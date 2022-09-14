@@ -1,5 +1,5 @@
 import Dexie, { Table } from 'dexie';
-import { Board, TColumn, TTask } from '@/core/types/kanbanBoard';
+import { Board } from '@/core/types/kanbanBoard';
 
 // https://dexie.org/docs/Version/Version.stores()
 // https://dexie.org/docs/Table/Table.update()
