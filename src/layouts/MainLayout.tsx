@@ -19,7 +19,7 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { SiKibana } from 'react-icons/si';
 
 // import ThemeSettings from '@/components/themeSettings/ThemeSettings';
-// import Modal from '@/components/modal/Modal';
+import BaseModal from '@/components/modals/BaseModal';
 // import CreateBoardForm from '@/components/kanbanBoard/CreateBoardForm';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
@@ -138,7 +138,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
                                                 }
                                             >
                                                 <SiKibana />
-                                                <span>Kan-banana</span>
+                                                <span className="ml-1">
+                                                    Kan-banana
+                                                </span>
                                             </div>
                                         </Link>
                                     </div>
@@ -215,7 +217,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                                     onClick={() => handleCloseSidebar}
                                 >
                                     <SiKibana />
-                                    <span>Kan-banana</span>
+                                    <span className="ml-1">Kan-banana</span>
                                 </div>
                             </Link>
                         </div>
