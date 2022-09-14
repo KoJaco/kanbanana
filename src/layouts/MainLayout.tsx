@@ -75,7 +75,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 {/* <Modal open={modalOpen} setOpen={setModalOpen}>
                     <CreateBoardForm setOpen={setModalOpen} />
                 </Modal> */}
-                {/* Sidebar starts, boards menu can be a separate component dynamically imported */}
+                {/* Mobile Sidebar starts, boards menu can be a separate component dynamically imported */}
                 <Transition.Root show={sidebarOpen} as={Fragment}>
                     <Dialog
                         as="div"
@@ -207,7 +207,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 {/* Static sidebar for desktop */}
                 <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
                     {/* Sidebar component, swap this element with another sidebar if you like */}
-                    <div className="flex flex-grow flex-col overflow-y-auto bg-indigo-700 pt-5">
+                    <div className="flex flex-grow flex-col overflow-y-auto bg-primary-bg pt-5">
                         <div className="flex flex-shrink-0 items-center px-4">
                             <Link href="/">
                                 <div
@@ -224,30 +224,30 @@ export default function MainLayout({ children }: MainLayoutProps) {
                                 <div>
                                     {/* New Board Button */}
                                     <button
-                                        className="text-indigo-100 hover:bg-indigo-600
+                                        className="text-indigo-100 hover:bg-offset-bg hover:text-slate-600
                                                         group flex items-center px-2 py-2 text-base font-medium rounded-md mt-6 w-full"
                                         onClick={handleOpenModal}
                                     >
-                                        <span className="h-full text-gray-400 group-hover:text-gray-800">
+                                        <span className="h-full text-gray-400 group-hover:text-slate-600">
                                             <IoCreateOutline
-                                                className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300"
+                                                className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 group-hover:text-slate-600"
                                                 aria-hidden="true"
                                             />
                                         </span>
-                                        <p className=" text-indigo-100 font-regular uppercase cursor-pointer">
+                                        <p className=" text-indigo-100 font-regular uppercase cursor-pointer group-hover:text-slate-600">
                                             New Board
                                         </p>
                                     </button>
                                 </div>
                                 {/* Boards menu */}
                                 <a
-                                    className="text-indigo-100 hover:bg-indigo-600
+                                    className="text-indigo-100 hover:bg-offset-bg
                                                         group flex items-center px-2 py-2 text-base font-medium rounded-md"
                                 >
                                     <span className="h-full text-gray-400">
-                                        <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300" />
+                                        <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 group-hover:text-slate-600" />
                                     </span>
-                                    <p className=" text-indigo-100 font-regular uppercase cursor-pointer">
+                                    <p className=" text-indigo-100 font-regular uppercase cursor-pointer group-hover:text-slate-600">
                                         Boards
                                     </p>
                                 </a>
@@ -368,7 +368,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                                     type="button"
                                     className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                 >
-                                    <span>About</span>
+                                    <span>Why the bananas?</span>
                                 </button>
                             </div>
                         </div>
@@ -378,11 +378,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
                         <div className="py-6">
                             <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
                                 <h1 className="text-2xl font-semibold text-gray-900">
-                                    Dashboard
+                                    Board Title
                                 </h1>
                             </div>
                             <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-                                {/* content */}
+                                content
                                 {children}
                                 {/* /End replace */}
                             </div>
