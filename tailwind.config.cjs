@@ -36,6 +36,8 @@ module.exports = {
                 'light-gray': '#F0F0F0',
                 'half-transparent': 'rgba(0, 0, 0, 0.5)',
                 'primary-bg': '#6967CE',
+                'primary-bg-lighter': '#8681EB',
+                'primary-bg-darker': '#5556BA',
                 'secondary-bg': '#F1B814',
                 'offset-bg': '#FFC414',
                 'info-bg': '#9CF6FB',
