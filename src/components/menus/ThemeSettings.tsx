@@ -17,7 +17,8 @@ const themeColors = [
 ];
 
 const ThemeSettings = () => {
-    const { setCurrentColor, setMode, currentMode } = useUIControlStore();
+    const { setCurrentColor, setCurrentMode, currentMode } =
+        useUIControlStore();
 
     return (
         <div className="bg-inherit w-full h-auto">
@@ -32,7 +33,7 @@ const ThemeSettings = () => {
                             type="checkbox"
                             className="absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md"
                             checked={currentMode === 'light' ? false : true}
-                            onChange={setMode}
+                            onChange={setCurrentMode}
                             value={currentMode === 'light' ? 'dark' : 'light'}
                         />
                         <span className="cursor-pointer w-14 h-8 flex items-center flex-shrink-0 p-0.5 bg-slate-300 rounded-full duration-300 ease-in-out peer-checked:bg-primary-bg after:w-7 after:h-7 after:bg-white after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-6 group-hover:scale-105 group-hover:drop-shadow-md"></span>

@@ -11,7 +11,7 @@ export type State = {
     currentColor: string;
     setCurrentColor: (color: string) => void;
     currentMode: string;
-    setMode: (e: React.FormEvent<HTMLInputElement>) => void;
+    setCurrentMode: (e: React.FormEvent<HTMLInputElement>) => void;
 };
 
 export const useUIControlStore = create<State>()(
@@ -33,15 +33,22 @@ export const useUIControlStore = create<State>()(
                 }));
             },
             currentMode: 'light',
-            setMode: (event) => {
-                () => ({
+            setCurrentMode: (event) => {
+                set(() => ({
                     currentMode:
                         event.target === null
                             ? 'light'
                             : event.currentTarget.value,
-                });
+                }));
             },
         }),
-        { name: 'ui-control-storage', getStorage: () => localStorage }
+        {
+            name: 'ui-control-storage',
+            getStorage: () => localStorage,
+            partialize: (state) => ({
+                currentColor: state.currentColor,
+                currentMode: state.currentMode,
+            }),
+        }
     )
 );
