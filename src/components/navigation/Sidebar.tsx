@@ -20,7 +20,7 @@ import { SiKibana } from 'react-icons/si';
 
 // import ThemeSettings from '@/components/themeSettings/ThemeSettings';
 import BaseModal from '@/components/modals/BaseModal';
-// import CreateBoardForm from '@/components/kanbanBoard/CreateBoardForm';
+import CreateBoardForm from '@/components/kanban/CreateBoardForm';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
 import { useUIContext } from '@/stores/UIContextProvider';
@@ -51,9 +51,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     }
     return (
         <>
-            {/* <Modal open={modalOpen} setOpen={setModalOpen}>
-                    <CreateBoardForm setOpen={setModalOpen} />
-                </Modal> */}
+            <BaseModal open={modalOpen} setOpen={setModalOpen}>
+                <CreateBoardForm setOpen={setModalOpen} />
+            </BaseModal>
             <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
                     as="div"
