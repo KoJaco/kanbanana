@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useUIContext } from '@/stores/UIContextProvider';
+import { useUIControlStore } from '@/stores/UIControlStore';
 
 import Sidebar from '@/components/navigation/Sidebar';
 import Navbar from '@/components/navigation/Navbar';
@@ -9,9 +8,7 @@ type MainLayoutProps = {
 };
 
 export default function MainLayout({ children }: MainLayoutProps) {
-    const { currentMode, activeMenu } = useUIContext();
-
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { currentMode, sidebarOpen, setSidebarOpen } = useUIControlStore();
 
     return (
         <>

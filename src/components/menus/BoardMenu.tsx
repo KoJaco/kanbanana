@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { useRouter } from 'next/router';
 
-import { useUIContext } from '@/stores/UIContextProvider';
+import { useUIControlStore } from '@/stores/UIControlStore';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
@@ -11,15 +11,15 @@ import { useKanbanStore } from '@/stores/KanbanStore';
 const BoardMenu = () => {
     const { boardCount, setBoardCount } = useKanbanStore();
 
-    const { activeMenu, setActiveMenu, screenSize, currentColor } =
-        useUIContext();
+    const { sidebarOpen, setSidebarOpen, screenSize, currentColor } =
+        useUIControlStore();
 
     const router = useRouter();
     const currentRoute = router.asPath;
 
     const handleCloseSidebar = () => {
-        if (activeMenu && screenSize != undefined && screenSize <= 900) {
-            setActiveMenu(false);
+        if (sidebarOpen && screenSize != undefined && screenSize <= 900) {
+            setSidebarOpen(false);
         }
     };
 

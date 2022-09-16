@@ -1,5 +1,5 @@
 import React from 'react';
-import { useUIContext } from '@/stores/UIContextProvider';
+import { useUIControlStore } from '@/stores/UIControlStore';
 
 const themeColors = [
     {
@@ -17,7 +17,7 @@ const themeColors = [
 ];
 
 const ThemeSettings = () => {
-    const { setColor, setMode, currentMode } = useUIContext();
+    const { setCurrentColor, setMode, currentMode } = useUIControlStore();
 
     return (
         <div className="bg-inherit w-full h-auto">
@@ -61,7 +61,7 @@ const ThemeSettings = () => {
                                             : '',
                                     }}
                                     onClick={() => {
-                                        setColor(item.color);
+                                        setCurrentColor(item.color);
                                     }}
                                 ></button>
                             </div>
