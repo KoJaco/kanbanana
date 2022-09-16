@@ -243,13 +243,13 @@ const Kanban = ({ slug }: KanbanProps) => {
             <DragDropContext onDragEnd={onDragEnd}>
                 {/* TITLE */}
                 <div className="my-8 mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-                    <h1 className="text-2xl font-semibold text-gray-900 bg-gray-400">
+                    <h1 className="text-2xl font-semibold text-gray-900">
                         {boardState.title.length === 0
                             ? 'Add a Board Title...'
                             : boardState.title}
                     </h1>
                 </div>
-                <div className="flex flex-row mx-auto max-w-7xl px-4 sm:px-6 md:px-8 bg-gray-100 overflow-x-auto no-scrollbar">
+                <div className="flex flex-row mx-auto max-w-7xl px-4 sm:px-6 md:px-8  overflow-x-auto no-scrollbar">
                     {/* Board */}
                     <Droppable
                         droppableId="columns"
@@ -300,14 +300,14 @@ const Kanban = ({ slug }: KanbanProps) => {
                         )}
                     </Droppable>
 
-                    <div className="flex mb-auto items-center">
+                    {/* <div className="flex mb-auto items-center">
                         <button
                             className="bg-transparent hover:scale-110 text-gray-500 bg-gray-100 p-1 rounded-full transition-transform duration-300 hover:drop-shadow"
                             onClick={handleAddColumn}
                         >
                             <MdAdd className="w-7 h-7 text-gray-500 dark:text-gray-50" />
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </DragDropContext>
         </>

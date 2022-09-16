@@ -131,12 +131,12 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
             <Draggable draggableId={props.column.id} index={props.index}>
                 {(draggableProvided) => (
                     <div
-                        className="flex flex-col sm:w-28 md:w-56 lg:w-96 bg-red-50 px-2"
+                        className="flex flex-col sm:w-28 md:w-56 lg:w-96 px-2 "
                         {...draggableProvided.draggableProps}
                         ref={draggableProvided.innerRef}
                     >
-                        <div className="flex justify-between items-center group my-2">
-                            <h1 className="text-l text-gray-500 font-medium italic">
+                        <div className="flex justify-between items-center group mt-2 ">
+                            <h1 className="text-l text-slate-500 font-medium">
                                 {props.columnTitle}
                             </h1>
                             <div
@@ -151,7 +151,7 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
                         <Droppable droppableId={props.column!.id} type="task">
                             {(droppableProvided, droppableSnapshot) => (
                                 <div
-                                    className="py-2 rounded-md transition-color duration-300 h-full"
+                                    className="py-1 rounded-md transition-color duration-300 h-full "
                                     style={{
                                         backgroundColor:
                                             droppableSnapshot.isDraggingOver
