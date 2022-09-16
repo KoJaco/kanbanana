@@ -23,7 +23,6 @@ const BoardMenu = () => {
         }
     };
 
-    // change this to async, user defined... can be recent boards given number, all, reverse order, specific tags, etc.
     const boards = useLiveQuery(
         () => db.getAllBoards(true),
         // () => db.boards.orderBy('updatedAt').reverse().toArray(),

@@ -180,7 +180,7 @@ module.exports = {
 
                 '.scrollbar-rounded::-webkit-scrollbar-track': {
                     borderRadius: '100vh',
-                    background: '#f3f4f6',
+                    background: '#FFFFFF00',
                 },
                 '.scrollbar-rounded-horizontal::-webkit-scrollbar-track': {
                     borderRadius: '100vh',
@@ -190,16 +190,16 @@ module.exports = {
                 '.scrollbar-rounded::-webkit-scrollbar-thumb': {
                     background: '#999',
                     borderRadius: '100vh',
-                    border: '3px solid #f3f4f6',
+                    border: '3px solid #6967CE',
                 },
                 '.scrollbar-rounded-horizontal::-webkit-scrollbar-thumb': {
                     background: '#666',
                     borderRadius: '100vh',
-                    border: '3px solid #f3f4f6',
+                    border: '3px solid #00176D',
                 },
 
                 '.scrollbar-rounded::-webkit-scrollbar-thumb:hover': {
-                    background: '#475569',
+                    background: '#00176D',
                 },
 
                 '.scrollbar-rounded-horizontal::-webkit-scrollbar-thumb:hover':
