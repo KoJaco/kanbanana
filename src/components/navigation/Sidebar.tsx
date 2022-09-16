@@ -8,7 +8,6 @@ import { MdMenuOpen, MdClose } from 'react-icons/md';
 import Link from 'next/link';
 
 import { useRouter } from 'next/router';
-import { BsKanban } from 'react-icons/bs';
 import {
     IoList,
     IoColorPaletteOutline,
@@ -142,17 +141,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                             </button>
                                         </div>
                                         <div>
-                                            <a
-                                                className="text-indigo-100 hover:bg-primary-bg-darker
+                                            <Link href="/" passHref={true}>
+                                                <a
+                                                    className="text-indigo-100 hover:bg-primary-bg-darker
                                             group flex items-center px-2 py-2 text-base font-medium rounded-md cursor-pointer"
-                                            >
-                                                <span className="h-full text-gray-400">
-                                                    <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300" />
-                                                </span>
-                                                <p className=" text-indigo-100 font-regular uppercase cursor-pointer">
-                                                    Boards
-                                                </p>
-                                            </a>
+                                                >
+                                                    <span className="h-full text-gray-400 cursor-pointer">
+                                                        <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 " />
+                                                    </span>
+                                                    <p className=" text-indigo-100 font-regular uppercase cursor-pointer">
+                                                        Boards
+                                                    </p>
+                                                </a>
+                                            </Link>
+
                                             <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
                                                 {/* Dynamic component, client-side only */}
                                                 <BoardMenu />

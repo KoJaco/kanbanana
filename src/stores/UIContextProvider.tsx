@@ -22,7 +22,7 @@ const UIContextDefaultValues: UIContextType = {
     setActiveMenu: (activeMenu) => {},
     screenSize: undefined,
     setScreenSize: (screenSize) => {},
-    currentColor: '#03C9D7',
+    currentColor: '#00176D',
     setCurrentColor: (color) => {},
     setColor: (color) => {},
     currentMode: 'light',

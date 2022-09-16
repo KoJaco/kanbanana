@@ -43,7 +43,7 @@ module.exports = {
                 'info-bg': '#9CF6FB',
                 'success-bg': '#BCFD4C',
                 'light-alt-bg': '#FDF5DF',
-                'dark-alt-bg': '#1A2238',
+                'dark-alt-bg': '#00176D',
             },
             textColor: {
                 primary: '#BD1E51',

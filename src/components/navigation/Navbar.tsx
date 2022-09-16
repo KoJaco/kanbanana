@@ -1,5 +1,5 @@
 import React from 'react';
-import { MdMenuOpen, MdOutlineSearch } from 'react-icons/md';
+import { MdMenuOpen } from 'react-icons/md';
 
 type NavbarProps = {
     setSidebarOpen: (value: boolean) => void;
@@ -18,6 +18,7 @@ const Navbar = ({ setSidebarOpen }: NavbarProps) => {
             </button>
             <div className="flex flex-1 justify-between px-4">
                 <div className="flex flex-1">
+                    {/* What should go here? */}
                     {/* <form
                         className="flex w-full md:ml-0"
                         action="#"
