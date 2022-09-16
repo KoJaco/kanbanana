@@ -64,7 +64,7 @@ const BoardMenu = () => {
                                 className={
                                     currentRoute === `/boards/${board.slug}`
                                         ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-indigo-200 drop-shadow-md mt-2 font-light'
-                                        : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 bg-transparent dark:text-gray-200  hover:bg-primary-bg-darker font-light'
+                                        : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 bg-transparent   hover:bg-primary-bg-darker font-light'
                                     //   `bg-[${currentColor.toLowerCase()}]`
                                 }
                                 onClick={handleCloseSidebar}

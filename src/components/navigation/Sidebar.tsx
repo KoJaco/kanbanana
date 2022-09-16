@@ -101,7 +101,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 </Transition.Child>
                                 <div className="flex flex-shrink-0 items-center px-4">
                                     <Link href="/">
-                                        <div className="cursor-pointer items-center gap-3 flex text-xl font-medium tracking-tight dark:text-white text-gray-100">
+                                        <div className="cursor-pointer items-center gap-3 flex text-xl font-medium tracking-tight text-gray-100">
                                             <SiKibana />
                                             <span className="ml-1">
                                                 Kan-banana
@@ -157,13 +157,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                             <p className="text-indigo-100 mr-4 font-regular uppercase">
                                                 Theme and Settings
                                             </p>
-                                            <div>
-                                                <ThemeSettings />
-                                            </div>
                                         </div>
-                                        {/* <div>
-                                    <ThemeSettings />
-                                </div> */}
+                                        <div>
+                                            <ThemeSettings />
+                                        </div>
                                     </nav>
                                 </div>
                             </Dialog.Panel>
@@ -181,7 +178,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <div className="flex flex-grow flex-col overflow-y-auto bg-primary-bg pt-5">
                     <div className="flex flex-shrink-0 items-center px-4">
                         <Link href="/">
-                            <div className="cursor-pointer items-center gap-3 mt-4 flex text-xl font-medium tracking-tight dark:text-white text-gray-50">
+                            <div className="cursor-pointer items-center gap-3 mt-4 flex text-xl font-medium tracking-tight text-gray-50">
                                 <SiKibana className="text-offset" />
                                 <span className="ml-1">Kan-banana</span>
                             </div>
