@@ -48,7 +48,7 @@ module.exports = {
             textColor: {
                 primary: '#BD1E51',
                 secondary: '#F1B814',
-                accent: '#490B3D',
+                offset: '#FFC414',
                 'half-transparent': 'rgba(0,0,0,0.5',
             },
             borderWidth: {

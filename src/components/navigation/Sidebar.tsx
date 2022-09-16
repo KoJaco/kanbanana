@@ -51,6 +51,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     }
     return (
         <>
+            {/* <Modal open={modalOpen} setOpen={setModalOpen}>
+                    <CreateBoardForm setOpen={setModalOpen} />
+                </Modal> */}
             <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
                     as="div"
@@ -180,7 +183,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     <div className="flex flex-shrink-0 items-center px-4">
                         <Link href="/">
                             <div className="cursor-pointer items-center gap-3 mt-4 flex text-xl font-medium tracking-tight dark:text-white text-gray-50">
-                                <SiKibana />
+                                <SiKibana className="text-offset" />
                                 <span className="ml-1">Kan-banana</span>
                             </div>
                         </Link>
