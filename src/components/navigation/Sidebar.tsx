@@ -1,29 +1,18 @@
-import { Fragment, useState, useEffect, useCallback } from 'react';
-import { Dialog, Menu, Transition } from '@headlessui/react';
+import { Fragment, useState } from 'react';
 import dynamic from 'next/dynamic';
-
-import clsx from 'clsx';
-import { BsCloudsFill } from 'react-icons/bs';
-import { MdMenuOpen, MdClose } from 'react-icons/md';
 import Link from 'next/link';
-
-import { useRouter } from 'next/router';
+import { Dialog, Transition } from '@headlessui/react';
+import { MdClose } from 'react-icons/md';
 import {
     IoList,
     IoColorPaletteOutline,
     IoCreateOutline,
 } from 'react-icons/io5';
-import { SiShopware } from 'react-icons/si';
-import { MdOutlineCancel } from 'react-icons/md';
 import { SiKibana } from 'react-icons/si';
 
 import ThemeSettings from '@/components/menus/ThemeSettings';
 import BaseModal from '@/components/modals/BaseModal';
 import CreateBoardForm from '@/components/kanban/CreateBoardForm';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '@/server/db';
-import { useUIControlStore } from '@/stores/UIControlStore';
-import { useKanbanStore } from '@/stores/KanbanStore';
 
 const BoardMenu = dynamic(() => import('@/components/menus/BoardMenu'), {
     ssr: false,
