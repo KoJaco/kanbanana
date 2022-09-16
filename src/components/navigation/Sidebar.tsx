@@ -63,7 +63,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             leaveFrom="translate-x-0"
                             leaveTo="-translate-x-full"
                         >
-                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-primary-bg pt-5 pb-4">
+                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-gradient-to-b from-primary to-primary-dark-alt pt-5 pb-4">
                                 <Transition.Child
                                     as={Fragment}
                                     enter="ease-in-out duration-300"
@@ -152,6 +152,34 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                         </div>
                                     </nav>
                                 </div>
+                                {/* Sidebar Footer Desktop */}
+
+                                <div className="flex flex-shrink-0 bg-transparent p-4">
+                                    <a
+                                        href="#"
+                                        className="group block w-full flex-shrink-0"
+                                    >
+                                        <div className="flex items-center">
+                                            <div></div>
+                                            <div className="ml-3">
+                                                <p className="text-sm font-medium text-indigo-100">
+                                                    Database Info
+                                                </p>
+                                                <div className="flex gap-5 text-xs font-medium text-indigo-200">
+                                                    <span className="group-hover:text-gray-50">
+                                                        12 boards
+                                                    </span>
+                                                    <span className="group-hover:text-gray-50">
+                                                        12 boards
+                                                    </span>
+                                                    <span className="group-hover:text-gray-50">
+                                                        12 boards
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </Dialog.Panel>
                         </Transition.Child>
                         <div className="w-14 flex-shrink-0" aria-hidden="true">
@@ -164,7 +192,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             {/* Static sidebar for desktop */}
             <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
                 {/* Sidebar component, swap this element with another sidebar if you like */}
-                <div className="flex flex-grow flex-col overflow-y-auto bg-primary-bg pt-5">
+                <div className="flex flex-grow flex-col overflow-y-auto bg-gradient-to-b from-primary to-primary-dark-alt pt-5">
                     <div className="flex flex-shrink-0 items-center px-4">
                         <Link href="/">
                             <div className="cursor-pointer items-center gap-3 mt-4 flex text-xl font-medium tracking-tight text-gray-50">
@@ -225,7 +253,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         </nav>
                     </div>
                     {/* Sidebar Footer Desktop */}
-                    <div className="flex flex-shrink-0 bg-primary-bg-darker p-4">
+                    <div className="flex flex-shrink-0 bg-transparent p-4">
                         <a
                             href="#"
                             className="group block w-full flex-shrink-0"

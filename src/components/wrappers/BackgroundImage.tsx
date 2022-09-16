@@ -39,12 +39,14 @@ const BackgroundImage = ({ altText = '', ...props }: BackgroundImageProps) => {
 
     if (width && height) {
         return (
-            <Image
-                src={props.imageSrc}
-                width={width}
-                height={height}
-                alt={altText}
-            />
+            <div className="fixed top-0 z-0">
+                <Image
+                    src={props.imageSrc}
+                    width={width}
+                    height={height}
+                    alt={altText}
+                />
+            </div>
         );
     }
 

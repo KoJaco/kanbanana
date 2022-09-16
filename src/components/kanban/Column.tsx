@@ -14,6 +14,7 @@ import type {
     Columns,
 } from '@/core/types/kanbanBoard';
 import { useOnClickOutside } from '@/core/hooks';
+import { useUIControlStore } from '@/stores/UIControlStore';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import Dexie, { ModifyError } from 'dexie';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -34,6 +35,8 @@ type ColumnProps = {
 };
 
 const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
+    const { currentColor } = useUIControlStore();
+
     // * STATE
     // local state variables for Column
     const [columnTitle, setColumnTitle] = useState<string>('');
@@ -82,7 +85,7 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
         let newTask = {
             id: maxTaskId + 1,
             content: '',
-            color: 'rgba(255, 255, 255, 1)',
+            color: 'rgba(255, 200, 50, 1)',
         };
 
         db.transaction('rw', db.boards, async () => {
@@ -131,11 +134,11 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
             <Draggable draggableId={props.column.id} index={props.index}>
                 {(draggableProvided) => (
                     <div
-                        className="flex flex-col sm:w-28 md:w-56 lg:w-96 px-2 "
+                        className="flex flex-col sm:w-28 md:w-56 lg:w-96 px-1 bg-gray-100 mx-1 rounded-md"
                         {...draggableProvided.draggableProps}
                         ref={draggableProvided.innerRef}
                     >
-                        <div className="flex justify-between items-center group mt-2 ">
+                        <div className="flex justify-between items-center group mt-2 mb-1 mx-1">
                             <h1 className="text-l text-slate-500 font-medium">
                                 {props.columnTitle}
                             </h1>
@@ -151,12 +154,13 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
                         <Droppable droppableId={props.column!.id} type="task">
                             {(droppableProvided, droppableSnapshot) => (
                                 <div
-                                    className="py-1 rounded-md transition-color duration-300 h-full "
+                                    className="py-1 rounded-md transition-color duration-300 h-full px-1"
                                     style={{
                                         backgroundColor:
                                             droppableSnapshot.isDraggingOver
-                                                ? '#F0F0F0'
-                                                : parsedColor(color),
+                                                ? '#B0AFE6'
+                                                : // ? currentColor
+                                                  parsedColor(color),
                                     }}
                                     ref={droppableProvided.innerRef}
                                     {...droppableProvided.droppableProps}
@@ -209,7 +213,7 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
                                 </div>
                             )}
                         </Droppable>
-                        <div className="my-4 ml-4">
+                        {/* <div className="my-4 ml-4">
                             <div className="flex justify-start mt-4">
                                 <button
                                     className={clsx(
@@ -225,10 +229,9 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
                                     disabled={showColorPicker ? true : false}
                                 >
                                     <MdBrush className="w-5 h-5 text-gray-50 hover:text-gray-500 transition-colors duration-500 focus:text-gray-500" />
-                                    {/* colour picker component, fixed to bottom of screen */}
                                 </button>
                             </div>
-                            {/* {showColorPicker && (
+                            {showColorPicker && (
                                 <div
                                     ref={colorPickerRef}
                                     className="fixed bottom-12 right-12 drop-shadow-lg hover:scale-110 transition-all duration-500 z-10000 cursor-pointer"
@@ -239,8 +242,8 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
                                         onChange={setColor}
                                     ></RgbaColorPicker>
                                 </div>
-                            )} */}
-                        </div>
+                            )}
+                        </div> */}
                     </div>
                 )}
             </Draggable>

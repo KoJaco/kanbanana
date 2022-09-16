@@ -29,6 +29,11 @@ module.exports = {
             fontSize: {
                 14: '14px',
             },
+            colors: {
+                primary: '#6967CE',
+                'primary-darker': '#5556BA',
+                'primary-dark-alt': '#00176D',
+            },
             backgroundColor: {
                 'main-bg': '#FAFBFB',
                 'main-dark-bg': '#011A27',
@@ -169,13 +174,13 @@ module.exports = {
             addUtilities({
                 '.scrollbar-rounded::-webkit-scrollbar': {
                     display: 'block',
-                    width: '12px',
+                    width: '6px',
                     height: '18px',
                 },
                 '.scrollbar-rounded-horizontal::-webkit-scrollbar': {
                     display: 'block',
-                    width: '28px',
-                    height: '12px',
+                    width: 'auto',
+                    height: '6px',
                 },
 
                 '.scrollbar-rounded::-webkit-scrollbar-track': {
@@ -188,14 +193,14 @@ module.exports = {
                 },
 
                 '.scrollbar-rounded::-webkit-scrollbar-thumb': {
-                    background: '#999',
+                    background: '#FFFFFF00',
                     borderRadius: '100vh',
-                    border: '3px solid #6967CE',
+                    border: '3px solid #FFFFFF00',
                 },
                 '.scrollbar-rounded-horizontal::-webkit-scrollbar-thumb': {
                     background: '#666',
                     borderRadius: '100vh',
-                    border: '3px solid #00176D',
+                    border: '3px solid #FFFFFF00',
                 },
 
                 '.scrollbar-rounded::-webkit-scrollbar-thumb:hover': {
