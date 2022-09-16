@@ -281,13 +281,13 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
                                         <button
                                             type="button"
                                             className="w-5 h-5 rounded-md hover:bg-red-600 cursor-pointer text-gray-500 hover:text-gray-50 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                                            // button is disabled if we only have one column, OR if we will be deleting all our tasks.
                                             disabled={
                                                 columnCount === 1
                                                     ? true
                                                     : false ||
-                                                      (taskCount === 1 &&
-                                                          columnTasks!.length >
-                                                              0)
+                                                      taskCount ===
+                                                          columnTasks!.length
                                             }
                                             onClick={handleRemoveColumn}
                                         >

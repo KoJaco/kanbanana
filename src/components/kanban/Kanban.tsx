@@ -12,6 +12,7 @@ import type {
     TaskId,
     ColumnId,
     TColumn,
+    TTask,
     Tasks,
     Columns,
 } from '@/core/types/kanbanBoard';
@@ -82,7 +83,7 @@ const Kanban = ({ slug }: KanbanProps) => {
     // use effect for setting local board state and global zustand state for this component instance.
     useEffect(() => {
         function getMaxIdFromString<T extends Object>(obj: T) {
-            // accepts format 'task-1' or 'column-1', etc...
+            // accepts format 'task-1' or 'column-1', etc... should really type of TTask | TColumn
             const keys = Object.keys(obj);
             let idArray: number[] = [];
             keys.forEach((key) => {
@@ -114,37 +115,6 @@ const Kanban = ({ slug }: KanbanProps) => {
             // return the max
             return Math.max(...idArray);
         }
-        // function getMaxTaskId(tasks: Tasks) {
-        //     const taskIds = Object.keys(tasks);
-        //     let idArray: number[] = [];
-        //     taskIds.forEach((task) => {
-        //         let [t, id] = task.split('-');
-        //         try {
-        //             if (id === undefined) {
-        //                 throw new Error(
-        //                     'Second half of task-id (id) was undefined, failed while parsing to integer.'
-        //                 );
-        //             }
-        //             // try to parse the id to an integer
-        //             let idNum = parseInt(id, 10);
-        //             if (isNaN(idNum)) {
-        //                 throw new Error(
-        //                     'Second half of task-id could not be parsed to an integer.'
-        //                 );
-        //             }
-        //             // push id to number array
-        //             idArray.push(idNum);
-        //         } catch (error) {
-        //             let message;
-        //             if (error instanceof Error) message = error.message;
-        //             else message = String(error);
-
-        //             // proceed but report the error
-        //             reportError({ message });
-        //         }
-        //     });
-        //     return Math.max(...idArray);
-        // }
 
         if (board !== undefined) {
             setBoardState(board);
@@ -166,18 +136,18 @@ const Kanban = ({ slug }: KanbanProps) => {
         slug,
     ]);
 
-    // useEffect(() => {
-    //     //Check width of the scollings
-    //     if (
-    //         scroller.current &&
-    //         scroller?.current?.scrollWidth === scroller?.current?.offsetWidth
-    //     ) {
-    //         setScrollEnd(true);
-    //     } else {
-    //         setScrollEnd(false);
-    //     }
-    //     return () => {};
-    // }, [scroller?.current?.scrollWidth, scroller?.current?.offsetWidth]);
+    useEffect(() => {
+        //Check width of the scolling
+        if (
+            scroller.current &&
+            scroller?.current?.scrollWidth === scroller?.current?.offsetWidth
+        ) {
+            setScrollEnd(true);
+        } else {
+            setScrollEnd(false);
+        }
+        return () => {};
+    }, [scroller?.current?.scrollWidth, scroller?.current?.offsetWidth]);
 
     function handleAddColumn() {
         const newColumnId = `column-${maxColumnId + 1}`;
@@ -210,6 +180,7 @@ const Kanban = ({ slug }: KanbanProps) => {
                 console.error('Generic error: ' + e);
             });
         increaseColumnCount();
+        handleSlide(384);
     }
 
     // * CONSTS
@@ -305,7 +276,6 @@ const Kanban = ({ slug }: KanbanProps) => {
     };
 
     function handleSlide(xShift: number) {
-        console.log('slide start:' + scrollX);
         if (scroller.current !== null && scroller !== null) {
             scroller.current.scrollLeft += xShift;
             setScrollX(scrollX + xShift); // updates latest scrolled position
@@ -320,7 +290,6 @@ const Kanban = ({ slug }: KanbanProps) => {
                 setScrollEnd(false);
             }
         }
-        console.log('slide end:' + scrollX);
     }
 
     function checkScroll() {
@@ -360,7 +329,7 @@ const Kanban = ({ slug }: KanbanProps) => {
                     </div>
                 </div>
                 <div
-                    className="flex flex-row mx-auto px-2 sm:px-6 md:px-8 overflow-x-auto no-scrollbar"
+                    className="flex flex-row mx-auto px-2 sm:px-6 md:px-8 no-scrollbar overflow-x-auto snap-proximity snap-x"
                     ref={scroller}
                     onScroll={checkScroll}
                 >
@@ -372,7 +341,7 @@ const Kanban = ({ slug }: KanbanProps) => {
                     >
                         {(droppableProvided) => (
                             <div
-                                className="flex"
+                                className="flex snap-start"
                                 ref={droppableProvided.innerRef}
                                 {...droppableProvided.droppableProps}
                             >
