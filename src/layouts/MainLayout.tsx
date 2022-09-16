@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useUIContext } from '@/stores/UIContextProvider';
 
 import Sidebar from '@/components/navigation/Sidebar';
 import Navbar from '@/components/navigation/Navbar';
@@ -8,12 +9,14 @@ type MainLayoutProps = {
 };
 
 export default function MainLayout({ children }: MainLayoutProps) {
+    const { currentMode, activeMenu } = useUIContext();
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
         <>
             {/* Main Layout */}
-            <div>
+            <div className={currentMode === 'dark' ? 'dark' : ''}>
                 {/* Sidebar, static on desktop, responsive/closed on mobile */}
                 <Sidebar
                     sidebarOpen={sidebarOpen}

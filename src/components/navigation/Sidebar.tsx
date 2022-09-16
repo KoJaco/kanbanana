@@ -17,7 +17,7 @@ import { SiShopware } from 'react-icons/si';
 import { MdOutlineCancel } from 'react-icons/md';
 import { SiKibana } from 'react-icons/si';
 
-// import ThemeSettings from '@/components/themeSettings/ThemeSettings';
+import ThemeSettings from '@/components/menus/ThemeSettings';
 import BaseModal from '@/components/modals/BaseModal';
 import CreateBoardForm from '@/components/kanban/CreateBoardForm';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -159,7 +159,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                 {/* Dynamic component, client-side only */}
                                                 <BoardMenu />
                                             </div>
-                                            {/* Theme settings */}
                                         </div>
 
                                         <div className="flex ml-2">
@@ -169,6 +168,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                             <p className="text-indigo-100 mr-4 font-regular uppercase">
                                                 Theme and Settings
                                             </p>
+                                            <div>
+                                                <ThemeSettings />
+                                            </div>
                                         </div>
                                         {/* <div>
                                     <ThemeSettings />
@@ -207,7 +209,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 >
                                     <span className="h-full">
                                         <IoCreateOutline
-                                            className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 "
+                                            className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300"
                                             aria-hidden="true"
                                         />
                                     </span>
@@ -233,7 +235,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     <BoardMenu />
                                 </div>
                             </div>
-                            {/* Theme settings */}
 
                             <div className="flex ml-2">
                                 <span className="h-full text-indigo-100 mr-4">
@@ -243,7 +244,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     Theme and Settings
                                 </p>
                             </div>
-                            <div>{/* <ThemeSettings /> */}</div>
+                            <div>
+                                <ThemeSettings />
+                            </div>
                         </nav>
                     </div>
                 </div>
