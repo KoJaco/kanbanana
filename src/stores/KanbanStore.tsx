@@ -20,6 +20,8 @@ export type State = {
     currentColumnId: string;
     // keep track of how the highest task id, used in creating a new task to avoid conflicts in task deletion.
     maxTaskId: number;
+    maxColumnId: number;
+
     currentTaskId: string;
 
     setShowNotification: (show: boolean) => void;
@@ -49,6 +51,7 @@ export type State = {
     setCurrentTaskSlug: (slug: string) => void;
     setCurrentColumnId: (columnId: string) => void;
     setMaxTaskId: (maxTaskId: number) => void;
+    setMaxColumnId: (maxTaskId: number) => void;
     setCurrentTaskId: (taskId: string) => void;
 };
 
@@ -67,6 +70,7 @@ export const useKanbanStore = create<State>((set) => ({
     currentTaskSlug: '',
     currentColumnId: 'column-1',
     maxTaskId: 1,
+    maxColumnId: 1,
     currentTaskId: 'task-1',
 
     setShowNotification: (show: boolean) => {
@@ -125,6 +129,8 @@ export const useKanbanStore = create<State>((set) => ({
     setCurrentColumnId: (columnId: string) =>
         set(() => ({ currentColumnId: columnId })),
     setMaxTaskId: (maxTaskId: number) => set(() => ({ maxTaskId: maxTaskId })),
+    setMaxColumnId: (maxColumnId: number) =>
+        set(() => ({ maxColumnId: maxColumnId })),
     setCurrentTaskId: (taskId: string) =>
         set(() => ({ currentTaskId: taskId })),
 }));

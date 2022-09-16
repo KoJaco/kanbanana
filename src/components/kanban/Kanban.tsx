@@ -45,6 +45,8 @@ const Kanban = ({ slug }: KanbanProps) => {
     const [scrollEnd, setScrollEnd] = useState(false);
     const scroller = useRef<HTMLDivElement>(null);
 
+    const [showEditBoardForm, setShowEditBoardForm] = useState(false);
+
     // Zustand store state
     const {
         taskCount,
@@ -54,9 +56,13 @@ const Kanban = ({ slug }: KanbanProps) => {
         increaseColumnCount,
         currentBoardSlug,
         setCurrentBoardSlug,
+        maxColumnId,
         maxTaskId,
         setMaxTaskId,
+        setMaxColumnId,
     } = useKanbanStore();
+
+    console.log(maxColumnId, maxTaskId);
 
     // * HOOKS
 
@@ -75,22 +81,23 @@ const Kanban = ({ slug }: KanbanProps) => {
     }, []);
     // use effect for setting local board state and global zustand state for this component instance.
     useEffect(() => {
-        function getMaxTaskId(tasks: Tasks) {
-            const taskIds = Object.keys(tasks);
+        function getMaxIdFromString<T extends Object>(obj: T) {
+            // accepts format 'task-1' or 'column-1', etc...
+            const keys = Object.keys(obj);
             let idArray: number[] = [];
-            taskIds.forEach((task) => {
-                let [t, id] = task.split('-');
+            keys.forEach((key) => {
+                let [str, id] = key.split('-');
                 try {
                     if (id === undefined) {
                         throw new Error(
-                            'Second half of task-id (id) was undefined, failed while parsing to integer.'
+                            'Second half of <identifier>-<id> (id) was undefined, failed while parsing to integer.'
                         );
                     }
-                    // try to parse the id to an integer
+                    // try to parse id to integer
                     let idNum = parseInt(id, 10);
                     if (isNaN(idNum)) {
                         throw new Error(
-                            'Second half of task-id could not be parsed to an integer.'
+                            'Second half of <identifier>-<id> could not be parsed to an integer.'
                         );
                     }
                     // push id to number array
@@ -104,14 +111,48 @@ const Kanban = ({ slug }: KanbanProps) => {
                     reportError({ message });
                 }
             });
+            // return the max
             return Math.max(...idArray);
         }
+        // function getMaxTaskId(tasks: Tasks) {
+        //     const taskIds = Object.keys(tasks);
+        //     let idArray: number[] = [];
+        //     taskIds.forEach((task) => {
+        //         let [t, id] = task.split('-');
+        //         try {
+        //             if (id === undefined) {
+        //                 throw new Error(
+        //                     'Second half of task-id (id) was undefined, failed while parsing to integer.'
+        //                 );
+        //             }
+        //             // try to parse the id to an integer
+        //             let idNum = parseInt(id, 10);
+        //             if (isNaN(idNum)) {
+        //                 throw new Error(
+        //                     'Second half of task-id could not be parsed to an integer.'
+        //                 );
+        //             }
+        //             // push id to number array
+        //             idArray.push(idNum);
+        //         } catch (error) {
+        //             let message;
+        //             if (error instanceof Error) message = error.message;
+        //             else message = String(error);
+
+        //             // proceed but report the error
+        //             reportError({ message });
+        //         }
+        //     });
+        //     return Math.max(...idArray);
+        // }
+
         if (board !== undefined) {
             setBoardState(board);
             setCurrentBoardSlug(slug);
             setTaskCount(Object.keys(board.tasks).length);
             setColumnCount(Object.keys(board.columns).length);
-            setMaxTaskId(getMaxTaskId(board.tasks));
+            setMaxTaskId(getMaxIdFromString(board.tasks));
+            setMaxColumnId(getMaxIdFromString(board.columns));
         }
     }, [
         board,
@@ -138,7 +179,7 @@ const Kanban = ({ slug }: KanbanProps) => {
     // }, [scroller?.current?.scrollWidth, scroller?.current?.offsetWidth]);
 
     function handleAddColumn() {
-        const newColumnId = `column-${columnCount + 1}`;
+        const newColumnId = `column-${maxColumnId + 1}`;
 
         let newColumn: TColumn = {
             id: newColumnId,
@@ -302,15 +343,23 @@ const Kanban = ({ slug }: KanbanProps) => {
         <>
             <DragDropContext onDragEnd={onDragEnd}>
                 {/* TITLE */}
-                <div className="my-8 mx-2 max-w-7xl px-4 sm:px-6 md:px-8">
-                    <h1 className="text-2xl font-semibold text-gray-900">
-                        {boardState.title.length === 0
-                            ? 'Add a Board Title...'
-                            : boardState.title}
-                    </h1>
+                <div className="my-8 ml-2  px-2 sm:px-6 md:px-8 ">
+                    <div className="flex justify-between items-end gap-8">
+                        <h1 className="text-2xl font-semibold text-slate-600">
+                            {boardState.title.length === 0
+                                ? 'Add a Board Title...'
+                                : boardState.title}
+                        </h1>
+                        <button
+                            className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
+                            onClick={() => setShowEditBoardForm(true)}
+                        >
+                            <MdOutlineEdit className="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
                 <div
-                    className="flex flex-row mx-auto px-4 sm:px-6 md:px-8 overflow-x-auto no-scrollbar"
+                    className="flex flex-row mx-auto px-2 sm:px-6 md:px-8 overflow-x-auto no-scrollbar"
                     ref={scroller}
                     onScroll={checkScroll}
                 >
@@ -373,7 +422,7 @@ const Kanban = ({ slug }: KanbanProps) => {
                         </button>
                     </div>
                 </div>
-                <div className="my-8 mx-2 max-w-7xl px-4 sm:px-6 md:px-8 text-slate-600 space-x-2">
+                <div className="my-8 sm:mx-2 max-w-7xl px-2 sm:px-6 md:px-8 text-slate-600 space-x-2">
                     {/* scroll left button, disable on initial scroll position */}
                     <button
                         onClick={() => handleSlide(-384)}

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { Droppable } from 'react-beautiful-dnd';
 
-import { MdDragIndicator, MdAdd, MdBrush } from 'react-icons/md';
+import { MdDragIndicator, MdAdd, MdBrush, MdOutlineEdit } from 'react-icons/md';
 import { RgbaColorPicker } from 'react-colorful';
 
 import Task from './Task';
@@ -19,6 +19,7 @@ import { useKanbanStore } from '@/stores/KanbanStore';
 import Dexie, { ModifyError } from 'dexie';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
+import { AiOutlineDelete } from 'react-icons/ai';
 
 import clsx from 'clsx';
 
@@ -40,6 +41,8 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
     // * STATE
     // local state variables for Column
     const [columnTitle, setColumnTitle] = useState<string>('');
+    const [showEditColumnForm, setShowEditColumnForm] = useState(false);
+    var omit = require('object.omit');
 
     const [color, setColor] = useState<{
         r: number;
@@ -126,6 +129,72 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
         return `rgba(${color.r},${color.g},${color.b},${color.a})`;
     }
 
+    function handleRemoveColumn() {
+        // TODO: 1. retrieve all taskIds in given column, 2. remove columnId from columnOrder array, 3. remove all tasks that match any of the given taskIds, 4. remove column from columns.
+        // restrictions...
+        // ** cannot remove column if there is only one column. handled in disabled button.
+        // ** cannot remove column if there is only one task, and that column contains the task. Handled in disabled button.
+        const oldColumnId = props.columnId;
+        let removingTaskIds: string[] = [];
+        let newTasks: Tasks = {};
+        let newColumns: Columns = {};
+
+        // need to copy tasks and then remove index while updating all task keys / ids.
+        db.transaction('rw', db.boards, async () => {
+            // delete count should be 1, catch error
+            let deleteCount = await db.boards
+                .where('slug')
+                .equals(props.currentBoardSlug)
+                .modify((item: any) => {
+                    if (
+                        props.totalTaskCount === 1 &&
+                        item.columns[oldColumnId].taskIds.length > 0
+                    ) {
+                        throw new Error(
+                            'Tried to remove column when there is only one task left, this should not have gotten past the disabled button...'
+                        );
+                    }
+                    // get all task Ids to be removed.
+                    removingTaskIds = item.columns[oldColumnId].taskIds;
+                    // omit taskIds from tasks object
+                    newTasks = omit(item.tasks, removingTaskIds);
+
+                    // loop through column order
+                    let newColumnOrder: string[] = Array.from(item.columnOrder);
+                    for (let i = 0; i < newColumnOrder.length; i++) {
+                        let columnId = newColumnOrder[i];
+                        if (columnId === oldColumnId) {
+                            newColumnOrder.splice(i, 1);
+                        }
+                    }
+                    newColumns = omit(item.columns, oldColumnId);
+
+                    // spread out column id from old columns.
+                    // let oldColumns: Columns = item.columns;
+                    // const newColumns = (({ oldColumnId, ...rest }) => ({
+                    //     ...rest,
+                    // }))(oldColumns);
+
+                    // update state
+                    console.log(
+                        'new Columns: ' +
+                            `${JSON.stringify(newColumns)}` +
+                            '\n' +
+                            'new Tasks: ' +
+                            `${JSON.stringify(newTasks)}` +
+                            '\n' +
+                            'new column order: ' +
+                            `${newColumnOrder.toString()}`
+                    );
+                    item.columns = newColumns;
+                    item.tasks = newTasks;
+                    item.columnOrder = newColumnOrder;
+                });
+            if (deleteCount === 1) {
+                console.log('Deleted task Column ' + oldColumnId);
+            }
+        });
+    }
     // If default values are returned, queries are still loading:
     if (!props.column) return null;
 
@@ -134,7 +203,7 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
             <Draggable draggableId={props.column.id} index={props.index}>
                 {(draggableProvided) => (
                     <div
-                        className="flex flex-col w-96 md:w-80 lg:w-[30rem] px-1 bg-gray-100 mx-1 rounded-md"
+                        className="flex flex-col w-64 md:w-80 lg:w-[30rem] sm:px-1 bg-gray-100 mx-1 rounded-md group"
                         {...draggableProvided.draggableProps}
                         ref={draggableProvided.innerRef}
                     >
@@ -151,7 +220,7 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
                         <Droppable droppableId={props.column!.id} type="task">
                             {(droppableProvided, droppableSnapshot) => (
                                 <div
-                                    className="py-1 rounded-md transition-color duration-300 h-full px-1"
+                                    className="flex flex-col py-1 rounded-md transition-color duration-300 h-full px-1"
                                     style={{
                                         backgroundColor:
                                             droppableSnapshot.isDraggingOver
@@ -199,12 +268,33 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
                                         )
                                     )}
                                     {droppableProvided.placeholder}
-                                    <div className="flex my-2 w-full h-auto justify-end">
+                                    <div className="flex my-2 w-full h-auto justify-start">
                                         <button
                                             className="bg-transparent hover:scale-110 text-gray-500 transition-transform duration-300"
                                             onClick={handleAddTask}
                                         >
                                             <MdAdd className="w-5 h-5 text-gray-500 dark:text-gray-50" />
+                                        </button>
+                                    </div>
+
+                                    <div className="flex items-center justify-between mt-auto inset-y-0 opacity-0 border-t group-hover:opacity-100 transition-opacity duration-300 py-2">
+                                        <button
+                                            type="button"
+                                            className="w-5 h-5 rounded-md hover:bg-red-600 cursor-pointer text-gray-500 hover:text-gray-50 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                                            disabled={
+                                                columnCount === 1
+                                                    ? true
+                                                    : false ||
+                                                      (taskCount === 1 &&
+                                                          columnTasks!.length >
+                                                              0)
+                                            }
+                                            onClick={handleRemoveColumn}
+                                        >
+                                            <AiOutlineDelete className="w-4 h-4" />
+                                        </button>
+                                        <button className="items-center justify-end text-slate-500 py-2 rounded-full hover:text-red-500 cursor-pointer transition-color duration-300">
+                                            <MdOutlineEdit className="w-5 h-5" />
                                         </button>
                                     </div>
                                 </div>
