@@ -235,6 +235,33 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             </div>
                         </nav>
                     </div>
+                    {/* Sidebar Footer Desktop */}
+                    <div className="flex flex-shrink-0 bg-primary-bg-darker p-4">
+                        <a
+                            href="#"
+                            className="group block w-full flex-shrink-0"
+                        >
+                            <div className="flex items-center">
+                                <div></div>
+                                <div className="ml-3">
+                                    <p className="text-sm font-medium text-indigo-100">
+                                        Database Info
+                                    </p>
+                                    <div className="flex gap-5 text-xs font-medium text-indigo-200">
+                                        <span className="group-hover:text-gray-50">
+                                            12 boards
+                                        </span>
+                                        <span className="group-hover:text-gray-50">
+                                            12 boards
+                                        </span>
+                                        <span className="group-hover:text-gray-50">
+                                            12 boards
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </>
