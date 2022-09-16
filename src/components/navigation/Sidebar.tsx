@@ -253,15 +253,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         </nav>
                     </div>
                     {/* Sidebar Footer Desktop */}
-                    <div className="flex flex-shrink-0 bg-transparent p-4">
-                        <a
-                            href="#"
-                            className="group block w-full flex-shrink-0"
-                        >
+                    <div className="flex flex-shrink-0 bg-transparent py-4 px-2">
+                        <div className="group block w-full flex-shrink-0">
                             <div className="flex items-center">
                                 <div></div>
                                 <div className="ml-3">
-                                    <p className="text-sm font-medium text-indigo-100">
+                                    <p className="text-sm font-medium text-indigo-100/[0.8]">
                                         Database Info
                                     </p>
                                     <div className="flex gap-5 text-xs font-medium text-indigo-200">
@@ -269,15 +266,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                             12 boards
                                         </span>
                                         <span className="group-hover:text-gray-50">
-                                            12 boards
-                                        </span>
-                                        <span className="group-hover:text-gray-50">
-                                            12 boards
+                                            1mb / 50gb used
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>
