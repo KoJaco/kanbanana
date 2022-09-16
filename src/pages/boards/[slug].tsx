@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
 // dynamically import board component, depends on window.
-// const Kanban = dynamic(() => import('@/components/kanbanBoard/Kanban'), {
-//     ssr: false,
-// });
+const Kanban = dynamic(() => import('@/components/kanban/Kanban'), {
+    ssr: false,
+});
 
 const BoardDetail: NextPage = () => {
     const router = useRouter();
@@ -23,7 +23,11 @@ const BoardDetail: NextPage = () => {
         }
     }
 
-    return <div></div>;
+    return (
+        <>
+            <Kanban slug={parseSlug(slug)} />
+        </>
+    );
 };
 
 export default BoardDetail;
