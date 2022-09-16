@@ -134,7 +134,7 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
             <Draggable draggableId={props.column.id} index={props.index}>
                 {(draggableProvided) => (
                     <div
-                        className="flex flex-col sm:w-28 md:w-56 lg:w-96 px-1 bg-gray-100 mx-1 rounded-md"
+                        className="flex flex-col w-96 md:w-80 lg:w-[30rem] px-1 bg-gray-100 mx-1 rounded-md"
                         {...draggableProvided.draggableProps}
                         ref={draggableProvided.innerRef}
                     >
@@ -142,10 +142,7 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
                             <h1 className="text-l text-slate-500 font-medium">
                                 {props.columnTitle}
                             </h1>
-                            <div
-                                className="mr-4"
-                                {...draggableProvided.dragHandleProps}
-                            >
+                            <div {...draggableProvided.dragHandleProps}>
                                 <MdDragIndicator className="opacity-0 group-hover:opacity-100 text-gray-500 cursor-drag focus:cursor-drag transition-opacity duration-300" />
                             </div>
                         </div>
