@@ -161,6 +161,7 @@ const Kanban = ({ slug }: KanbanProps) => {
         setTaskCount,
         setColumnCount,
         setMaxTaskId,
+        setMaxColumnId,
         reportError,
         slug,
     ]);

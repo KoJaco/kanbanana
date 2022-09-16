@@ -6,7 +6,6 @@
     },
 
     "rules": {
-        "no-unused-vars": "off",
-        "ignoreRestSiblings": true
+        "no-unused-vars": "off"
     }
 }
