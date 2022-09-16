@@ -419,7 +419,7 @@ const Kanban = ({ slug }: KanbanProps) => {
                             className="bg-transparent text-gray-500 bg-gray-100 p-1 rounded-full transition-transform duration-300 hover:drop-shadow"
                             onClick={handleAddColumn}
                         >
-                            <MdAdd className="w-7 h-7 text-gray-500 dark:text-gray-50" />
+                            <MdAdd className="w-7 h-7 text-gray-500" />
                         </button>
                     </div>
                 </div>

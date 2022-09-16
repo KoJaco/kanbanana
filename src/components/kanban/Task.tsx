@@ -112,7 +112,7 @@ const Task = ({ id, editing = false, ...props }: TaskProps) => {
     return (
         <div
             ref={isEditingRef}
-            className="w-full py-1 px-2 border-[1.5px] border-gray-300 rounded-lg bg-gray-50 dark:bg-secondary-dark-bg focus-within:border-gray-500 focus-within:ring-0.5 focus-within:ring-slate-500 focus-within:drop-shadow group h-full max-w-auto"
+            className="w-full py-1 px-2 border-[1.5px] border-gray-300 rounded-lg bg-gray-50  focus-within:border-gray-500 focus-within:ring-0.5 focus-within:ring-slate-500 focus-within:drop-shadow group h-full max-w-auto"
         >
             <BaseModal open={showColorPicker} setOpen={setShowColorPicker}>
                 <div className="flex min-h-full items-center justify-center p-4 text-center">
@@ -202,7 +202,7 @@ const Task = ({ id, editing = false, ...props }: TaskProps) => {
                     </TaskForm>
                 </>
             ) : (
-                <div className="w-full pb-2 text-slate-600 dark:text-gray-50">
+                <div className="w-full pb-2 text-slate-600 ">
                     <p className="">{props.content ? props.content : '...'}</p>
                 </div>
             )}

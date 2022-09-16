@@ -104,16 +104,16 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                             {/* New Board Button */}
                                             <button
                                                 className="text-indigo-100 hover:bg-primary-bg-darker
-                                            group flex items-center px-2 py-2 text-base font-medium rounded-md my-6 w-full"
+                                             flex items-center px-2 py-2 text-base font-medium rounded-md my-6 w-full"
                                                 onClick={handleOpenModal}
                                             >
-                                                <span className="h-full text-gray-400 group-hover:text-slate-900">
+                                                <span className="h-full text-gray-400">
                                                     <IoCreateOutline
                                                         className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300"
                                                         aria-hidden="true"
                                                     />
                                                 </span>
-                                                <p className=" text-indigo-100 font-regular uppercase cursor-pointer">
+                                                <p className="text-indigo-100 font-regular uppercase cursor-pointer">
                                                     New Board
                                                 </p>
                                             </button>
@@ -122,7 +122,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                             <Link href="/" passHref={true}>
                                                 <a
                                                     className="text-indigo-100 hover:bg-primary-bg-darker
-                                            group flex items-center px-2 py-2 text-base font-medium rounded-md cursor-pointer"
+                                             flex items-center px-2 py-2 text-base font-medium rounded-md cursor-pointer"
                                                 >
                                                     <span className="h-full text-gray-400 cursor-pointer">
                                                         <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 " />
@@ -200,8 +200,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             <div>
                                 {/* New Board Button */}
                                 <button
-                                    className="text-indigo-100 hover:bg-primary-bg-darker hover:text-slate-600
-                                            group flex items-center px-2 py-2 text-base font-medium rounded-md mt-6 w-full"
+                                    className="text-indigo-100 hover:bg-primary-bg-darker hover:text-slate-600 group flex items-center px-2 py-2 text-base font-medium rounded-md mt-6 w-full"
                                     onClick={handleOpenModal}
                                 >
                                     <span className="h-full">

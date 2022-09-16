@@ -115,7 +115,7 @@ const TaskForm = ({ id, setIsEditing, taskCount, ...props }: TaskFormProps) => {
                 ref={textAreaRef}
                 name="taskContent"
                 id="taskContent"
-                className="border-0 w-full mb-2 resize-none no-scrollbar bg-gray-50 text-gray-500 dark:text-gray-50 focus:ring-0 sm:text-md focus:outline-none placeholder:italic placeholder:text-gray-500/[0.5] dark:placeholder:text-gray-50/[0.5] focus:resize-y bg-inherit group overflow-wrap"
+                className="border-0 w-full mb-2 resize-none no-scrollbar bg-gray-50 text-gray-500 focus:ring-0 sm:text-md focus:outline-none placeholder:italic placeholder:text-gray-500/[0.5] focus:resize-y bg-inherit group overflow-wrap"
                 placeholder="Start writing..."
                 value={taskContent}
                 onChange={handleTaskContentChange}

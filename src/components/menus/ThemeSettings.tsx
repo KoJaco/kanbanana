@@ -14,6 +14,18 @@ const themeColors = [
         name: 'dark-alt-bg',
         color: '#00176D',
     },
+    // {
+    //     name: '1',
+    //     color: '#531554',
+    // },
+    // {
+    //     name: '2',
+    //     color: '#E01E5A',
+    // },
+    // {
+    //     name: '3',
+    //     color: '#FFC414',
+    // },
 ];
 
 const ThemeSettings = () => {
@@ -41,7 +53,7 @@ const ThemeSettings = () => {
                         </label>
                     </li>
 
-                    <li className="flex flex-row items-center px-3 py-2  rounded-lg text-md text-indigo-200  dark:hover:text-black hover:bg-primary-bg-darker group">
+                    <li className="flex flex-row items-center px-3 py-2  rounded-lg text-md text-indigo-200  hover:bg-primary-bg-darker group">
                         <label className="flex items-center text-md">
                             <span className="text-indigo-200">
                                 Theme Colours
