@@ -26,6 +26,10 @@ import { db } from '@/server/db';
 import { useUIContext } from '@/stores/UIContextProvider';
 import { useKanbanStore } from '@/stores/KanbanStore';
 
+const BoardMenu = dynamic(() => import('@/components/menus/BoardMenu'), {
+    ssr: false,
+});
+
 type SidebarProps = {
     sidebarOpen: boolean;
     setSidebarOpen: (value: boolean) => void;
@@ -137,22 +141,24 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                 </p>
                                             </button>
                                         </div>
-                                        {/* Boards menu */}
-                                        <a
-                                            className="text-indigo-100 hover:bg-primary-bg-darker
+                                        <div>
+                                            <a
+                                                className="text-indigo-100 hover:bg-primary-bg-darker
                                             group flex items-center px-2 py-2 text-base font-medium rounded-md cursor-pointer"
-                                        >
-                                            <span className="h-full text-gray-400">
-                                                <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300" />
-                                            </span>
-                                            <p className=" text-indigo-100 font-regular uppercase cursor-pointer">
-                                                Boards
-                                            </p>
-                                        </a>
-                                        <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
-                                            {/* <BoardMenu /> */}
+                                            >
+                                                <span className="h-full text-gray-400">
+                                                    <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300" />
+                                                </span>
+                                                <p className=" text-indigo-100 font-regular uppercase cursor-pointer">
+                                                    Boards
+                                                </p>
+                                            </a>
+                                            <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
+                                                {/* Dynamic component, client-side only */}
+                                                <BoardMenu />
+                                            </div>
+                                            {/* Theme settings */}
                                         </div>
-                                        {/* Theme settings */}
 
                                         <div className="flex ml-2">
                                             <span className="h-full text-indigo-100 mr-4">
@@ -208,72 +214,23 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     </p>
                                 </button>
                             </div>
-                            {/* Boards menu */}
-                            <a
-                                className="text-indigo-100 hover:bg-primary-bg-darker
+                            <div>
+                                <a
+                                    className="text-indigo-100 hover:bg-primary-bg-darker
                                             group flex items-center px-2 py-2 text-base font-medium rounded-md"
-                            >
-                                <span className="h-full ">
-                                    <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 " />
-                                </span>
-                                <p className=" text-indigo-100 font-regular uppercase cursor-pointer ">
-                                    Boards
-                                </p>
-                            </a>
-                            {/* <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
-                                    <ol>
-                                        {boards?.map(
-                                            (board, index) => (
-                                                <li key={index}>
-
-                                                    <Link
-                                                        href={{
-                                                            pathname: `/boards/[slug]`,
-                                                            query: {
-                                                                slug: encodeURIComponent(
-                                                                    board.slug
-                                                                ),
-                                                            },
-                                                        }}
-                                                        passHref={
-                                                            true
-                                                        }
-                                                        key={index}
-                                                    >
-                                                        <a
-                                                            // Hydration error with null value
-                                                            style={{
-                                                                backgroundColor:
-                                                                    currentRoute ===
-                                                                    `/boards/${board.slug}`
-                                                                        ? currentColor
-                                                                        : '',
-                                                            }}
-                                                            className={
-                                                                currentRoute ===
-                                                                `/boards/${board.slug}`
-                                                                    ? 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md m-2 text-gray-50 drop-shadow-md'
-                                                                    : 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-gray-700 bg-transparent dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2'
-                                                                //   `bg-[${currentColor.toLowerCase()}]`
-                                                            }
-                                                            onClick={
-                                                                handleCloseSidebar
-                                                            }
-                                                        >
-                                                            <div className="flex justify-between items-end">
-                                                                <span className="capitalize">
-                                                                    {
-                                                                        board.title
-                                                                    }
-                                                                </span>
-                                                            </div>
-                                                        </a>
-                                                    </Link>
-                                                </li>
-                                            )
-                                        )}
-                                    </ol>
-                                </div> */}
+                                >
+                                    <span className="h-full ">
+                                        <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 " />
+                                    </span>
+                                    <p className=" text-indigo-100 font-regular uppercase cursor-pointer ">
+                                        Boards
+                                    </p>
+                                </a>
+                                <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
+                                    {/* Dynamic component, client-side only */}
+                                    <BoardMenu />
+                                </div>
+                            </div>
                             {/* Theme settings */}
 
                             <div className="flex ml-2">
