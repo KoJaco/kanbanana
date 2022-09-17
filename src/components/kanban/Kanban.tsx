@@ -33,7 +33,7 @@ type KanbanProps = {
 const Kanban = ({ slug }: KanbanProps) => {
     // *** react-beautiful-dnd does not work with React Strict Mode...
     // *** should look at dnd-kit or react-draggable instead, although can simply disable strict mode when testing drag and drop functionality.
-    // TODO: Carousel scrolling is not working properly when adding columns, if we add multiple columns after one another, the column is added off-screen and we cannot scroll to the add column button.
+    // TODO: Carousel scrolling is not working properly when adding columns, if we add multiple columns after one another, the column is added off-screen and we cannot scroll to the add column button... think I need to factor in the margin I've put on the container potentially the sidebar?
 
     // * STATE VARIABLES
     // instead of setting the whole board here, just set top level board attributes to use within this component.
@@ -344,7 +344,7 @@ const Kanban = ({ slug }: KanbanProps) => {
 
                 <div>
                     <div
-                        className="carousel-container mx-10 relative flex gap-1 overflow-hidden scroll-smooth snap-x snap-mandatory touch-pan-x"
+                        className="carousel-container mx-8 relative flex gap-1 overflow-hidden scroll-smooth snap-x snap-mandatory touch-pan-x"
                         ref={carouselRef}
                     >
                         <Droppable
@@ -378,7 +378,7 @@ const Kanban = ({ slug }: KanbanProps) => {
                                                     className="flex snap-start"
                                                 >
                                                     <Column
-                                                        key={index}
+                                                        key={column.id}
                                                         columnTitle={
                                                             column.title
                                                                 .length === 0
@@ -421,7 +421,8 @@ const Kanban = ({ slug }: KanbanProps) => {
                 </div>
 
                 {/* </div> */}
-                <div className="my-8 sm:mx-2 max-w-7xl px-2 sm:px-6 md:px-8 text-slate-600 space-x-2">
+                {/* make this fixed, bottom right on mobile */}
+                <div className="my-8 max-w-7xl px-2 sm:px-6 md:px-8 text-slate-600 space-x-2">
                     <button
                         onClick={scrollPrevious}
                         // onClick={() => handleSlide(-384)}
