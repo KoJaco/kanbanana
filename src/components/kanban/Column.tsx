@@ -176,16 +176,16 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
                     // }))(oldColumns);
 
                     // update state
-                    console.log(
-                        'new Columns: ' +
-                            `${JSON.stringify(newColumns)}` +
-                            '\n' +
-                            'new Tasks: ' +
-                            `${JSON.stringify(newTasks)}` +
-                            '\n' +
-                            'new column order: ' +
-                            `${newColumnOrder.toString()}`
-                    );
+                    // console.log(
+                    //     'new Columns: ' +
+                    //         `${JSON.stringify(newColumns)}` +
+                    //         '\n' +
+                    //         'new Tasks: ' +
+                    //         `${JSON.stringify(newTasks)}` +
+                    //         '\n' +
+                    //         'new column order: ' +
+                    //         `${newColumnOrder.toString()}`
+                    // );
                     item.columns = newColumns;
                     item.tasks = newTasks;
                     item.columnOrder = newColumnOrder;
@@ -203,7 +203,7 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
             <Draggable draggableId={props.column.id} index={props.index}>
                 {(draggableProvided) => (
                     <div
-                        className="flex flex-col w-64 md:w-80 lg:w-[30rem] sm:px-1 bg-gray-100 mx-1 rounded-md group"
+                        className="flex flex-col w-64 md:w-80 lg:w-[26rem] xl:w-[30rem] sm:px-1 bg-gray-100 mx-1 rounded-md group"
                         {...draggableProvided.draggableProps}
                         ref={draggableProvided.innerRef}
                     >

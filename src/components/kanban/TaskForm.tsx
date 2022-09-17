@@ -87,7 +87,6 @@ const TaskForm = ({ id, setIsEditing, taskCount, ...props }: TaskFormProps) => {
                         }
                     }
 
-                    console.log(newTasks);
                     item.tasks = newTasks;
 
                     // handle updating taskIds in column object.

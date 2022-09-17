@@ -33,7 +33,6 @@ type KanbanProps = {
 const Kanban = ({ slug }: KanbanProps) => {
     // *** react-beautiful-dnd does not work with React Strict Mode...
     // *** should look at dnd-kit or react-draggable instead, although can simply disable strict mode when testing drag and drop functionality.
-    // TODO: Carousel scrolling is not working properly when adding columns, if we add multiple columns after one another, the column is added off-screen and we cannot scroll to the add column button.
 
     // * STATE VARIABLES
     // instead of setting the whole board here, just set top level board attributes to use within this component.
@@ -42,13 +41,11 @@ const Kanban = ({ slug }: KanbanProps) => {
         initializeBoard(Date.now().toLocaleString())
     );
 
-    // state
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    // refs
-    // we don't want this number to change during renders
-    const maxScrollWidth = useRef<number>(0);
-    const carouselRef = useRef<HTMLDivElement>(null);
+    // detect start of scroll position
+    const [scrollX, setScrollX] = useState(0);
+    // detect end of scroll available
+    const [scrollEnd, setScrollEnd] = useState(false);
+    const scroller = useRef<HTMLDivElement>(null);
 
     const [showEditBoardForm, setShowEditBoardForm] = useState(false);
 
@@ -67,6 +64,8 @@ const Kanban = ({ slug }: KanbanProps) => {
         setMaxColumnId,
     } = useKanbanStore();
 
+    console.log(maxColumnId, maxTaskId);
+
     // * HOOKS
 
     // useLiveQuery() for indexDB state management, watch for changes in local board state.
@@ -75,26 +74,13 @@ const Kanban = ({ slug }: KanbanProps) => {
         [taskCount, columnCount, slug]
     );
 
+    // console.log(Object.keys(board.tasks).length);
+    // console.log('task count: ' + taskCount + ' column count: ' + columnCount);
+    // console.log('Max task id: ' + maxTaskId);
+
     const reportError = useCallback(({ message }: { message: string }) => {
         // send message to notification service.
     }, []);
-
-    // Hooks
-    useEffect(() => {
-        // run on component render to get carousel element's total scrollable content width, less the currently visible offset width value.. then store this value in maxScrollWidth ref value.
-        maxScrollWidth.current = carouselRef.current
-            ? carouselRef.current.scrollWidth - carouselRef.current.offsetWidth
-            : 0;
-    }, [carouselRef]);
-
-    useEffect(() => {
-        // when the value of current index changes (when previous/next function are clicked), scroll the carousel
-        if (carouselRef !== null && carouselRef.current !== null) {
-            carouselRef.current.scrollLeft =
-                carouselRef.current.offsetWidth * currentIndex;
-        }
-    }, [currentIndex]);
-
     // use effect for setting local board state and global zustand state for this component instance.
     useEffect(() => {
         function getMaxIdFromString<T extends Object>(obj: T) {
@@ -151,6 +137,19 @@ const Kanban = ({ slug }: KanbanProps) => {
         slug,
     ]);
 
+    useEffect(() => {
+        //Check width of the scolling
+        if (
+            scroller.current &&
+            scroller?.current?.scrollWidth === scroller?.current?.offsetWidth
+        ) {
+            setScrollEnd(true);
+        } else {
+            setScrollEnd(false);
+        }
+        return () => {};
+    }, [scroller?.current?.scrollWidth, scroller?.current?.offsetWidth]);
+
     function handleAddColumn() {
         const newColumnId = `column-${maxColumnId + 1}`;
 
@@ -182,7 +181,7 @@ const Kanban = ({ slug }: KanbanProps) => {
                 console.error('Generic error: ' + e);
             });
         increaseColumnCount();
-        scrollNext();
+        // handleSlide(384);
     }
 
     // * CONSTS
@@ -277,47 +276,37 @@ const Kanban = ({ slug }: KanbanProps) => {
         }
     };
 
-    // helper functions
-    function scrollPrevious() {
-        // Just need to know when we hit 0
-        if (currentIndex > 0) {
-            setCurrentIndex((prevIndex) => prevIndex - 1);
-        }
-    }
+    // function handleSlide(xShift: number) {
+    //     if (scroller.current !== null && scroller !== null) {
+    //         scroller.current.scrollLeft += xShift;
+    //         setScrollX(scrollX + xShift); // updates latest scrolled position
 
-    function scrollNext() {
-        // need to check .current !== null, and that we're not going 'out of bounds'
-        // work out currently visible slide of the carousel, multiplied by the current page... must be less than the max scrollable width of the carousel's content -- i.e. the carousel's total width.
-        if (
-            carouselRef.current !== null &&
-            carouselRef.current.offsetWidth * currentIndex <=
-                maxScrollWidth.current
-        ) {
-            setCurrentIndex((prevIndex) => prevIndex + 1);
-        }
-    }
+    //         if (
+    //             Math.floor(
+    //                 scroller.current.scrollWidth - scroller.current.scrollLeft
+    //             ) <= scroller.current.offsetWidth
+    //         ) {
+    //             setScrollEnd(true);
+    //         } else {
+    //             setScrollEnd(false);
+    //         }
+    //     }
+    // }
 
-    function isDisabled(direction: 'previous' | 'next') {
-        // on each button click and subsequent slide function, isDisabled will be called to determine if the button should be disabled.
-        if (direction === 'previous') {
-            return currentIndex <= 0;
-        }
-
-        if (direction === 'next' && carouselRef.current !== null) {
-            return (
-                carouselRef.current.offsetWidth * currentIndex >=
-                maxScrollWidth.current
-            );
-        }
-
-        return false;
-    }
-
-    console.log('currentIndex: ' + currentIndex);
-    console.log(
-        'width: ' +
-            (carouselRef.current !== null && carouselRef.current.offsetWidth)
-    );
+    // function checkScroll() {
+    //     if (scroller.current !== null) {
+    //         setScrollX(scroller.current.scrollLeft);
+    //         if (
+    //             Math.floor(
+    //                 scroller.current.scrollWidth - scroller.current.scrollLeft
+    //             ) <= scroller.current.offsetWidth
+    //         ) {
+    //             setScrollEnd(true);
+    //         } else {
+    //             setScrollEnd(false);
+    //         }
+    //     }
+    // }
 
     if (!board && boardState === undefined) return null;
 
@@ -325,7 +314,7 @@ const Kanban = ({ slug }: KanbanProps) => {
         <>
             <DragDropContext onDragEnd={onDragEnd}>
                 {/* TITLE */}
-                <div className="my-8 ml-2 px-2 sm:px-6 md:px-8 ">
+                <div className="my-8 ml-2  px-2 sm:px-6 md:px-8 ">
                     <div className="flex justify-between items-end gap-8">
                         <h1 className="text-2xl font-semibold text-slate-600">
                             {boardState.title.length === 0
@@ -340,106 +329,98 @@ const Kanban = ({ slug }: KanbanProps) => {
                         </button>
                     </div>
                 </div>
-                {/* Carousel component  */}
-
-                <div>
-                    <div
-                        className="carousel-container mx-10 relative flex gap-1 overflow-hidden scroll-smooth snap-x snap-mandatory touch-pan-x"
-                        ref={carouselRef}
+                {/* <div
+                    className="flex flex-row mx-auto px-2 sm:px-6 md:px-8 no-scrollbar overflow-x-auto snap-proximity snap-x"
+                    // ref={scroller}
+                    // onScroll={checkScroll}
+                > */}
+                <Carousel>
+                    {/* Carousel component wraps the board, columns act as carousel items. */}
+                    <Droppable
+                        droppableId="columns"
+                        direction="horizontal"
+                        type="column"
                     >
-                        <Droppable
-                            droppableId="columns"
-                            direction="horizontal"
-                            type="column"
-                        >
-                            {(droppableProvided) => (
-                                // column surround
-                                <div
-                                    className="flex"
-                                    ref={droppableProvided.innerRef}
-                                    {...droppableProvided.droppableProps}
-                                >
-                                    {/* column map start */}
-                                    {boardState.columnOrder.map(
-                                        (columnId: ColumnId, index: number) => {
-                                            console.log('index ' + index);
-                                            // Columns should always be defined, see server/db.ts
-                                            const column =
-                                                boardState.columns[columnId]!;
-
-                                            const tasks = column.taskIds.map(
-                                                (taskId: TaskId) =>
-                                                    boardState.tasks[taskId]
-                                            );
-
-                                            return (
-                                                <div
-                                                    key={index}
-                                                    className="flex snap-start"
-                                                >
-                                                    <Column
-                                                        key={index}
-                                                        columnTitle={
-                                                            column.title
-                                                                .length === 0
-                                                                ? 'Add a Column Title...'
-                                                                : column.title
-                                                        }
-                                                        column={column}
-                                                        columnId={column.id}
-                                                        // @ts-ignore
-                                                        columnTasks={tasks}
-                                                        totalTaskCount={
-                                                            taskCount
-                                                        }
-                                                        setTotalTaskCount={
-                                                            setTaskCount
-                                                        }
-                                                        currentBoardSlug={
-                                                            currentBoardSlug
-                                                        }
-                                                        index={index}
-                                                    />
-                                                </div>
-                                            );
-                                        }
-                                    )}
-                                    {droppableProvided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-
-                        <div className="flex mb-auto ml-2 items-center">
-                            <button
-                                className="bg-transparent text-gray-500 bg-gray-100 p-1 rounded-full transition-transform duration-300 hover:drop-shadow"
-                                onClick={handleAddColumn}
+                        {(droppableProvided) => (
+                            // column surround
+                            <div
+                                className="flex"
+                                ref={droppableProvided.innerRef}
+                                {...droppableProvided.droppableProps}
                             >
-                                <MdAdd className="w-7 h-7 text-gray-500" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                                {/* column map start */}
+                                {boardState.columnOrder.map(
+                                    (columnId: ColumnId, index: number) => {
+                                        // Columns should always be defined, see server/db.ts
+                                        const column =
+                                            boardState.columns[columnId]!;
 
+                                        const tasks = column.taskIds.map(
+                                            (taskId: TaskId) =>
+                                                boardState.tasks[taskId]
+                                        );
+
+                                        return (
+                                            <div
+                                                key={index}
+                                                className="carousel-item text-center snap-start relative"
+                                            >
+                                                <Column
+                                                    key={column.id}
+                                                    columnTitle={
+                                                        column.title.length ===
+                                                        0
+                                                            ? 'Add a Column Title...'
+                                                            : column.title
+                                                    }
+                                                    column={column}
+                                                    columnId={column.id}
+                                                    // @ts-ignore
+                                                    columnTasks={tasks}
+                                                    totalTaskCount={taskCount}
+                                                    setTotalTaskCount={
+                                                        setTaskCount
+                                                    }
+                                                    currentBoardSlug={
+                                                        currentBoardSlug
+                                                    }
+                                                    index={index}
+                                                />
+                                            </div>
+                                        );
+                                    }
+                                )}
+                                {droppableProvided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
+                </Carousel>
                 {/* </div> */}
-                <div className="my-8 sm:mx-2 max-w-7xl px-2 sm:px-6 md:px-8 text-slate-600 space-x-2">
+
+                <div className="flex mb-auto ml-2 items-center">
                     <button
-                        onClick={scrollPrevious}
-                        // onClick={() => handleSlide(-384)}
-                        disabled={isDisabled('previous')}
-                        className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed"
+                        className="bg-transparent text-gray-500 bg-gray-100 p-1 rounded-full transition-transform duration-300 hover:drop-shadow"
+                        onClick={handleAddColumn}
+                    >
+                        <MdAdd className="w-7 h-7 text-gray-500" />
+                    </button>
+                </div>
+                {/* </div> */}
+                {/* <div className="my-8 sm:mx-2 max-w-7xl px-2 sm:px-6 md:px-8 text-slate-600 space-x-2">
+                    <button
+                        onClick={() => handleSlide(-384)}
+                        disabled={scrollX === 0}
                     >
                         <MdKeyboardArrowLeft className="w-7 h-7 rounded-full hover:bg-light-gray transition-color duration-300 cursor-pointer disabled:cursor-not-allowed" />
                     </button>
 
                     <button
-                        onClick={scrollNext}
-                        // onClick={() => handleSlide(+384)}
-                        disabled={isDisabled('next')}
-                        className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed"
+                        onClick={() => handleSlide(+384)}
+                        disabled={scrollEnd}
                     >
                         <MdKeyboardArrowRight className="w-7 h-7 rounded-full hover:bg-light-gray transition-color duration-300 cursor-pointer disabled:cursor-not-allowed" />
                     </button>
-                </div>
+                </div> */}
             </DragDropContext>
         </>
     );
