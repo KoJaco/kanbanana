@@ -10,6 +10,7 @@ type CreateBoardFormProps = {
 };
 
 const CreateBoardForm = ({ setOpen }: CreateBoardFormProps) => {
+    //  TODO: maybe delete this in replace of EditBoardForm... this can have a variant for 'editing' | 'creating'... copy over some logic.
     // keep track of local state, upon save add the board to db.
     const [state, setState] = useState<{
         boardTitle: string;

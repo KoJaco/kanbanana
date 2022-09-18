@@ -70,6 +70,7 @@ const EditBoardForm = ({
     setShowEditBoardForm,
     ...props
 }: EditBoardFormProps) => {
+    // TODO: Finish this component with full data, should be able to add tags and columns here too.
     return (
         <Transition.Root show={props.showEditBoardForm} as={Fragment}>
             <Dialog

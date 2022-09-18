@@ -9,6 +9,7 @@ import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
 
 const BoardMenu = () => {
+    // TODO: Add showTags and showTimestamp options, add styling for each if they're selected... maybe show tags on hover, or beneath.
     const { boardCount, setBoardCount } = useKanbanStore();
 
     const { sidebarOpen, setSidebarOpen, screenSize, currentColor } =

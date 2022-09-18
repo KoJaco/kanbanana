@@ -23,12 +23,7 @@ type TaskProps = {
 };
 
 const Task = ({ id, editing = false, ...props }: TaskProps) => {
-    // console.log(
-    //     'content: ' +
-    //         props.content +
-    //         ', Color: ' +
-    //         parseColorToString(props.color)
-    // );
+    // TODO: add edit button instead of clicking inside the task, add a nice transition for displaying this form using headlessui.
 
     // * STATE
     // local state and controlled inputs
