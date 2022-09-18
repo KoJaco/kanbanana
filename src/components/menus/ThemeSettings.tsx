@@ -35,7 +35,7 @@ const ThemeSettings = () => {
     return (
         <div className="bg-inherit w-full h-auto">
             <div className="flex-col">
-                <ul>
+                <ul role="list">
                     <li className="form-check form-switch px-3 py-2 rounded-lg text-md  hover:bg-primary-bg-darker">
                         <label className="relative flex justify-between items-center group text-md">
                             <span className="text-indigo-200 ">Light/Dark</span>

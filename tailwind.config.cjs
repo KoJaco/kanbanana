@@ -181,6 +181,7 @@ module.exports = {
                     display: 'block',
                     width: 'auto',
                     height: '6px',
+                    cursor: 'pointer',
                 },
 
                 '.scrollbar-rounded::-webkit-scrollbar-track': {
@@ -218,6 +219,13 @@ module.exports = {
                     '-ms-overflow-style': 'none',
                     'scrollbar-width': 'none',
                 },
+                '.invisible-scrollbar::-webkit-scrollbar': {
+                    display: 'block',
+                    width: 'auto',
+                    height: '6px',
+                    opacity: '0',
+                },
+
                 '.transform3d': {
                     transform: 'perspective(999px) rotateX(0deg) translateZ(0)',
                 },

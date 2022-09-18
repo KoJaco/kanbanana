@@ -17,18 +17,33 @@ import type {
     Tasks,
     Columns,
 } from '@/core/types/kanbanBoard';
+import { MdAdd, MdDone, MdOutlineEdit } from 'react-icons/md';
 import {
-    MdAdd,
-    MdDone,
-    MdOutlineEdit,
-    MdKeyboardArrowLeft,
-    MdKeyboardArrowRight,
-} from 'react-icons/md';
+    HiChevronDoubleLeft,
+    HiChevronDoubleRight,
+    HiChevronLeft,
+    HiChevronRight,
+} from 'react-icons/hi';
 import { FiEdit } from 'react-icons/fi';
 
 type KanbanProps = {
     slug: string;
 };
+
+const scrollButtons = [
+    {
+        id: 1,
+        direction: 'start',
+        icon: <HiChevronDoubleLeft className="w-6 h-6" />,
+    },
+    { id: 2, direction: 'left', icon: <HiChevronLeft className="w-6 h-6" /> },
+    { id: 3, direction: 'right', icon: <HiChevronRight className="w-6 h-6" /> },
+    {
+        id: 4,
+        direction: 'end',
+        icon: <HiChevronDoubleRight className="w-6 h-6" />,
+    },
+];
 
 const Kanban = ({ slug }: KanbanProps) => {
     // *** react-beautiful-dnd does not work with React Strict Mode...
@@ -41,14 +56,6 @@ const Kanban = ({ slug }: KanbanProps) => {
     const [boardState, setBoardState] = useState<Board>(
         initializeBoard(Date.now().toLocaleString())
     );
-
-    // state
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    // refs
-    // we don't want this number to change during renders
-    const maxScrollWidth = useRef<number>(0);
-    const carouselRef = useRef<HTMLDivElement>(null);
 
     const [showEditBoardForm, setShowEditBoardForm] = useState(false);
 
@@ -78,22 +85,6 @@ const Kanban = ({ slug }: KanbanProps) => {
     const reportError = useCallback(({ message }: { message: string }) => {
         // send message to notification service.
     }, []);
-
-    // Hooks
-    useEffect(() => {
-        // run on component render to get carousel element's total scrollable content width, less the currently visible offset width value.. then store this value in maxScrollWidth ref value.
-        maxScrollWidth.current = carouselRef.current
-            ? carouselRef.current.scrollWidth - carouselRef.current.offsetWidth
-            : 0;
-    }, [carouselRef]);
-
-    useEffect(() => {
-        // when the value of current index changes (when previous/next function are clicked), scroll the carousel
-        if (carouselRef !== null && carouselRef.current !== null) {
-            carouselRef.current.scrollLeft =
-                carouselRef.current.offsetWidth * currentIndex;
-        }
-    }, [currentIndex]);
 
     // use effect for setting local board state and global zustand state for this component instance.
     useEffect(() => {
@@ -182,7 +173,6 @@ const Kanban = ({ slug }: KanbanProps) => {
                 console.error('Generic error: ' + e);
             });
         increaseColumnCount();
-        scrollNext();
     }
 
     // * CONSTS
@@ -277,47 +267,36 @@ const Kanban = ({ slug }: KanbanProps) => {
         }
     };
 
-    // helper functions
-    function scrollPrevious() {
-        // Just need to know when we hit 0
-        if (currentIndex > 0) {
-            setCurrentIndex((prevIndex) => prevIndex - 1);
+    const scroller = (direction: string, value?: number) => {
+        let carousel = document.getElementById('carousel');
+        if (carousel !== null) {
+            switch (direction) {
+                case 'end':
+                    carousel.scrollLeft =
+                        carousel.scrollWidth - carousel.offsetWidth;
+                    break;
+                case 'start':
+                    carousel.scrollLeft =
+                        carousel.clientWidth - carousel.offsetWidth;
+                    break;
+                case 'left':
+                    carousel.scrollLeft = value
+                        ? carousel.scrollLeft - value
+                        : carousel.scrollLeft - 500;
+                    break;
+                case 'right':
+                    carousel.scrollLeft = value
+                        ? carousel.scrollLeft + value
+                        : carousel.scrollLeft + 500;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            // report the error.
+            throw new Error('Something went wrong!');
         }
-    }
-
-    function scrollNext() {
-        // need to check .current !== null, and that we're not going 'out of bounds'
-        // work out currently visible slide of the carousel, multiplied by the current page... must be less than the max scrollable width of the carousel's content -- i.e. the carousel's total width.
-        if (
-            carouselRef.current !== null &&
-            carouselRef.current.offsetWidth * currentIndex <=
-                maxScrollWidth.current
-        ) {
-            setCurrentIndex((prevIndex) => prevIndex + 1);
-        }
-    }
-
-    function isDisabled(direction: 'previous' | 'next') {
-        // on each button click and subsequent slide function, isDisabled will be called to determine if the button should be disabled.
-        if (direction === 'previous') {
-            return currentIndex <= 0;
-        }
-
-        if (direction === 'next' && carouselRef.current !== null) {
-            return (
-                carouselRef.current.offsetWidth * currentIndex >=
-                maxScrollWidth.current
-            );
-        }
-
-        return false;
-    }
-
-    console.log('currentIndex: ' + currentIndex);
-    console.log(
-        'width: ' +
-            (carouselRef.current !== null && carouselRef.current.offsetWidth)
-    );
+    };
 
     if (!board && boardState === undefined) return null;
 
@@ -344,8 +323,9 @@ const Kanban = ({ slug }: KanbanProps) => {
 
                 <div>
                     <div
-                        className="carousel-container mx-8 relative flex gap-1 overflow-hidden scroll-smooth snap-x snap-mandatory touch-pan-x"
-                        ref={carouselRef}
+                        id="carousel"
+                        // ref={carouselRef}
+                        className="pb-10 mx-8 relative items-center flex overflow-x-scroll scroll no-scrollbar whitespace-nowrap scroll-smooth snap-x snap-mandatory touch-pan-x transition-all duration-500"
                     >
                         <Droppable
                             droppableId="columns"
@@ -362,7 +342,6 @@ const Kanban = ({ slug }: KanbanProps) => {
                                     {/* column map start */}
                                     {boardState.columnOrder.map(
                                         (columnId: ColumnId, index: number) => {
-                                            console.log('index ' + index);
                                             // Columns should always be defined, see server/db.ts
                                             const column =
                                                 boardState.columns[columnId]!;
@@ -423,23 +402,15 @@ const Kanban = ({ slug }: KanbanProps) => {
                 {/* </div> */}
                 {/* make this fixed, bottom right on mobile */}
                 <div className="my-8 max-w-7xl px-2 sm:px-6 md:px-8 text-slate-600 space-x-2">
-                    <button
-                        onClick={scrollPrevious}
-                        // onClick={() => handleSlide(-384)}
-                        disabled={isDisabled('previous')}
-                        className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed"
-                    >
-                        <MdKeyboardArrowLeft className="w-7 h-7 rounded-full hover:bg-light-gray transition-color duration-300 cursor-pointer disabled:cursor-not-allowed" />
-                    </button>
-
-                    <button
-                        onClick={scrollNext}
-                        // onClick={() => handleSlide(+384)}
-                        disabled={isDisabled('next')}
-                        className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed"
-                    >
-                        <MdKeyboardArrowRight className="w-7 h-7 rounded-full hover:bg-light-gray transition-color duration-300 cursor-pointer disabled:cursor-not-allowed" />
-                    </button>
+                    {scrollButtons.map((button) => (
+                        <button
+                            key={button.id}
+                            onClick={() => scroller(button.direction)}
+                            className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed w-7 h-7 text-slate-600/[.8] hover:text-slate-600  transition-opacity duration-300"
+                        >
+                            {button.icon}
+                        </button>
+                    ))}
                 </div>
             </DragDropContext>
         </>
