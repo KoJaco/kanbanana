@@ -12,6 +12,7 @@ export type State = {
     setCurrentColor: (color: string) => void;
     currentMode: string;
     setCurrentMode: (e: React.FormEvent<HTMLInputElement>) => void;
+    toggleCurrentMode: () => void;
 };
 
 export const useUIControlStore = create<State>()(
@@ -36,6 +37,11 @@ export const useUIControlStore = create<State>()(
             set(() => ({
                 currentMode:
                     event.target === null ? 'light' : event.currentTarget.value,
+            }));
+        },
+        toggleCurrentMode: () => {
+            set((state) => ({
+                currentMode: state.currentMode === 'light' ? 'dark' : 'light',
             }));
         },
     })
