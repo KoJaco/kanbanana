@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Droppable, DragDropContext, DropResult } from 'react-beautiful-dnd';
 import Column from './Column';
-import Carousel from '@/components/wrappers/Carousel';
+import EditBoardForm from './EditBoardForm';
 import { ModifyError } from 'dexie';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
@@ -48,7 +48,6 @@ const scrollButtons = [
 const Kanban = ({ slug }: KanbanProps) => {
     // *** react-beautiful-dnd does not work with React Strict Mode...
     // *** should look at dnd-kit or react-draggable instead, although can simply disable strict mode when testing drag and drop functionality.
-    // TODO: Carousel scrolling is not working properly when adding columns, if we add multiple columns after one another, the column is added off-screen and we cannot scroll to the add column button... think I need to factor in the margin I've put on the container potentially the sidebar?
 
     // * STATE VARIABLES
     // instead of setting the whole board here, just set top level board attributes to use within this component.
@@ -302,6 +301,10 @@ const Kanban = ({ slug }: KanbanProps) => {
 
     return (
         <>
+            <EditBoardForm
+                showEditBoardForm={showEditBoardForm}
+                setShowEditBoardForm={setShowEditBoardForm}
+            />
             <DragDropContext onDragEnd={onDragEnd}>
                 {/* TITLE */}
                 <div className="my-8 ml-2 px-2 sm:px-6 md:px-8 ">
@@ -325,7 +328,7 @@ const Kanban = ({ slug }: KanbanProps) => {
                     <div
                         id="carousel"
                         // ref={carouselRef}
-                        className="pb-10 mx-8 relative items-center flex overflow-x-scroll scroll no-scrollbar whitespace-nowrap scroll-smooth snap-x snap-mandatory touch-pan-x transition-all duration-500"
+                        className="pb-10 mx-2 sm:mx-8 relative items-center flex overflow-x-scroll scroll invisible-scrollbar scrollbar-rounded-horizontal snap-x whitespace-nowrap scroll-smooth snap-mandatory touch-pan-x transition-all duration-500"
                     >
                         <Droppable
                             droppableId="columns"
@@ -353,8 +356,8 @@ const Kanban = ({ slug }: KanbanProps) => {
 
                                             return (
                                                 <div
-                                                    key={index}
                                                     className="flex snap-start"
+                                                    key={index}
                                                 >
                                                     <Column
                                                         key={column.id}
