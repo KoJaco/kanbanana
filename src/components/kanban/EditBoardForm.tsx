@@ -103,15 +103,15 @@ const EditBoardForm = ({
                                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                                     <form className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
                                         <div className="h-0 flex-1 overflow-y-auto">
-                                            <div className="bg-indigo-700 py-6 px-4 sm:px-6">
+                                            <div className="bg-offset-bg py-6 px-4 sm:px-6">
                                                 <div className="flex items-center justify-between">
-                                                    <Dialog.Title className="text-lg font-medium text-white">
-                                                        New Project
+                                                    <Dialog.Title className="text-lg font-medium text-slate-600">
+                                                        New Board
                                                     </Dialog.Title>
                                                     <div className="ml-3 flex h-7 items-center">
                                                         <button
                                                             type="button"
-                                                            className="rounded-md bg-indigo-700 text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                                                            className="rounded-md transparent text-slate-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                                                             onClick={() =>
                                                                 setShowEditBoardForm(
                                                                     false
@@ -129,11 +129,10 @@ const EditBoardForm = ({
                                                     </div>
                                                 </div>
                                                 <div className="mt-1">
-                                                    <p className="text-sm text-indigo-300">
-                                                        Get started by filling
-                                                        in the information below
-                                                        to create your new
-                                                        project.
+                                                    <p className="text-sm text-slate-500">
+                                                        Fill out the information
+                                                        below and do not forget
+                                                        to save!
                                                     </p>
                                                 </div>
                                             </div>
@@ -143,9 +142,9 @@ const EditBoardForm = ({
                                                         <div>
                                                             <label
                                                                 htmlFor="project-name"
-                                                                className="block text-sm font-medium text-gray-900"
+                                                                className="block text-sm font-medium text-slate-600"
                                                             >
-                                                                Project name
+                                                                Board Title
                                                             </label>
                                                             <div className="mt-1">
                                                                 <input
@@ -158,54 +157,23 @@ const EditBoardForm = ({
                                                         </div>
                                                         <div>
                                                             <label
-                                                                htmlFor="description"
-                                                                className="block text-sm font-medium text-gray-900"
+                                                                htmlFor="Tags"
+                                                                className="block text-sm font-medium text-slate-600"
                                                             >
-                                                                Description
+                                                                Tags
                                                             </label>
                                                             <div className="mt-1">
-                                                                <textarea
-                                                                    id="description"
-                                                                    name="description"
-                                                                    rows={4}
+                                                                <input
+                                                                    type="text"
+                                                                    name="project-name"
+                                                                    id="project-name"
                                                                     className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                                                    defaultValue={
-                                                                        ''
-                                                                    }
                                                                 />
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <h3 className="text-sm font-medium text-gray-900">
-                                                                Team Members
-                                                            </h3>
                                                             <div className="mt-2">
                                                                 <div className="flex space-x-2">
-                                                                    {team.map(
-                                                                        (
-                                                                            person
-                                                                        ) => (
-                                                                            <a
-                                                                                key={
-                                                                                    person.email
-                                                                                }
-                                                                                href={
-                                                                                    person.href
-                                                                                }
-                                                                                className="rounded-full hover:opacity-75"
-                                                                            >
-                                                                                <img
-                                                                                    className="inline-block h-8 w-8 rounded-full"
-                                                                                    src={
-                                                                                        person.imageUrl
-                                                                                    }
-                                                                                    alt={
-                                                                                        person.name
-                                                                                    }
-                                                                                />
-                                                                            </a>
-                                                                        )
-                                                                    )}
                                                                     <button
                                                                         type="button"
                                                                         className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-dashed border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -342,38 +310,6 @@ const EditBoardForm = ({
                                                             </div>
                                                         </fieldset>
                                                     </div>
-                                                    <div className="pt-4 pb-6">
-                                                        <div className="flex text-sm">
-                                                            <a
-                                                                href="#"
-                                                                className="group inline-flex items-center font-medium text-indigo-600 hover:text-indigo-900"
-                                                            >
-                                                                <MdOutlineLink
-                                                                    className="h-5 w-5 text-indigo-500 group-hover:text-indigo-900"
-                                                                    aria-hidden="true"
-                                                                />
-                                                                <span className="ml-2">
-                                                                    Copy link
-                                                                </span>
-                                                            </a>
-                                                        </div>
-                                                        <div className="mt-4 flex text-sm">
-                                                            <a
-                                                                href="#"
-                                                                className="group inline-flex items-center text-gray-500 hover:text-gray-900"
-                                                            >
-                                                                <MdQuestionAnswer
-                                                                    className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                                                                    aria-hidden="true"
-                                                                />
-                                                                <span className="ml-2">
-                                                                    Learn more
-                                                                    about
-                                                                    sharing
-                                                                </span>
-                                                            </a>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -389,7 +325,7 @@ const EditBoardForm = ({
                                             </button>
                                             <button
                                                 type="submit"
-                                                className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                                className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-dark-alt focus:outline-none transition-color duration-300"
                                             >
                                                 Save
                                             </button>

@@ -172,6 +172,7 @@ const Kanban = ({ slug }: KanbanProps) => {
                 console.error('Generic error: ' + e);
             });
         increaseColumnCount();
+        scroller('end');
     }
 
     // * CONSTS
