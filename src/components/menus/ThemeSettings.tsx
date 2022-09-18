@@ -14,18 +14,6 @@ const themeColors = [
         name: 'dark-alt-bg',
         color: '#00176D',
     },
-    // {
-    //     name: '1',
-    //     color: '#531554',
-    // },
-    // {
-    //     name: '2',
-    //     color: '#E01E5A',
-    // },
-    // {
-    //     name: '3',
-    //     color: '#FFC414',
-    // },
 ];
 
 const ThemeSettings = () => {

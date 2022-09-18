@@ -15,40 +15,64 @@ export type State = {
 };
 
 export const useUIControlStore = create<State>()(
-    persist(
-        (set, get) => ({
-            sidebarOpen: false,
-            setSidebarOpen: (value) => {
-                set(() => ({ sidebarOpen: value }));
-            },
-            screenSize: undefined,
-            setScreenSize: (screenSize) => {
-                set(() => ({ screenSize: screenSize }));
-            },
-            currentColor: '#00176D',
+    (set) => ({
+        sidebarOpen: false,
+        setSidebarOpen: (value) => {
+            set(() => ({ sidebarOpen: value }));
+        },
+        screenSize: undefined,
+        setScreenSize: (screenSize) => {
+            set(() => ({ screenSize: screenSize }));
+        },
+        currentColor: '#00176D',
 
-            setCurrentColor: (color) => {
-                set(() => ({
-                    currentColor: color === null ? '#00176D' : color,
-                }));
-            },
-            currentMode: 'light',
-            setCurrentMode: (event) => {
-                set(() => ({
-                    currentMode:
-                        event.target === null
-                            ? 'light'
-                            : event.currentTarget.value,
-                }));
-            },
-        }),
-        {
-            name: 'ui-control-storage',
-            getStorage: () => localStorage,
-            partialize: (state) => ({
-                currentColor: state.currentColor,
-                currentMode: state.currentMode,
-            }),
-        }
-    )
+        setCurrentColor: (color) => {
+            set(() => ({
+                currentColor: color === null ? '#00176D' : color,
+            }));
+        },
+        currentMode: 'light',
+        setCurrentMode: (event) => {
+            set(() => ({
+                currentMode:
+                    event.target === null ? 'light' : event.currentTarget.value,
+            }));
+        },
+    })
+    // persist(
+    //     (set, get) => ({
+    //         sidebarOpen: false,
+    //         setSidebarOpen: (value) => {
+    //             set(() => ({ sidebarOpen: value }));
+    //         },
+    //         screenSize: undefined,
+    //         setScreenSize: (screenSize) => {
+    //             set(() => ({ screenSize: screenSize }));
+    //         },
+    //         currentColor: '#00176D',
+
+    //         setCurrentColor: (color) => {
+    //             set(() => ({
+    //                 currentColor: color === null ? '#00176D' : color,
+    //             }));
+    //         },
+    //         currentMode: 'light',
+    //         setCurrentMode: (event) => {
+    //             set(() => ({
+    //                 currentMode:
+    //                     event.target === null
+    //                         ? 'light'
+    //                         : event.currentTarget.value,
+    //             }));
+    //         },
+    //     }),
+    //     {
+    //         name: 'ui-control-storage',
+    //         getStorage: () => localStorage,
+    //         partialize: (state) => ({
+    //             currentColor: state.currentColor,
+    //             currentMode: state.currentMode,
+    //         }),
+    //     }
+    // )
 );
