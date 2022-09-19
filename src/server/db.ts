@@ -86,6 +86,7 @@ export class KanbanBoardDexie extends Dexie {
                         b: 255,
                         a: 1,
                     },
+                    type: 'simple',
                     taskIds: ['task-1'],
                 },
             },

@@ -35,6 +35,7 @@ export type TColumn = {
     id: string;
     // user input
     title: string;
+    type: 'checklist' | 'simple';
     // must set a default value of 'transparent'
     bgColor: Color;
     taskIds: string[];
