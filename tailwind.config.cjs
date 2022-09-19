@@ -170,7 +170,6 @@ module.exports = {
         }),
     },
     plugins: [
-        require('@tailwindcss/forms'),
         plugin(function ({ addComponents, addUtilities }) {
             addUtilities({
                 '.scrollbar-rounded::-webkit-scrollbar': {

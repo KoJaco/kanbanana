@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import { db } from '@/server/db';
@@ -6,6 +6,7 @@ import { db } from '@/server/db';
 import { useOnClickOutside, useOnClickInsideOnly } from '@/core/hooks';
 import { TTask, Tasks, TColumn } from '@/core/types/kanbanBoard';
 import { RgbaColorPicker } from 'react-colorful';
+import { Disclosure, Transition } from '@headlessui/react';
 
 type TaskFormProps = {
     id: number;
@@ -14,6 +15,7 @@ type TaskFormProps = {
     color: { r: number; g: number; b: number; a: number };
     previousTaskContent: string;
     currentBoardSlug: string;
+    showForm: boolean;
     setIsEditing: (value: boolean) => void;
     resetColor: () => void;
     children: JSX.Element;
@@ -27,6 +29,14 @@ const TaskForm = ({ id, setIsEditing, taskCount, ...props }: TaskFormProps) => {
     // Zustand global state
     const { increaseTaskCount } = useKanbanStore();
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+        // scroll textAreaRef on initial render.
+        if (textAreaRef.current !== null) {
+            textAreaRef.current.style.height = 'auto';
+            textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+        }
+    }, []);
 
     function handleTextAreaInput(e: React.ChangeEvent<HTMLTextAreaElement>) {
         if (textAreaRef.current) {

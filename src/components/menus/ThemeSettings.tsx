@@ -24,13 +24,13 @@ const ThemeSettings = () => {
         <div className="bg-inherit w-full h-auto">
             <div className="flex-col">
                 <ul role="list">
-                    <li className="relative flex justify-between items-center group text-md form-check form-switch gap-5 px-1 py-3 rounded-lg text-md text-indigo-200 hover:bg-primary-bg-darker m-2">
+                    <li className="relative flex justify-between items-center group text-md form-check form-switch gap-5 px-3 py-3 rounded-lg text-md text-indigo-200 hover:bg-primary-bg-darker my-2 w-full">
                         <span className="text-indigo-200">Light/Dark</span>
                         <label className="appearance-none">
                             <input
                                 id={currentMode}
                                 type="checkbox"
-                                className="absolute left-1/2 -translate-x-1/2 h-full peer appearance-none rounded-md invisible checked:invisible"
+                                className="absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md invisible checked:invisible"
                                 checked={currentMode === 'light' ? false : true}
                                 onChange={setCurrentMode}
                                 value={

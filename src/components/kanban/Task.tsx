@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, Fragment } from 'react';
 import ArrowIcon from '@/components/elements/ArrowIcon';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import { RgbaColorPicker } from 'react-colorful';
 import { db } from '@/server/db';
 import { useLiveQuery } from 'dexie-react-hooks';
-
+import { MdOutlineEdit } from 'react-icons/md';
 import { useOnClickOutside, useOnClickInsideOnly } from '@/core/hooks';
 import { TTask, Tasks } from '@/core/types/kanbanBoard';
 import BaseModal from '@/components/modals/BaseModal';
@@ -171,7 +171,18 @@ const Task = ({ id, editing = false, ...props }: TaskProps) => {
                 </div>
 
                 {/* insert drag handle, didn't want to drill props further with react-dnd*/}
-                <div className="opacity-100">{props.children}</div>
+                <div className="flex items-center gap-3 opacity-100">
+                    {/* Is this preferred? rather than ref. */}
+                    {/* <button
+                        className="opacity-50 hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                        onClick={() => {
+                            setIsEditing((prev) => !prev);
+                        }}
+                    >
+                        <MdOutlineEdit />
+                    </button> */}
+                    {props.children}
+                </div>
             </div>
 
             {isEditing ? (
@@ -183,6 +194,7 @@ const Task = ({ id, editing = false, ...props }: TaskProps) => {
                         color={props.color}
                         previousTaskContent={props.content}
                         currentBoardSlug={currentBoardSlug}
+                        showForm={isEditing}
                         setIsEditing={setIsEditing}
                         resetColor={handleColorReset}
                     >
@@ -197,8 +209,8 @@ const Task = ({ id, editing = false, ...props }: TaskProps) => {
                     </TaskForm>
                 </>
             ) : (
-                <div className="w-full pb-2 text-slate-600 ">
-                    <p className="">{props.content ? props.content : '...'}</p>
+                <div className="whitespace-normal pb-2 text-slate-600 break-all">
+                    {props.content ? props.content : '...'}
                 </div>
             )}
         </div>
