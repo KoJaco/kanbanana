@@ -30,3 +30,12 @@ export function parseBgColor(color: string) {
 export function parseCurrentColumnId(currentColumnId: number) {
     return `column-${currentColumnId}`;
 }
+
+export function parseColorToString(color: {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}) {
+    return `rgba(${color.r},${color.g},${color.b},${color.a})`;
+}

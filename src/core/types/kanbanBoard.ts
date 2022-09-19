@@ -1,15 +1,26 @@
+export type Color = {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+};
+
 export type TTask = {
     // incremental positive integer, will need to track task count.
     id: number;
-    color: {
-        r: number;
-        g: number;
-        b: number;
-        a: number;
-    };
+    color: Color;
     // user input
     content: string;
 };
+
+export type BoardTag = {
+    id: number;
+    color: string;
+    // color: Color;
+    text: string;
+};
+
+export type BoardTags = BoardTag[];
 
 export interface Tasks {
     // accessing non-existing property results in undefined, difference between runtime and and compilation inference.
@@ -25,12 +36,7 @@ export type TColumn = {
     // user input
     title: string;
     // must set a default value of 'transparent'
-    bgColor: {
-        r: number;
-        g: number;
-        b: number;
-        a: number;
-    };
+    bgColor: Color;
     taskIds: string[];
 };
 

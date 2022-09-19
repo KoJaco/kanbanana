@@ -6,6 +6,8 @@ import { db } from '@/server/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { MdOutlineEdit } from 'react-icons/md';
 import { useOnClickOutside, useOnClickInsideOnly } from '@/core/hooks';
+import { parseColorToString } from '@/core/utils/misc';
+
 import { TTask, Tasks } from '@/core/types/kanbanBoard';
 import BaseModal from '@/components/modals/BaseModal';
 import TaskForm from './TaskForm';
@@ -50,15 +52,6 @@ const Task = ({ id, editing = false, ...props }: TaskProps) => {
 
     const colorPickerRef = useRef<HTMLDivElement>(null);
     useOnClickOutside(colorPickerRef, () => setShowColorPicker(false));
-
-    function parseColorToString(color: {
-        r: number;
-        g: number;
-        b: number;
-        a: number;
-    }) {
-        return `rgba(${color.r},${color.g},${color.b},${color.a})`;
-    }
 
     // dispatch task save and content back
     // async:: generate new task object, save to BoardState, write to DB.

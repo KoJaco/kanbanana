@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Droppable, DragDropContext, DropResult } from 'react-beautiful-dnd';
 import Column from './Column';
-import EditBoardForm from './EditBoardForm';
+import BoardForm from './BoardForm';
 import { ModifyError } from 'dexie';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
@@ -56,7 +56,7 @@ const Kanban = ({ slug }: KanbanProps) => {
         initializeBoard(Date.now().toLocaleString())
     );
 
-    const [showEditBoardForm, setShowEditBoardForm] = useState(false);
+    const [showBoardForm, setShowBoardForm] = useState(false);
 
     // Zustand store state
     const {
@@ -302,9 +302,11 @@ const Kanban = ({ slug }: KanbanProps) => {
 
     return (
         <>
-            <EditBoardForm
-                showEditBoardForm={showEditBoardForm}
-                setShowEditBoardForm={setShowEditBoardForm}
+            <BoardForm
+                variant="edit"
+                boardTitle={boardState.title}
+                showBoardForm={showBoardForm}
+                setShowBoardForm={setShowBoardForm}
             />
             <DragDropContext onDragEnd={onDragEnd}>
                 {/* TITLE */}
@@ -317,7 +319,7 @@ const Kanban = ({ slug }: KanbanProps) => {
                         </h1>
                         <button
                             className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
-                            onClick={() => setShowEditBoardForm(true)}
+                            onClick={() => setShowBoardForm(true)}
                         >
                             <MdOutlineEdit className="w-5 h-5" />
                         </button>
