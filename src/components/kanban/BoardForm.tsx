@@ -220,9 +220,6 @@ const BoardForm = ({
                                             <div className="flex flex-1 flex-col justify-between">
                                                 <div className=" px-4 sm:px-6">
                                                     <div className="space-y-4 pt-6 pb-5">
-                                                        <div className="text-slate-600">
-                                                            <h3>Board info</h3>
-                                                        </div>
                                                         <div>
                                                             <label
                                                                 htmlFor="boardTitle"
@@ -316,11 +313,16 @@ const BoardForm = ({
                                                         <h3>Columns</h3>
                                                     </div>
 
-                                                    <div className="items-center justify-between mt-10 gap-3 w-full flex-wrap space-y-4">
+                                                    <div
+                                                        id="columns"
+                                                        className="items-center justify-between mt-10 gap-3 w-full flex-wrap space-y-4"
+                                                    >
                                                         {state.columnTitles.map(
                                                             (title, index) => (
                                                                 <div
                                                                     key={index}
+                                                                    // make the id be the column key after I've refactored this component.
+                                                                    id={`${title}`}
                                                                 >
                                                                     <ColumnForm
                                                                         title={

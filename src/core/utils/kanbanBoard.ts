@@ -19,6 +19,7 @@ export function initializeBoard(currentTime: string): Board {
                 title: '',
                 bgColor: { r: 255, g: 255, b: 255, a: 0 },
                 taskIds: ['task-1'],
+                type: 'simple',
             },
         },
         columnOrder: ['column-1'],
@@ -56,6 +57,7 @@ export function initializeColumns(columnTitles: string[]) {
                 title: `${columnTitles[0]}`,
                 bgColor: { r: 255, g: 255, b: 255, a: 0 },
                 taskIds: ['task-1'],
+                type: 'simple',
             },
         };
         let columnOrder: string[] = ['column-1'];
@@ -67,6 +69,7 @@ export function initializeColumns(columnTitles: string[]) {
                 title: title,
                 bgColor: { r: 255, g: 255, b: 255, a: 0 },
                 taskIds: [],
+                type: 'simple',
             };
             columnOrder.push(columnKey);
 
@@ -80,6 +83,7 @@ export function initializeColumns(columnTitles: string[]) {
                 title: `${columnTitles[0]}`,
                 bgColor: { r: 255, g: 255, b: 255, a: 0 },
                 taskIds: ['task-1'],
+                type: 'simple',
             },
         };
         let columnOrder: string[] = ['column-1'];
