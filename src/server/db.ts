@@ -73,6 +73,9 @@ export class KanbanBoardDexie extends Dexie {
                         b: 255,
                         a: 1,
                     },
+                    completed: false,
+                    createdAt: new Date(Date.now()).toLocaleString(),
+                    updatedAt: new Date(Date.now()).toLocaleString(),
                 },
             },
             // initialise columns, always start with one blank column.
@@ -80,7 +83,7 @@ export class KanbanBoardDexie extends Dexie {
                 'column-1': {
                     id: 'column-1',
                     title: '',
-                    bgColor: {
+                    badgeColor: {
                         r: 255,
                         g: 255,
                         b: 255,

@@ -11,6 +11,11 @@ export type TTask = {
     color: Color;
     // user input
     content: string;
+    // completed tag will change styling based on column type.
+    completed: boolean;
+    // timestamps, good to have.
+    updatedAt: string;
+    createdAt: string;
 };
 
 export type BoardTag = {
@@ -35,10 +40,12 @@ export type TColumn = {
     id: string;
     // user input
     title: string;
+    // strings b/c maybe add more types later.
     type: 'checklist' | 'simple';
     // must set a default value of 'transparent'
-    bgColor: Color;
+    badgeColor: Color;
     taskIds: string[];
+    // timestamps not essential for columns?
 };
 
 export interface Columns {

@@ -52,9 +52,7 @@ const Kanban = ({ slug }: KanbanProps) => {
     // * STATE VARIABLES
     // instead of setting the whole board here, just set top level board attributes to use within this component.
     // Local board state.
-    const [boardState, setBoardState] = useState<Board>(
-        initializeBoard(Date.now().toLocaleString())
-    );
+    const [boardState, setBoardState] = useState<Board>(initializeBoard());
 
     const [showBoardForm, setShowBoardForm] = useState(false);
 
@@ -147,7 +145,7 @@ const Kanban = ({ slug }: KanbanProps) => {
         let newColumn: TColumn = {
             id: newColumnId,
             title: '',
-            bgColor: { r: 255, g: 255, b: 255, a: 0 },
+            badgeColor: { r: 255, g: 255, b: 255, a: 0 },
             taskIds: [],
             type: 'simple',
         };

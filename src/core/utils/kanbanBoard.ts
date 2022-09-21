@@ -1,23 +1,29 @@
 import { Board, Columns } from '@/core/types/kanbanBoard';
 
-export function initializeBoard(currentTime: string): Board {
+const now = new Date(Date.now()).toLocaleString();
+
+export function initializeBoard(): Board {
     return {
         title: '',
         slug: '',
-        createdAt: currentTime,
-        updatedAt: currentTime,
+        createdAt: now,
+        updatedAt: now,
+
         tasks: {
             'task-1': {
                 id: 1,
                 content: '',
                 color: { r: 255, g: 255, b: 255, a: 0 },
+                completed: false,
+                createdAt: now,
+                updatedAt: now,
             },
         },
         columns: {
             'column-1': {
                 id: 'column-1',
                 title: '',
-                bgColor: { r: 255, g: 255, b: 255, a: 0 },
+                badgeColor: { r: 255, g: 255, b: 255, a: 0 },
                 taskIds: ['task-1'],
                 type: 'simple',
             },
@@ -41,6 +47,9 @@ export function initializeBoardWithColumns(
                 id: 1,
                 content: '',
                 color: { r: 255, g: 255, b: 255, a: 0 },
+                completed: false,
+                createdAt: now,
+                updatedAt: now,
             },
         },
         columns: initializedColumns,
@@ -55,7 +64,7 @@ export function initializeColumns(columnTitles: string[]) {
             'column-1': {
                 id: 'column-1',
                 title: `${columnTitles[0]}`,
-                bgColor: { r: 255, g: 255, b: 255, a: 0 },
+                badgeColor: { r: 255, g: 255, b: 255, a: 0 },
                 taskIds: ['task-1'],
                 type: 'simple',
             },
@@ -67,7 +76,7 @@ export function initializeColumns(columnTitles: string[]) {
             columns[columnKey] = {
                 id: columnKey,
                 title: title,
-                bgColor: { r: 255, g: 255, b: 255, a: 0 },
+                badgeColor: { r: 255, g: 255, b: 255, a: 0 },
                 taskIds: [],
                 type: 'simple',
             };
@@ -81,7 +90,7 @@ export function initializeColumns(columnTitles: string[]) {
             'column-1': {
                 id: 'column-1',
                 title: `${columnTitles[0]}`,
-                bgColor: { r: 255, g: 255, b: 255, a: 0 },
+                badgeColor: { r: 255, g: 255, b: 255, a: 0 },
                 taskIds: ['task-1'],
                 type: 'simple',
             },

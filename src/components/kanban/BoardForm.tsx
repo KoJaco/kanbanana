@@ -306,34 +306,43 @@ const BoardForm = ({
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div
-                                                        id="column-heading"
-                                                        className="mt-10 text-slate-600"
-                                                    >
-                                                        <h3>Columns</h3>
-                                                    </div>
 
                                                     <div
                                                         id="columns"
-                                                        className="items-center justify-between mt-10 gap-3 w-full flex-wrap space-y-4"
+                                                        className="items-center justify-between gap-3 w-full flex-wrap space-y-4 max-h-1/2"
                                                     >
                                                         {state.columnTitles.map(
                                                             (title, index) => (
                                                                 <div
+                                                                    className="mb-5 space-y-4"
                                                                     key={index}
-                                                                    // make the id be the column key after I've refactored this component.
-                                                                    id={`${title}`}
                                                                 >
-                                                                    <ColumnForm
-                                                                        title={
-                                                                            title
-                                                                        }
-                                                                    />
+                                                                    <div
+                                                                        id="column-heading"
+                                                                        className="mt-10 text-slate-600"
+                                                                    >
+                                                                        <h3>
+                                                                            {`Column-${
+                                                                                index +
+                                                                                1
+                                                                            }`}
+                                                                        </h3>
+                                                                    </div>
+                                                                    <div
+                                                                        // make the id be the column key after I've refactored this component.
+                                                                        id={`${title}`}
+                                                                    >
+                                                                        <ColumnForm
+                                                                            title={
+                                                                                title
+                                                                            }
+                                                                        />
+                                                                    </div>
                                                                 </div>
                                                             )
                                                         )}
                                                     </div>
-                                                    <div className="mt-6">
+                                                    <div className="my-6">
                                                         <div className="flex space-x-3 items-end text-sm group">
                                                             <button
                                                                 type="button"
