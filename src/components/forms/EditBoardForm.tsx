@@ -1,7 +1,13 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { MdClose, MdOutlineAdd } from 'react-icons/md';
-import { Board, TColumn, Columns, BoardTags } from '@/core/types/kanbanBoard';
+import {
+    Board,
+    TColumn,
+    Columns,
+    BoardTags,
+    BoardTag,
+} from '@/core/types/kanbanBoard';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { ModifyError } from 'dexie';
 import { db } from '@/server/db';
@@ -52,8 +58,6 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
         [props.boardSlug]
     );
 
-    console.log(boardColumns);
-
     const reportError = useCallback(({ message }: { message: string }) => {
         // send message to notification service.
     }, []);
@@ -94,6 +98,7 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
                 id: `column-${getMaxIdFromString(boardColumns)}`,
                 title: '',
                 type: 'simple',
+                completedTaskOrder: 'noChange',
                 badgeColor: {
                     r: 255,
                     g: 255,
@@ -108,9 +113,37 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
         }
     }
 
-    function handleAddTag() {}
+    function handleAddTag() {
+        if (boardTags !== undefined) {
+            const newTag: BoardTag = {
+                id: boardTags.length + 1,
+                text: '',
+                color: '#fff',
+            };
+            setBoardTags([...boardTags, newTag]);
+        } else {
+            throw new Error('Error trying to add a tag.');
+        }
+    }
+
+    function handleCancelEdit() {
+        // reset state if cancel was click, assume user wishes for their changes to NOT be saved in any way.
+        if (board !== undefined) {
+            setBoardTitle(board.title);
+            setCurrentBoardSlug(board.slug);
+            setBoardColumns(board.columns);
+            setBoardTags(
+                board.tags ? board.tags : [{ id: 1, text: '', color: '#fff' }]
+            );
+            setColumnCount(Object.keys(board.columns).length);
+            setMaxColumnId(getMaxIdFromString(board.columns));
+        }
+        // close slide over
+        setShowBoardForm(false);
+    }
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        // remember to set the key from task options object
         db.transaction('rw', db.boards, async () => {
             // modify the board state, assert board slug is not undefined.
             await db.boards
@@ -231,8 +264,8 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
                                                 </div>
                                             </div>
                                             <div className="flex flex-1 flex-col justify-between">
-                                                <div className=" px-4 sm:px-6">
-                                                    <div className="space-y-4 pt-6 pb-5">
+                                                <div className="px-2 sm:px-4">
+                                                    <div className="space-y-4 pt-6 pb-5 px-1">
                                                         <div>
                                                             <label
                                                                 htmlFor="boardTitle"
@@ -265,7 +298,7 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
 
                                                     <div
                                                         id="tags"
-                                                        className="items-center justify-between gap-3 w-full flex-wrap space-y-4 max-h-96 overflow-y-auto no-scrollbar pb-4"
+                                                        className="items-center justify-between gap-3 w-full flex-wrap space-y-4 max-h-96 overflow-y-auto no-scrollbar pb-4 px-1"
                                                     >
                                                         {boardTags ? (
                                                             // if a user has inputted some tags already, map through them with inputs provided.
@@ -301,11 +334,33 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
                                                             </div>
                                                         )}
                                                     </div>
+                                                    <div className="mb-6">
+                                                        <div className="flex space-x-3 items-end text-sm group">
+                                                            <button
+                                                                type="button"
+                                                                className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow"
+                                                                onClick={
+                                                                    handleAddTag
+                                                                }
+                                                            >
+                                                                <span className="sr-only">
+                                                                    Add a Column
+                                                                </span>
+                                                                <MdOutlineAdd
+                                                                    className="h-5 w-5"
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </button>
+                                                            <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                                Add a Tag
+                                                            </span>
+                                                        </div>
+                                                    </div>
 
                                                     {/* Map through columns, on edit show column form. */}
                                                     <div
                                                         id="columns"
-                                                        className="items-center justify-between gap-3 w-full flex-wrap max-h-[30rem] overflow-y-auto no-scrollbar mt-8"
+                                                        className="items-center justify-between gap-3 w-full flex-wrap max-h-[30rem] overflow-y-auto no-scrollbar mt-8 px-1"
                                                     >
                                                         {boardColumns &&
                                                             Object.values(
@@ -318,38 +373,19 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
                                                                     return (
                                                                         // return column info with edit button
                                                                         <div
-                                                                            className="mb-4 space-y-4"
+                                                                            className="mb-4 space-y-4 pb-4"
                                                                             key={
                                                                                 index
                                                                             }
                                                                         >
-                                                                            <div
-                                                                                id="column-heading"
-                                                                                className="text-slate-600"
-                                                                            >
-                                                                                <h3>
-                                                                                    {`${
-                                                                                        index +
-                                                                                        1
-                                                                                    }) `}
-                                                                                </h3>
-                                                                                <span>
-                                                                                    {
-                                                                                        column.title
-                                                                                    }
-                                                                                </span>
-                                                                            </div>
-
-                                                                            <div
-                                                                                // make the id be the column key after I've refactored this component.
-                                                                                id={`${column.title}`}
-                                                                            >
-                                                                                <ColumnForm
-                                                                                    title={
-                                                                                        column.title
-                                                                                    }
-                                                                                />
-                                                                            </div>
+                                                                            <ColumnForm
+                                                                                index={
+                                                                                    index
+                                                                                }
+                                                                                column={
+                                                                                    column
+                                                                                }
+                                                                            />
                                                                         </div>
                                                                         // return column form on edit.
                                                                     );
@@ -385,9 +421,7 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
                                             <button
                                                 type="button"
                                                 className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                                onClick={() =>
-                                                    setShowBoardForm(false)
-                                                }
+                                                onClick={handleCancelEdit}
                                             >
                                                 Cancel
                                             </button>

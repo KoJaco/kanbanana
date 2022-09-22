@@ -42,6 +42,7 @@ export type TColumn = {
     title: string;
     // strings b/c maybe add more types later.
     type: 'checklist' | 'simple';
+    completedTaskOrder: 'start' | 'end' | 'noChange';
     // must set a default value of 'transparent'
     badgeColor: Color;
     taskIds: string[];

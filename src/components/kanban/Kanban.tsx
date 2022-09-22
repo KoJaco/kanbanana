@@ -152,6 +152,7 @@ const Kanban = ({ slug }: KanbanProps) => {
             badgeColor: { r: 255, g: 255, b: 255, a: 0 },
             taskIds: [],
             type: 'simple',
+            completedTaskOrder: 'noChange',
         };
 
         db.transaction('rw', db.boards, async () => {

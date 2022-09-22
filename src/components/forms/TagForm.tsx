@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import Tag from '@/components/elements/Tag';
+import { BsBrush } from 'react-icons/bs';
+
 type TagFormProps = {
     text: string;
     color: string;
@@ -20,12 +22,12 @@ const TagForm = (props: TagFormProps) => {
     return (
         <div className="flex justify-between w-full gap-x-2">
             <div className="w-full">
-                <div className="flex items-center space-x-4 justify-start">
+                <div className="flex items-center space-x-2 justify-start">
                     <label
                         htmlFor="Tag"
                         className="block text-sm font-medium text-slate-600"
                     >
-                        Tag
+                        Tag:
                     </label>
 
                     <Tag text={tagState.text} color={tagState.color} />
@@ -54,13 +56,13 @@ const TagForm = (props: TagFormProps) => {
                 >
                     Color
                 </label>
-                <div className="mt-1">
+                <div className="relative mt-1">
                     <input
                         type="color"
                         name="color"
                         value={tagState.color}
                         id="color"
-                        className="appearance-none bg-transparent p-3 block outline-primary border-1 border-gray-300 w-full h-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm focus:border-none"
+                        className="appearance-none bg-transparent block outline-primary border-1 border-gray-300 w-full h-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm focus:border-none"
                         onChange={handleInputChange}
                         style={{
                             backgroundColor: tagState.color,
