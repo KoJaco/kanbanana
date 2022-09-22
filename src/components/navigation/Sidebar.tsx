@@ -12,7 +12,7 @@ import { SiKibana } from 'react-icons/si';
 
 import ThemeSettings from '@/components/menus/ThemeSettings';
 import BaseModal from '@/components/modals/BaseModal';
-import CreateBoardForm from '@/components/kanban/CreateBoardForm';
+import CreateBoardForm from '@/components/forms/CreateBoardForm';
 
 const BoardMenu = dynamic(() => import('@/components/menus/BoardMenu'), {
     ssr: false,

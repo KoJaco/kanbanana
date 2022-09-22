@@ -64,7 +64,7 @@ export interface Board {
     title: string;
     slug: string;
     // optional tag for categorising boards
-    tag?: string;
+    tags?: BoardTags;
     // auto generated upon instantiation.
     createdAt: string;
     // auto generated per mutation.

@@ -126,7 +126,7 @@ const BoardForm = ({
         try {
             db.boards.add(board, [slug]);
             console.info(
-                `A new board was created with title: ${board.title} and tag: ${board.tag}`
+                `A new board was created with title: ${board.title} and tags: ${board.tags}`
             );
             setCurrentBoardSlug(slug);
             // push to board detail endpoint

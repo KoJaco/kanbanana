@@ -1,5 +1,5 @@
 import Dexie, { Table } from 'dexie';
-import { Board } from '@/core/types/kanbanBoard';
+import { Board, BoardTags, BoardTag } from '@/core/types/kanbanBoard';
 
 // https://dexie.org/docs/Version/Version.stores()
 // https://dexie.org/docs/Table/Table.update()
@@ -27,14 +27,14 @@ export class KanbanBoardDexie extends Dexie {
                   .toArray();
     }
 
-    getBoardsByTag(boardTag: string) {
-        return this.boards
-            .orderBy('updatedAt')
-            .reverse()
-            .filter((board) => {
-                return board.tag === boardTag;
-            });
-    }
+    // getBoardsByTag(boardTagId: number) {
+    //     return this.boards
+    //         .orderBy('updatedAt')
+    //         .reverse()
+    //         .filter((board) => {
+    //             return board.tags.filter((tag) => tag.id === boardTagId);
+    //         });
+    // }
 
     getAllBoards(reverseOrder: boolean) {
         return reverseOrder
@@ -51,13 +51,13 @@ export class KanbanBoardDexie extends Dexie {
             });
     }
 
-    addBoard(boardTitle: string, boardTag: string, boardSlug: string) {
+    addBoard(boardTitle: string, boardTags: BoardTags, boardSlug: string) {
         // initialising a board after use inputs a title and a tag
         // returns a promise that resolves when the underlying indexedDB request succeeds.
         // use promise chaining or async/await pattern.
         return this.boards.add({
             title: boardTitle,
-            tag: boardTag,
+            tags: boardTags,
             slug: boardSlug,
             // is this guaranteed to be unique? no, practically impossible but still no... need to fix.
             createdAt: new Date(Date.now()).toLocaleString(),

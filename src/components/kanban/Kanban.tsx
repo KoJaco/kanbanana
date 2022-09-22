@@ -1,7 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import dynamic from 'next';
 import { Droppable, DragDropContext, DropResult } from 'react-beautiful-dnd';
 import Column from './Column';
-import BoardForm from './BoardForm';
+import BoardForm from '../forms/BoardForm';
+import EditBoardForm from '@/components/forms/EditBoardForm';
+
+import SlideOverWrapper from '@/components//modals/SlideOverWrapper';
 import { ModifyError } from 'dexie';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
@@ -301,12 +305,25 @@ const Kanban = ({ slug }: KanbanProps) => {
 
     return (
         <>
-            <BoardForm
+            {/* <BoardForm
                 variant="edit"
                 boardTitle={boardState.title}
                 showBoardForm={showBoardForm}
                 setShowBoardForm={setShowBoardForm}
+            /> */}
+            <EditBoardForm
+                boardSlug={slug}
+                showBoardForm={showBoardForm}
+                setShowBoardForm={setShowBoardForm}
             />
+            {/* <SlideOverWrapper
+                title="Edit Board"
+                description="Some random, concise description."
+                showSlideOver={showSlideOver}
+                setShowSlideOver={setShowSlideOver}
+            >
+                <div></div>
+            </SlideOverWrapper> */}
             <DragDropContext onDragEnd={onDragEnd}>
                 {/* TITLE */}
                 <div className="my-8 ml-2 px-2 sm:px-6 md:px-8 ">
