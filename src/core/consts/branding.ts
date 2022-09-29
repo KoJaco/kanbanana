@@ -234,6 +234,7 @@ export const fullColorPalette = [
     { name: 'rose-900', value: '#881337', textDark: false },
     { name: 'Black', value: '#000', textDark: true },
     { name: 'White', value: '#fff', textDark: true },
+    { name: 'transparent', value: '#00ffffff', textDark: true },
 ];
 
 export const largeColorPalette = [
@@ -326,9 +327,9 @@ export const largeColorPalette = [
     { name: 'pink-800', value: '#99154B', textDark: false },
     { name: 'pink-900', value: '#751A3D', textDark: false },
     // Misc
-    { name: 'black', value: '#000000', textDark: false },
-    { name: 'white', value: '#ffffff', textDark: true },
-    { name: 'transparent', value: '#00ffffff', textDark: true },
+    // { name: 'black', value: '#000000', textDark: false },
+    // { name: 'white', value: '#ffffff', textDark: true },
+    // { name: 'transparent', value: '#00ffffff', textDark: true },
 ];
 
 export const tailwindColorSet = {

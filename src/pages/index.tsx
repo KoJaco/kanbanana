@@ -1,6 +1,5 @@
 import type { NextPage } from 'next';
 import dynamic from 'next/dynamic';
-
 const ClientSideCardDisplay = dynamic(
     () => import('@/components/clientSideCardDisplay/ClientSideCardDisplay'),
     {

@@ -90,6 +90,7 @@ export class KanbanBoardDexie extends Dexie {
                         a: 1,
                     },
                     type: 'simple',
+                    completedTaskOrder: 'noChange',
                     taskIds: ['task-1'],
                 },
             },
