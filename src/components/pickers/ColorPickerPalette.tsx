@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { useMemo } from 'react';
 import { fullColorPalette } from '@/core/consts/branding';
 
@@ -22,25 +20,31 @@ const ColorPickerPalette = (props: ColorPickerPaletteProps) => {
     }, []);
 
     return (
-        <div className="p-3 shadow-lg grid grid-cols-10 justify-start items-end w-80 max-h-96 overflow-y-auto rounded-md bg-gradient-to-br to-white gap-y-1 gap-x-1 no-scrollbar">
-            {colorPalette.map((color, index) => (
-                <button
-                    key={index}
-                    title={`${color.name}`}
-                    className={`${color.name === 'white' && 'border-1'} 
-                        w-auto h-7 flex items-center justify-start hover:drop-shadow-lg hover:scale-110 transition-all duration-200 rounded-md hover:border-1`}
-                    style={{
-                        backgroundColor:
-                            color.value !== undefined || color.value !== null
-                                ? color.value
-                                : 'transparent',
-                        opacity: color.value === '#00ffffff' ? 0.2 : 1,
+        <div className="drop-shadow-sm z-1000 hover:scale-105 hover:drop-shadow-lg transition-transform duration-300">
+            <div className="p-4 shadow-lg grid grid-cols-10 justify-start items-end w-60 max-h-40 overflow-y-auto rounded-md bg-white gap-y-1 gap-x-1 no-scrollbar">
+                {colorPalette.map((color, index) => (
+                    <button
+                        type="button"
+                        key={index}
+                        title={`${color.name}`}
+                        className={`${color.name === 'white' && 'border-1'} 
+                        w-5 h-5 flex items-center justify-start hover:drop-shadow-lg hover:scale-110 transition-all duration-200 rounded-md hover:border-1`}
+                        style={{
+                            backgroundColor:
+                                color.value !== undefined ||
+                                color.value !== null
+                                    ? color.value
+                                    : 'transparent',
+                            opacity: color.value === '#00ffffff' ? 0.2 : 1,
 
-                        borderColor: color.textDark ? '#6875F5' : 'transparent',
-                    }}
-                    onClick={() => props.handlePickColor(color)}
-                />
-            ))}
+                            borderColor: color.textDark
+                                ? '#6875F5'
+                                : 'transparent',
+                        }}
+                        onClick={() => props.handlePickColor(color)}
+                    />
+                ))}
+            </div>
         </div>
     );
 };

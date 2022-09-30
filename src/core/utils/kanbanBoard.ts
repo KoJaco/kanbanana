@@ -42,12 +42,26 @@ export function initializeBoard(): Board {
         slug: '',
         createdAt: now,
         updatedAt: now,
-        tags: [{ id: 1, text: '', color: '#FFF' }],
+        tags: [
+            {
+                id: 1,
+                text: '',
+                color: {
+                    name: 'transparent',
+                    value: '#00ffffff',
+                    textDark: true,
+                },
+            },
+        ],
         tasks: {
             'task-1': {
                 id: 1,
                 content: '',
-                color: { r: 255, g: 255, b: 255, a: 0 },
+                color: {
+                    name: 'transparent',
+                    value: '#00ffffff',
+                    textDark: true,
+                },
                 completed: false,
                 createdAt: now,
                 updatedAt: now,
@@ -57,7 +71,11 @@ export function initializeBoard(): Board {
             'column-1': {
                 id: 'column-1',
                 title: '',
-                badgeColor: { r: 255, g: 255, b: 255, a: 0 },
+                badgeColor: {
+                    name: 'transparent',
+                    value: '#00ffffff',
+                    textDark: true,
+                },
                 taskIds: ['task-1'],
                 type: 'simple',
             },
@@ -71,7 +89,11 @@ export function initEmptyColumns() {
         'column-1': {
             id: 'column-1',
             title: '',
-            badgeColor: { r: 255, g: 255, b: 255, a: 0 },
+            badgeColor: {
+                name: 'transparent',
+                value: '#00ffffff',
+                textDark: true,
+            },
             taskIds: ['task-1'],
             type: 'simple',
         },
@@ -80,7 +102,17 @@ export function initEmptyColumns() {
 }
 
 export function initEmptyTags() {
-    const tags: BoardTags = [{ id: 1, text: '', color: '#FFF' }];
+    const tags: BoardTags = [
+        {
+            id: 1,
+            text: '',
+            color: {
+                name: 'transparent',
+                value: '#00ffffff',
+                textDark: true,
+            },
+        },
+    ];
     return tags;
 }
 

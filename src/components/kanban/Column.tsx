@@ -88,7 +88,7 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
         let newTask = {
             id: maxTaskId + 1,
             content: '',
-            color: 'rgba(255, 200, 50, 1)',
+            color: { name: 'transparent', value: '#00ffffff', textDark: true },
         };
 
         db.transaction('rw', db.boards, async () => {

@@ -4,8 +4,18 @@ import { useOnClickOutside } from '@/core/hooks/index';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import { db } from '@/server/db';
 import { stringToRandomSlug } from '@/core/utils/misc';
-import { Dialog, Transition } from '@headlessui/react';
-import { MdClose, MdOutlineAdd } from 'react-icons/md';
+import { Dialog, Transition, Menu } from '@headlessui/react';
+import {
+    MdClose,
+    MdOutlineAdd,
+    MdModeEdit,
+    MdFormatListBulleted,
+    MdOutlineChecklist,
+    MdSort,
+} from 'react-icons/md';
+import { BiSortDown, BiSortUp } from 'react-icons/bi';
+import { BsChevronBarDown } from 'react-icons/bs';
+import { TiDelete } from 'react-icons/ti';
 import {
     Board,
     TColumn,
@@ -19,6 +29,8 @@ import { ModifyError } from 'dexie';
 import { getMaxIdFromString } from '@/core/utils/kanbanBoard';
 import ColumnForm from './ColumnForm';
 import TagForm from './TagForm';
+import Tag from '@/components/elements/Tag';
+import clsx from 'clsx';
 
 type CreateBoardFormProps = {
     showBoardForm: boolean;
@@ -26,10 +38,10 @@ type CreateBoardFormProps = {
 };
 
 // Array of tags, can map over
-const initialBoardTags: BoardTags = [
+const initialTags: BoardTags = [
     {
         id: 1,
-        color: { name: 'transparent', value: '#00ffffff', textDark: true },
+        color: { name: 'white', value: '#fff', textDark: true },
         text: '',
     },
 ];
@@ -41,10 +53,12 @@ const initialColumns: Columns = {
         title: '',
         type: 'simple',
         completedTaskOrder: 'noChange',
-        badgeColor: { name: 'transparent', value: '#00ffffff', textDark: true },
+        badgeColor: { name: 'white', value: '#fff', textDark: true },
         taskIds: ['task-1'],
     },
 };
+
+const defaultColor = { name: 'white', value: '#fff', textDark: true };
 
 const initialColumnOrder: string[] = ['column-1'];
 
@@ -52,13 +66,15 @@ const initialColumnOrder: string[] = ['column-1'];
 const initialTasks: Tasks = {
     'task-1': {
         id: 1,
-        color: { name: 'transparent', value: '#00ffffff', textDark: true },
+        color: { name: 'white', value: '#fff', textDark: true },
         completed: false,
         content: '',
         updatedAt: '',
         createdAt: '',
     },
 };
+
+var omit = require('object.omit');
 
 const CreateBoardForm = ({
     setShowBoardForm,
@@ -67,14 +83,19 @@ const CreateBoardForm = ({
     // controlled inputs for form fields, everything we're editing
     const [boardTitle, setBoardTitle] = useState<string>('');
     // need separate form for editing a single tag
-    const [boardTags, setBoardTags] = useState<BoardTags>(initialBoardTags);
+    const [boardTags, setBoardTags] = useState<BoardTags>();
     // need separate form for editing a single column
-    const [boardColumns, setBoardColumns] = useState<Columns>(initialColumns);
-    const [boardColumnOrder, setBoardColumnOrder] =
-        useState<string[]>(initialColumnOrder);
+    const [boardColumns, setBoardColumns] = useState<Columns>();
+    const [boardColumnOrder, setBoardColumnOrder] = useState<string[]>();
+
+    const [showTagForm, setShowTagForm] = useState<boolean>(false);
+    const [showColumnForm, setShowColumnForm] = useState<boolean>(false);
 
     const { setCurrentBoardSlug, columnCount, setColumnCount, setMaxColumnId } =
         useKanbanStore();
+
+    console.log('boardCOlumnOrder ' + boardColumnOrder);
+    console.log(boardColumns !== undefined && Object.keys(boardColumns));
 
     function handleBoardTitleInputChange(
         event: React.ChangeEvent<HTMLInputElement>
@@ -82,43 +103,82 @@ const CreateBoardForm = ({
         setBoardTitle(event.currentTarget.value);
     }
 
-    function handleShowEditColumn() {}
-
-    function handleAddColumn() {
+    function initNewColumn() {
         if (boardColumns !== undefined) {
+            const columnId = `column-${getMaxIdFromString(boardColumns)}`;
             const newColumn: TColumn = {
-                id: `column-${getMaxIdFromString(boardColumns)}`,
+                id: columnId,
                 title: '',
                 type: 'simple',
                 completedTaskOrder: 'noChange',
-                badgeColor: {
-                    name: 'transparent',
-                    value: '#00ffffff',
-                    textDark: true,
-                },
-                taskIds: [],
+                badgeColor: { name: 'white', value: 'fff', textDark: true },
+                taskIds: columnId === 'column-1' ? ['task-1'] : [],
             };
-            setBoardColumns({ ...boardColumns, newColumn });
+            return newColumn;
         } else {
-            throw new Error('Error trying to add a column.');
+            throw new Error('Error trying to initialise new column.');
         }
     }
 
-    function handleAddTag() {
-        if (boardTags !== undefined) {
-            const newTag: BoardTag = {
-                id: boardTags.length + 1,
-                text: '',
-                color: {
-                    name: 'transparent',
-                    value: '#00ffffff',
-                    textDark: true,
-                },
-            };
-            setBoardTags([...boardTags, newTag]);
+    function handleAddColumn(column: TColumn) {
+        if (boardColumnOrder === undefined || boardColumnOrder.length === 0) {
+            setBoardColumns({ [column.id]: column });
+            setBoardColumnOrder([column.id]);
         } else {
-            throw new Error('Error trying to add a tag.');
+            let newColumnOrder = Array.from(boardColumnOrder);
+            setBoardColumns({ ...boardColumns, [column.id]: column });
+            newColumnOrder.push(column.id);
+            setBoardColumnOrder(newColumnOrder);
         }
+        setShowColumnForm(false);
+    }
+
+    function handleRemoveColumn(columnId: string) {
+        if (boardColumnOrder !== undefined) {
+            let newColumns = omit(boardColumns, columnId);
+            let newColumnOrder = Array.from(boardColumnOrder);
+            for (let i = 0; i < newColumnOrder.length; i++) {
+                let id = newColumnOrder[i];
+                if (id === columnId) {
+                    newColumnOrder.splice(i, 1);
+                }
+            }
+            setBoardColumns(newColumns);
+            setBoardColumnOrder(newColumnOrder);
+        }
+    }
+
+    function handleAddTag(tag: BoardTag) {
+        if (boardTags === undefined || boardTags.length === 0) {
+            setBoardTags([tag]);
+        } else {
+            let newTags = Array.from(boardTags);
+            newTags.push(tag);
+            setBoardTags(newTags);
+        }
+    }
+
+    function handleRemoveTag(index: number) {
+        if (boardTags !== undefined) {
+            // id is simple the index + 1
+            let newTags = Array.from(boardTags);
+            newTags.splice(index, 1);
+            setBoardTags(newTags);
+        }
+    }
+
+    function handleToggleTagForm() {
+        if (showColumnForm) {
+            setShowColumnForm(false);
+        }
+        setShowTagForm((showTagForm) => !showTagForm);
+    }
+
+    function handleToggleColumnForm() {
+        if (showTagForm) {
+            setShowTagForm(false);
+        }
+        setShowColumnForm((showColumnForm) => !showColumnForm);
     }
 
     function handleCancelEdit() {
@@ -129,15 +189,23 @@ const CreateBoardForm = ({
     }
 
     function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
+        let tags = boardTags === undefined ? initialTags : boardTags;
+        let columns =
+            boardColumns === undefined ? initialColumns : boardColumns;
+        let columnOrder =
+            boardColumnOrder === undefined
+                ? initialColumnOrder
+                : boardColumnOrder;
+        console.log(boardTitle);
         // remember to set the key from task options object
         db.transaction('rw', db.boards, async () => {
             // modify the board state, assert board slug is not undefined.
             await db.addBoard(
                 boardTitle,
-                boardTags,
+                tags,
                 initialTasks,
-                boardColumns,
-                boardColumnOrder
+                columns,
+                columnOrder
             );
         });
         // // Catch modification error and generic error.
@@ -153,15 +221,63 @@ const CreateBoardForm = ({
     }
 
     function resetState() {
-        setBoardTitle('');
-        setBoardTags(initialBoardTags);
-        setBoardColumns(initialColumns);
-        setBoardColumnOrder(initialColumnOrder);
+        // wait for transition to close, .5 sec timeout
+        setTimeout(() => {
+            setBoardTitle('');
+            setBoardTags(undefined);
+            setBoardColumns(undefined);
+            setBoardColumnOrder(undefined);
+        }, 500);
+    }
+
+    function retrieveMaxColumnId() {
+        if (boardColumns === undefined) {
+            return 0;
+        } else if (
+            boardColumnOrder === undefined ||
+            boardColumnOrder.length === 0
+        ) {
+            return 0;
+        } else {
+            return getMaxIdFromString(boardColumns);
+        }
     }
 
     const reportError = useCallback(({ message }: { message: string }) => {
         // send message to notification service.
     }, []);
+
+    const renderSortingIcon = (sortingMethod: string) => {
+        switch (sortingMethod) {
+            case 'start':
+                return (
+                    <span>
+                        <BiSortUp />
+                    </span>
+                );
+
+            case 'end':
+                return (
+                    <span>
+                        <BiSortDown />
+                    </span>
+                );
+
+            case 'noChange':
+                return (
+                    <span>
+                        <MdSort />
+                    </span>
+                );
+
+            default:
+                return (
+                    <span>
+                        <MdSort />
+                    </span>
+                );
+        }
+    };
 
     return (
         <Transition.Root show={props.showBoardForm} as={Fragment}>
@@ -199,10 +315,11 @@ const CreateBoardForm = ({
                                         onSubmit={handleSubmit}
                                     >
                                         <div className="h-0 flex-1 overflow-y-auto">
+                                            {/* HEADER SECTION */}
                                             <div className="bg-offset-bg py-6 px-4 sm:px-6">
                                                 <div className="flex items-center justify-between">
                                                     <Dialog.Title className="text-lg font-medium text-slate-600">
-                                                        {boardTitle}
+                                                        Create a new Board
                                                     </Dialog.Title>
 
                                                     <div className="ml-3 flex h-7 items-center">
@@ -233,160 +350,319 @@ const CreateBoardForm = ({
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="flex flex-1 flex-col justify-between">
-                                                <div className="px-2 sm:px-4">
-                                                    <div className="space-y-4 pt-6 pb-5 px-1">
-                                                        <div>
-                                                            <label
-                                                                htmlFor="boardTitle"
-                                                                className="block text-sm font-medium text-slate-600"
-                                                            >
-                                                                Board Title
-                                                            </label>
-                                                            <div className="mt-1">
-                                                                <input
-                                                                    type="text"
-                                                                    name="boardTitle"
-                                                                    id="boardTitle"
-                                                                    value={
-                                                                        boardTitle
-                                                                    }
-                                                                    placeholder={
-                                                                        boardTitle
-                                                                            ? boardTitle
-                                                                            : 'Give your board a title.'
-                                                                    }
-                                                                    className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                                                    onChange={
-                                                                        handleBoardTitleInputChange
-                                                                    }
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {/* Map through tags, on edit show tag form. */}
+                                            <div className=" mt-4 space-y-4 sm:mt-10">
+                                                {/* Board tag input*/}
+                                                <div className="flex flex-1 flex-col justify-between border-b border-gray-100">
+                                                    <div className="px-2 sm:px-4">
+                                                        <div className="space-y-4 pt-6 pb-5 px-1">
+                                                            <div>
+                                                                <label
+                                                                    htmlFor="boardTitle"
+                                                                    className="block text-sm font-medium text-slate-600"
+                                                                >
+                                                                    Board Title
+                                                                    *
+                                                                </label>
 
-                                                    <div
-                                                        id="tags"
-                                                        className="items-center justify-between gap-3 w-full flex-wrap space-y-4 max-h-96 overflow-y-auto no-scrollbar pb-4 px-1"
-                                                    >
-                                                        {boardTags ? (
-                                                            // if a user has inputted some tags already, map through them with inputs provided.
-                                                            boardTags.map(
-                                                                (
-                                                                    tag,
-                                                                    index
-                                                                ) => (
-                                                                    <div
-                                                                        key={
-                                                                            index
+                                                                <div className="mt-1">
+                                                                    <input
+                                                                        type="text"
+                                                                        name="boardTitle"
+                                                                        id="boardTitle"
+                                                                        value={
+                                                                            boardTitle
                                                                         }
-                                                                        className="space-y-4"
-                                                                    >
-                                                                        <TagForm
-                                                                            text={
-                                                                                tag.text
-                                                                            }
-                                                                            color={
-                                                                                tag.color
-                                                                            }
-                                                                        />
-                                                                    </div>
-                                                                )
-                                                            )
-                                                        ) : (
-                                                            // if the user has not provided any tags (undefined), allow them to add some.
-                                                            <div className="flex flex-row gap-3 justify-between space-y-4">
-                                                                <TagForm
-                                                                    text=""
-                                                                    color={{
-                                                                        name: 'transparent',
-                                                                        value: '#00ffffff',
-                                                                        textDark:
-                                                                            true,
-                                                                    }}
-                                                                />
+                                                                        placeholder={
+                                                                            boardTitle
+                                                                                ? boardTitle
+                                                                                : 'Give your board a title.'
+                                                                        }
+                                                                        className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                                        onChange={
+                                                                            handleBoardTitleInputChange
+                                                                        }
+                                                                    />
+                                                                </div>
                                                             </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="mb-6">
-                                                        <div className="flex space-x-3 items-end text-sm group">
-                                                            <button
-                                                                type="button"
-                                                                className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow"
-                                                                onClick={
-                                                                    handleAddTag
-                                                                }
-                                                            >
-                                                                <span className="sr-only">
-                                                                    Add a Column
-                                                                </span>
-                                                                <MdOutlineAdd
-                                                                    className="h-5 w-5"
-                                                                    aria-hidden="true"
-                                                                />
-                                                            </button>
-                                                            <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                                Add a Tag
-                                                            </span>
+                                                            {/* small display for tag and column info */}
+                                                            <div className="flex flex-col w-full space-y-4 overflow-x-auto no-scrollbar">
+                                                                {/* tags */}
+                                                                <div className="flex flex-col max-h-16 ">
+                                                                    <label
+                                                                        htmlFor="boardTags"
+                                                                        className="block text-sm font-medium text-slate-600"
+                                                                    >
+                                                                        Tags:
+                                                                    </label>
+                                                                    {/* tags map for display only */}
+                                                                    <div className="flex flex-wrap gap-x-2 gap-y-2 mt-1">
+                                                                        {boardTags?.map(
+                                                                            (
+                                                                                tag,
+                                                                                index
+                                                                            ) =>
+                                                                                tag
+                                                                                    .text
+                                                                                    .length >
+                                                                                    0 && (
+                                                                                    <div
+                                                                                        key={
+                                                                                            index
+                                                                                        }
+                                                                                        className="flex group"
+                                                                                        style={{}}
+                                                                                    >
+                                                                                        <span
+                                                                                            className="text-sm rounded-full px-2"
+                                                                                            style={{
+                                                                                                color: tag
+                                                                                                    .color
+                                                                                                    .textDark
+                                                                                                    ? '#333'
+                                                                                                    : '#fff',
+                                                                                                backgroundColor:
+                                                                                                    tag
+                                                                                                        .color
+                                                                                                        .value,
+                                                                                            }}
+                                                                                        >
+                                                                                            {
+                                                                                                tag.text
+                                                                                            }
+                                                                                        </span>
+                                                                                        <div className="flex">
+                                                                                            <button
+                                                                                                type="button"
+                                                                                                name="delete-tag"
+                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                                                                                onClick={() =>
+                                                                                                    handleRemoveTag(
+                                                                                                        index
+                                                                                                    )
+                                                                                                }
+                                                                                            >
+                                                                                                <TiDelete className="text-slate-600" />
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                )
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                                {/* columns */}
+                                                                <div className="w-auto max-h-96 overflow-y-auto">
+                                                                    <label
+                                                                        htmlFor="board-columns"
+                                                                        className="block text-sm font-medium text-slate-600 "
+                                                                    >
+                                                                        Columns:
+                                                                    </label>
+                                                                    <div className="mt-1 gap-y-2 gap-x-2 my-4">
+                                                                        {/* map through columns for display only*/}
+                                                                        {boardColumnOrder?.map(
+                                                                            (
+                                                                                columnId: string,
+                                                                                index: number
+                                                                            ) => {
+                                                                                const column =
+                                                                                    boardColumns![
+                                                                                        columnId
+                                                                                    ];
+                                                                                return column ==
+                                                                                    undefined ||
+                                                                                    column
+                                                                                        .title
+                                                                                        .length ===
+                                                                                        0 ? null : (
+                                                                                    // Column display card
+                                                                                    <div
+                                                                                        key={
+                                                                                            index
+                                                                                        }
+                                                                                        className="group rounded-md border shadow my-2 text-md"
+                                                                                    >
+                                                                                        <div
+                                                                                            className="flex flex-col p-2 rounded-t-md"
+                                                                                            style={{
+                                                                                                backgroundColor:
+                                                                                                    column
+                                                                                                        .badgeColor
+                                                                                                        .value,
+                                                                                                color: column
+                                                                                                    .badgeColor
+                                                                                                    .textDark
+                                                                                                    ? '#333'
+                                                                                                    : '#fff',
+                                                                                            }}
+                                                                                        ></div>
+                                                                                        <div className="flex flex-col p-2 divide-x">
+                                                                                            {/* upper flex, column number and badge
+                                                                                            <div
+                                                                                                className="flex items-center mb-2"
+                                                                                                style={{
+                                                                                                    backgroundColor:
+                                                                                                        column
+                                                                                                            .badgeColor
+                                                                                                            .value,
+                                                                                                }}
+                                                                                            >
+                                                                                                <div>{`${
+                                                                                                    index +
+                                                                                                    1
+                                                                                                }.`}</div>
+
+                                                                                                <div
+                                                                                                    className="flex ml-auto w-5 h-5 rounded-full"
+                                                                                                    style={{
+                                                                                                        backgroundColor:
+                                                                                                            column
+                                                                                                                .badgeColor
+                                                                                                                .value,
+                                                                                                    }}
+                                                                                                ></div>
+                                                                                            </div> */}
+
+                                                                                            <div className="flex gap-x-12 items-center text-slate-600">
+                                                                                                <div className="flex flex-col">
+                                                                                                    <label className="text-sm font-medium">
+                                                                                                        Title
+                                                                                                    </label>
+                                                                                                    <div>
+                                                                                                        {
+                                                                                                            column.title
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div className="flex flex-col">
+                                                                                                    <label className="text-sm font-medium">
+                                                                                                        Type
+                                                                                                    </label>
+                                                                                                    <div>
+                                                                                                        {
+                                                                                                            column.type
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                {column.type ===
+                                                                                                    'checklist' && (
+                                                                                                    <div className="flex flex-col">
+                                                                                                        <label className="text-sm font-medium">
+                                                                                                            Ordering
+                                                                                                        </label>
+                                                                                                        <div>
+                                                                                                            {
+                                                                                                                column.completedTaskOrder
+                                                                                                            }
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                )}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div className="flex items-center justify-end mt-2">
+                                                                                            <button
+                                                                                                type="button"
+                                                                                                name="delete-tag"
+                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                                                                                onClick={() =>
+                                                                                                    handleRemoveColumn(
+                                                                                                        column.id
+                                                                                                    )
+                                                                                                }
+                                                                                            >
+                                                                                                <TiDelete className="text-slate-600" />
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                );
+                                                                            }
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-
-                                                    {/* Map through columns, on edit show column form. */}
-                                                    <div
-                                                        id="columns"
-                                                        className="items-center justify-between gap-3 w-full flex-wrap max-h-[30rem] overflow-y-auto no-scrollbar mt-8 px-1"
-                                                    >
-                                                        {boardColumns &&
-                                                            Object.values(
-                                                                boardColumns
-                                                            ).map(
-                                                                (
-                                                                    column: TColumn,
-                                                                    index: number
-                                                                ) => {
-                                                                    return (
-                                                                        // return column info with edit button
-                                                                        <div
-                                                                            className="mb-4 space-y-4 pb-4"
-                                                                            key={
-                                                                                index
-                                                                            }
-                                                                        >
-                                                                            <ColumnForm
-                                                                                index={
-                                                                                    index
-                                                                                }
-                                                                                column={
-                                                                                    column
-                                                                                }
-                                                                            />
-                                                                        </div>
-                                                                        // return column form on edit.
-                                                                    );
-                                                                }
-                                                            )}
-                                                    </div>
-                                                    <div className="my-6">
-                                                        <div className="flex space-x-3 items-end text-sm group">
+                                                </div>
+                                                {/* Board tag/column input*/}
+                                                <div className="flex flex-1 flex-col justify-between border-b border-gray-100">
+                                                    <div className="px-2 sm:px-4">
+                                                        <div className="space-y-2 px-1">
+                                                            <div className="relative inline-block w-full"></div>
                                                             <button
                                                                 type="button"
-                                                                className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow"
+                                                                className="inline-flex w-full justify-end rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:shadow-sm hover:bg-gray-50 focus:outline-none mb-4"
                                                                 onClick={
-                                                                    handleAddColumn
+                                                                    handleToggleTagForm
                                                                 }
                                                             >
-                                                                <span className="sr-only">
-                                                                    Add a Column
-                                                                </span>
-                                                                <MdOutlineAdd
-                                                                    className="h-5 w-5"
+                                                                Add some tags
+                                                                <BsChevronBarDown
+                                                                    className="-mr-1 ml-2 h-5 w-5"
                                                                     aria-hidden="true"
                                                                 />
                                                             </button>
-                                                            <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                                Add a Column
-                                                            </span>
+                                                            <Transition
+                                                                show={
+                                                                    showTagForm
+                                                                }
+                                                                enter="transition ease-out duration-100"
+                                                                enterFrom="transform opacity-0 scale-95"
+                                                                enterTo="transform opacity-100 scale-100"
+                                                                leave="transition ease-in duration-75"
+                                                                leaveFrom="transform opacity-100 scale-100"
+                                                                leaveTo="transform opacity-0 scale-95"
+                                                            >
+                                                                <TagForm
+                                                                    id={
+                                                                        boardTags ===
+                                                                        undefined
+                                                                            ? 1
+                                                                            : boardTags.length
+                                                                    }
+                                                                    handleAddTag={
+                                                                        handleAddTag
+                                                                    }
+                                                                />
+                                                            </Transition>
+                                                        </div>
+                                                    </div>
+                                                    <div className="px-2 sm:px-4">
+                                                        <div className="space-y-2 pt-6 pb-5 px-1">
+                                                            <div className="relative inline-block w-full"></div>
+
+                                                            <button
+                                                                type="button"
+                                                                className="inline-flex w-full justify-end rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:shadow-sm hover:bg-gray-50 focus:outline-none mb-4"
+                                                                onClick={
+                                                                    handleToggleColumnForm
+                                                                }
+                                                            >
+                                                                Add some columns
+                                                                <BsChevronBarDown
+                                                                    className="-mr-1 ml-2 h-5 w-5"
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </button>
+                                                            <Transition
+                                                                show={
+                                                                    showColumnForm
+                                                                }
+                                                                enter="transition ease-out duration-100"
+                                                                enterFrom="transform opacity-0 scale-95"
+                                                                enterTo="transform opacity-100 scale-100"
+                                                                leave="transition ease-in duration-75"
+                                                                leaveFrom="transform opacity-100 scale-100"
+                                                                leaveTo="transform opacity-0 scale-95"
+                                                            >
+                                                                <ColumnForm
+                                                                    id={
+                                                                        retrieveMaxColumnId() +
+                                                                        1
+                                                                    }
+                                                                    handleAddColumn={
+                                                                        handleAddColumn
+                                                                    }
+                                                                />
+                                                            </Transition>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -402,7 +678,12 @@ const CreateBoardForm = ({
                                             </button>
                                             <button
                                                 type="submit"
-                                                className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-dark-alt focus:outline-none transition-color duration-300"
+                                                className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-dark-alt focus:outline-none transition-color duration-300 disabled:cursor-not-allowed"
+                                                disabled={
+                                                    boardTitle.length < 1
+                                                        ? true
+                                                        : false
+                                                }
                                             >
                                                 Save
                                             </button>

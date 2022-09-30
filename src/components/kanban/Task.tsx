@@ -8,7 +8,7 @@ import { MdOutlineEdit } from 'react-icons/md';
 import { useOnClickOutside, useOnClickInsideOnly } from '@/core/hooks';
 import { parseColorToString } from '@/core/utils/misc';
 
-import { TTask, Tasks } from '@/core/types/kanbanBoard';
+import { TTask, Tasks, Color } from '@/core/types/kanbanBoard';
 import BaseModal from '@/components/modals/BaseModal';
 import TaskForm from './TaskForm';
 
@@ -18,7 +18,7 @@ type TaskProps = {
     children?: JSX.Element;
     id: number;
     columnId: string;
-    color: { r: number; g: number; b: number; a: number };
+    color: Color;
     taskCount: number;
     content: string;
     editing: boolean;
@@ -43,12 +43,7 @@ const Task = ({ id, editing = false, ...props }: TaskProps) => {
     useOnClickOutside(isEditingRef, () => setIsEditing(false));
 
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
-    const [color, setColor] = useState<{
-        r: number;
-        g: number;
-        b: number;
-        a: number;
-    }>(props.color);
+    const [color, setColor] = useState<Color>(props.color);
 
     const colorPickerRef = useRef<HTMLDivElement>(null);
     useOnClickOutside(colorPickerRef, () => setShowColorPicker(false));
@@ -124,18 +119,18 @@ const Task = ({ id, editing = false, ...props }: TaskProps) => {
 
                         <div className="grid grid-cols-2 gap-8">
                             <div className="grid-col">
-                                <RgbaColorPicker
+                                {/* <RgbaColorPicker
                                     className="w-28 h-28 cursor-pointer "
                                     color={color}
                                     onChange={setColor}
-                                ></RgbaColorPicker>
+                                ></RgbaColorPicker> */}
                             </div>
-                            <div
+                            {/* <div
                                 className="grid-col rounded-lg border-1 drop-shadow-sm"
                                 style={{
                                     backgroundColor: parseColorToString(color),
                                 }}
-                            ></div>
+                            ></div> */}
                         </div>
                     </div>
                 </div>
@@ -152,9 +147,9 @@ const Task = ({ id, editing = false, ...props }: TaskProps) => {
                             showColorPicker &&
                                 'scale-110 transition-transform duration-300 drop-shadow-lg '
                         )}
-                        style={{
-                            backgroundColor: parseColorToString(props.color),
-                        }}
+                        // style={{
+                        //     backgroundColor: parseColorToString(props.color),
+                        // }}
                         onClick={() => setShowColorPicker(true)}
                         // disable when selecting color, let useOnClickOutside handle close
                         // disabled={showColorPicker ? true : false}

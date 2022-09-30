@@ -4,7 +4,7 @@ import { useKanbanStore } from '@/stores/KanbanStore';
 import { db } from '@/server/db';
 
 import { useOnClickOutside, useOnClickInsideOnly } from '@/core/hooks';
-import { TTask, Tasks, TColumn } from '@/core/types/kanbanBoard';
+import { TTask, Tasks, TColumn, Color } from '@/core/types/kanbanBoard';
 import { RgbaColorPicker } from 'react-colorful';
 import { Disclosure, Transition } from '@headlessui/react';
 
@@ -12,7 +12,7 @@ type TaskFormProps = {
     id: number;
     columnId: string;
     taskCount: number;
-    color: { r: number; g: number; b: number; a: number };
+    color: Color;
     previousTaskContent: string;
     currentBoardSlug: string;
     showForm: boolean;

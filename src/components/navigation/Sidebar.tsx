@@ -12,7 +12,7 @@ import { SiKibana } from 'react-icons/si';
 
 import ThemeSettings from '@/components/menus/ThemeSettings';
 import BaseModal from '@/components/modals/BaseModal';
-// import CreateBoardForm from '@/components/forms/CreateBoardForm';
+import CreateBoardForm from '@/components/forms/CreateBoardForm';
 import EditBoardForm from '@/components/forms/EditBoardForm';
 
 const BoardMenu = dynamic(() => import('@/components/menus/BoardMenu'), {
@@ -27,17 +27,23 @@ type SidebarProps = {
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     const [modalOpen, setModalOpen] = useState(false);
 
+    const [showCreateBoardForm, setShowCreateBoardForm] = useState(false);
+
     function handleOpenModal() {
         setSidebarOpen(false);
         setModalOpen(true);
     }
+
+    function handleShowCreateBoardForm() {
+        setShowCreateBoardForm(true);
+    }
+
     return (
         <>
-            {/* <EditBoardForm
-                boardSlug={slug}
-                showBoardForm={showBoardForm}
-                setShowBoardForm={setShowBoardForm}
-            /> */}
+            <CreateBoardForm
+                showBoardForm={showCreateBoardForm}
+                setShowBoardForm={setShowCreateBoardForm}
+            />
             <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
                     as="div"
@@ -108,7 +114,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                             <button
                                                 className="text-indigo-100 hover:bg-primary-bg-darker
                                              flex items-center px-2 py-2 text-base font-medium rounded-md my-6 w-full"
-                                                onClick={handleOpenModal}
+                                                onClick={
+                                                    handleShowCreateBoardForm
+                                                }
                                             >
                                                 <span className="h-full text-gray-400">
                                                     <IoCreateOutline
@@ -204,7 +212,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 {/* New Board Button */}
                                 <button
                                     className="text-indigo-100 hover:bg-primary-bg-darker hover:text-slate-600 group flex items-center px-2 py-2 text-base font-medium rounded-md mt-6 w-full"
-                                    onClick={handleOpenModal}
+                                    onClick={handleShowCreateBoardForm}
                                 >
                                     <span className="h-full">
                                         <IoCreateOutline

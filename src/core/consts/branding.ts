@@ -232,9 +232,9 @@ export const fullColorPalette = [
     { name: 'rose-700', value: '#be123c', textDark: false },
     { name: 'rose-800', value: '#9f1239', textDark: false },
     { name: 'rose-900', value: '#881337', textDark: false },
-    { name: 'black', value: '#000', textDark: true },
+    { name: 'black', value: '#000', textDark: false },
     { name: 'white', value: '#fff', textDark: true },
-    { name: 'transparent', value: '#00ffffff', textDark: true },
+    { name: 'transparent', value: '#FFFFFF00', textDark: true },
 ];
 
 export const largeColorPalette = [

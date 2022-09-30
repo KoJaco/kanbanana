@@ -30,7 +30,6 @@ const ClientSideCardDisplay = () => {
 
                         board.columnOrder.map((columnId) => {
                             let col = board.columns[columnId];
-                            console.log(col!.taskIds.length);
                             col !== undefined &&
                                 columnInfo.push({
                                     title: col.title,
