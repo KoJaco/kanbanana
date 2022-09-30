@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next';
 import { Droppable, DragDropContext, DropResult } from 'react-beautiful-dnd';
 import Column from './Column';
-import BoardForm from '../forms/BoardForm';
 import EditBoardForm from '@/components/forms/EditBoardForm';
 
 import SlideOverWrapper from '@/components//modals/SlideOverWrapper';
@@ -149,7 +148,11 @@ const Kanban = ({ slug }: KanbanProps) => {
         let newColumn: TColumn = {
             id: newColumnId,
             title: '',
-            badgeColor: { r: 255, g: 255, b: 255, a: 0 },
+            badgeColor: {
+                name: 'transparent',
+                value: '#00ffffff',
+                textDark: true,
+            },
             taskIds: [],
             type: 'simple',
             completedTaskOrder: 'noChange',
@@ -306,25 +309,12 @@ const Kanban = ({ slug }: KanbanProps) => {
 
     return (
         <>
-            {/* <BoardForm
-                variant="edit"
-                boardTitle={boardState.title}
-                showBoardForm={showBoardForm}
-                setShowBoardForm={setShowBoardForm}
-            /> */}
             <EditBoardForm
                 boardSlug={slug}
                 showBoardForm={showBoardForm}
                 setShowBoardForm={setShowBoardForm}
             />
-            {/* <SlideOverWrapper
-                title="Edit Board"
-                description="Some random, concise description."
-                showSlideOver={showSlideOver}
-                setShowSlideOver={setShowSlideOver}
-            >
-                <div></div>
-            </SlideOverWrapper> */}
+
             <DragDropContext onDragEnd={onDragEnd}>
                 {/* TITLE */}
                 <div className="my-8 ml-2 px-2 sm:px-6 md:px-8 ">

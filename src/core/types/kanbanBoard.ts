@@ -1,8 +1,7 @@
 export type Color = {
-    r: number;
-    g: number;
-    b: number;
-    a: number;
+    name: string;
+    value: string;
+    textDark: boolean;
 };
 
 export type TTask = {
@@ -20,7 +19,7 @@ export type TTask = {
 
 export type BoardTag = {
     id: number;
-    color: string;
+    color: Color;
     // color: Color;
     text: string;
 };

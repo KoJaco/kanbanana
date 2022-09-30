@@ -27,7 +27,7 @@ const ColorPickerPalette = (props: ColorPickerPaletteProps) => {
                 <button
                     key={index}
                     title={`${color.name}`}
-                    className={`${color.name === 'White' && 'border-1'} 
+                    className={`${color.name === 'white' && 'border-1'} 
                         w-auto h-7 flex items-center justify-start hover:drop-shadow-lg hover:scale-110 transition-all duration-200 rounded-md hover:border-1`}
                     style={{
                         backgroundColor:

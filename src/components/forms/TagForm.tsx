@@ -1,21 +1,21 @@
 import { useState } from 'react';
 import Tag from '@/components/elements/Tag';
 import { BsBrush } from 'react-icons/bs';
+import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
+import { Color } from '@/core/types/kanbanBoard';
 
 type TagFormProps = {
     text: string;
-    color: string;
+    color: Color;
 };
 
 const TagForm = (props: TagFormProps) => {
-    const [tagState, setTagState] = useState({
-        text: props.text,
-        color: props.color,
-    });
+    const [tagText, setTagText] = useState(props.text);
+    const [colorState, setColorState] = useState(props.color);
+    const [showColorPicker, setShowColorPicker] = useState(false);
 
-    function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const value = event.currentTarget.value;
-        setTagState({ ...tagState, [event.currentTarget.name]: value });
+    function handleSetColor(color: Color) {
+        setColorState(color);
     }
 
     // not a form per-say, just keeps track of inputs
@@ -30,7 +30,7 @@ const TagForm = (props: TagFormProps) => {
                         Tag:
                     </label>
 
-                    <Tag text={tagState.text} color={tagState.color} />
+                    <Tag text={tagText} color={colorState} />
                 </div>
 
                 <div className="mt-1">
@@ -38,12 +38,14 @@ const TagForm = (props: TagFormProps) => {
                         type="text"
                         name="text"
                         id="text"
-                        value={tagState.text}
+                        value={tagText}
                         placeholder={
                             props.text ? props.text : 'Write your tag here.'
                         }
                         className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                        onChange={handleInputChange}
+                        onChange={(event) =>
+                            setTagText(event.currentTarget.value)
+                        }
                     />
                 </div>
             </div>
@@ -56,19 +58,27 @@ const TagForm = (props: TagFormProps) => {
                 >
                     Color
                 </label>
-                <div className="relative mt-1">
+                <button onClick={() => setShowColorPicker(!setShowColorPicker)}>
+                    <BsBrush />
+                </button>
+                {showColorPicker && (
+                    <div className="relative mt-1">
+                        <ColorPickerPalette handlePickColor={handleSetColor} />
+                    </div>
+                )}
+                {/* <div className="relative mt-1">
                     <input
                         type="color"
                         name="color"
-                        value={tagState.color}
+                        value={tagState.colorValue}
                         id="color"
                         className="appearance-none bg-transparent block outline-primary border-1 border-gray-300 w-full h-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm focus:border-none"
                         onChange={handleInputChange}
                         style={{
-                            backgroundColor: tagState.color,
+                            backgroundColor: tagState.colorValue,
                         }}
                     />
-                </div>
+                </div> */}
             </div>
         </div>
     );

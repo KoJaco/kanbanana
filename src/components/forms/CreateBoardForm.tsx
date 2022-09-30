@@ -1,215 +1,420 @@
-import React, { useState, useRef } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { useOnClickOutside } from '@/core/hooks/index';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import { db } from '@/server/db';
 import { stringToRandomSlug } from '@/core/utils/misc';
+import { Dialog, Transition } from '@headlessui/react';
+import { MdClose, MdOutlineAdd } from 'react-icons/md';
+import {
+    Board,
+    TColumn,
+    Tasks,
+    Columns,
+    BoardTags,
+    BoardTag,
+} from '@/core/types/kanbanBoard';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { ModifyError } from 'dexie';
+import { getMaxIdFromString } from '@/core/utils/kanbanBoard';
+import ColumnForm from './ColumnForm';
+import TagForm from './TagForm';
 
 type CreateBoardFormProps = {
-    setOpen: (value: boolean) => void;
+    showBoardForm: boolean;
+    setShowBoardForm: (value: boolean) => void;
 };
 
-const CreateBoardForm = ({ setOpen }: CreateBoardFormProps) => {
-    //  TODO: maybe delete this in replace of EditBoardForm... this can have a variant for 'editing' | 'creating'... copy over some logic.
-    // keep track of local state, upon save add the board to db.
-    const [state, setState] = useState<{
-        boardTitle: string;
-        boardTag: string;
-        formErrors: {
-            boardTitle: string;
-        };
-        boardTitleValid: boolean;
-        formValid: boolean;
-    }>({
-        boardTitle: '',
-        boardTag: '',
-        formErrors: { boardTitle: '' },
-        boardTitleValid: false,
-        formValid: false,
-    });
+// Array of tags, can map over
+const initialBoardTags: BoardTags = [
+    {
+        id: 1,
+        color: { name: 'transparent', value: '#00ffffff', textDark: true },
+        text: '',
+    },
+];
 
-    // Zustand store state
-    const { setCurrentBoardSlug } = useKanbanStore();
+// object of columns, map through using column order.
+const initialColumns: Columns = {
+    'column-1': {
+        id: 'column-1',
+        title: '',
+        type: 'simple',
+        completedTaskOrder: 'noChange',
+        badgeColor: { name: 'transparent', value: '#00ffffff', textDark: true },
+        taskIds: ['task-1'],
+    },
+};
 
-    const router = useRouter();
+const initialColumnOrder: string[] = ['column-1'];
 
-    const { increaseBoardCount } = useKanbanStore();
+// column-1 should point to this, don't do anything further with this just save to db upon submit.
+const initialTasks: Tasks = {
+    'task-1': {
+        id: 1,
+        color: { name: 'transparent', value: '#00ffffff', textDark: true },
+        completed: false,
+        content: '',
+        updatedAt: '',
+        createdAt: '',
+    },
+};
 
-    const createBoardFormRef = useRef(null);
-    useOnClickOutside(createBoardFormRef, () => setOpen(false));
+const CreateBoardForm = ({
+    setShowBoardForm,
+    ...props
+}: CreateBoardFormProps) => {
+    // controlled inputs for form fields, everything we're editing
+    const [boardTitle, setBoardTitle] = useState<string>('');
+    // need separate form for editing a single tag
+    const [boardTags, setBoardTags] = useState<BoardTags>(initialBoardTags);
+    // need separate form for editing a single column
+    const [boardColumns, setBoardColumns] = useState<Columns>(initialColumns);
+    const [boardColumnOrder, setBoardColumnOrder] =
+        useState<string[]>(initialColumnOrder);
 
-    function handleUserInput(event: React.ChangeEvent<HTMLInputElement>) {
-        const name = event.currentTarget.name;
-        const value = event.currentTarget.value;
+    const { setCurrentBoardSlug, columnCount, setColumnCount, setMaxColumnId } =
+        useKanbanStore();
 
-        setState({
-            ...state,
-            [name]: value,
-        });
+    function handleBoardTitleInputChange(
+        event: React.ChangeEvent<HTMLInputElement>
+    ) {
+        setBoardTitle(event.currentTarget.value);
+    }
+
+    function handleShowEditColumn() {}
+
+    function handleAddColumn() {
+        if (boardColumns !== undefined) {
+            const newColumn: TColumn = {
+                id: `column-${getMaxIdFromString(boardColumns)}`,
+                title: '',
+                type: 'simple',
+                completedTaskOrder: 'noChange',
+                badgeColor: {
+                    name: 'transparent',
+                    value: '#00ffffff',
+                    textDark: true,
+                },
+                taskIds: [],
+            };
+            setBoardColumns({ ...boardColumns, newColumn });
+        } else {
+            throw new Error('Error trying to add a column.');
+        }
+    }
+
+    function handleAddTag() {
+        if (boardTags !== undefined) {
+            const newTag: BoardTag = {
+                id: boardTags.length + 1,
+                text: '',
+                color: {
+                    name: 'transparent',
+                    value: '#00ffffff',
+                    textDark: true,
+                },
+            };
+            setBoardTags([...boardTags, newTag]);
+        } else {
+            throw new Error('Error trying to add a tag.');
+        }
+    }
+
+    function handleCancelEdit() {
+        // reset state if cancel was click, assume user wishes for their changes to NOT be saved in any way.
+        resetState();
+        // close slide over
+        setShowBoardForm(false);
     }
 
     function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
-        event.preventDefault();
-        createBoard(state.boardTitle, state.boardTag);
-        increaseBoardCount();
-        setOpen(false);
+        // remember to set the key from task options object
+        db.transaction('rw', db.boards, async () => {
+            // modify the board state, assert board slug is not undefined.
+            await db.addBoard(
+                boardTitle,
+                boardTags,
+                initialTasks,
+                boardColumns,
+                boardColumnOrder
+            );
+        });
+        // // Catch modification error and generic error.
+        // .catch('ModifyError', (e: ModifyError) => {
+        //     // Failed with ModifyError, check e.failures.
+        //     console.error(
+        //         'ModifyError occurred: ' + e.failures.length + ' failures'
+        //     );
+        // })
+        // .catch((e: Error) => {
+        //     console.error('Generic error: ' + e);
+        // });
     }
 
-    // function validateField(name: string, value: string) {
-    //     let fieldValidationErrors = state.formErrors;
-    //     let boardTitleValid = state.boardTitleValid;
-    //     // let boardTagValid = state.boardTagValid;
+    function resetState() {
+        setBoardTitle('');
+        setBoardTags(initialBoardTags);
+        setBoardColumns(initialColumns);
+        setBoardColumnOrder(initialColumnOrder);
+    }
 
-    //     switch (name) {
-    //         case 'boardTitle':
-    //             boardTitleValid = value.length > 0;
-    //             fieldValidationErrors.boardTitle = boardTitleValid
-    //                 ? ''
-    //                 : 'invalid';
-    //             break;
-    //         // case 'boardTag':
-    //         //     boardTagValid = value.length > 0;
-    //         //     fieldValidationErrors.boardTag = boardTagValid ? '' : 'invalid';
-    //         //     break;
-    //     }
-
-    //     setState({
-    //         ...state,
-    //         formErrors: fieldValidationErrors,
-    //         boardTitleValid: boardTitleValid,
-    //     });
-    //     validateForm;
-    // }
-
-    // function validateForm() {
-    //     setState({
-    //         ...state,
-    //         formValid: state.boardTitleValid,
-    //     });
-    // }
-
-    const createBoard = async (title: string, tag: string) => {
-        const slug = stringToRandomSlug(title);
-        try {
-            db.addBoard(title, tag, slug);
-            console.info(
-                `A new board was created with title: ${title} and tag: ${tag}`
-            );
-            setCurrentBoardSlug(slug);
-            // push to board detail endpoint
-            router
-                .push(`/boards/${slug}`, undefined, { shallow: false })
-                .then(() => router.reload());
-        } catch (error) {
-            console.error(`Failed to add board`);
-            // push to fail page...
-            router.push(`/`);
-        }
-    };
-
-    // const FormErrors = (formErrors: {
-    //     boardTitle: string;
-    //     boardTag: string;
-    //     columnTitles: Set<string>;
-    // }) => {
-    //     // stateless functional component, iterates through form errors and displays them.
-    //     return (
-    //         <div>
-    //             {Object.keys(formErrors).map((fieldName, index) => {
-    //                 if (formErrors[fieldName].length > 0) {
-    //                     return (
-    //                         <p key={index}>
-    //                             {fieldName} {formErrors[fieldName]}
-    //                         </p>
-    //                     );
-    //                 } else {
-    //                     return '';
-    //                 }
-    //             })}
-    //         </div>
-    //     );
-    // };
+    const reportError = useCallback(({ message }: { message: string }) => {
+        // send message to notification service.
+    }, []);
 
     return (
-        <form
-            className="flex min-h-full items-center justify-center p-4 text-center"
-            onSubmit={handleSubmit}
-        >
-            <div
-                ref={createBoardFormRef}
-                className="flex items-center p-10 bg-gray-50 rounded-lg drop-shadow-lg w-1/2"
+        <Transition.Root show={props.showBoardForm} as={Fragment}>
+            <Dialog
+                as="div"
+                className="relative z-10"
+                onClose={setShowBoardForm}
             >
-                <div className="mt-1 flex flex-col w-full">
-                    <div className="flex mb-10">
-                        <h1 className="text-2xl text-gray-700">
-                            Create a New Board
-                        </h1>
-                    </div>
-                    <div className="grid grid-cols-5">
-                        <div className="col-span-3">
-                            <label
-                                htmlFor="boardTitle"
-                                className="block text-xl text-left font-medium text-gray-500 mb-2"
+                <Transition.Child
+                    as={Fragment}
+                    enter="ease-in-out duration-500"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in-out duration-500"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                </Transition.Child>
+                <div className="fixed inset-0 overflow-hidden">
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="transform transition ease-in-out duration-500 sm:duration-700"
+                                enterFrom="translate-x-full"
+                                enterTo="translate-x-0"
+                                leave="transform transition ease-in-out duration-500 sm:duration-700"
+                                leaveFrom="translate-x-0"
+                                leaveTo="translate-x-full"
                             >
-                                Title *
-                            </label>
-                            {/* control input, MUST enter title for form to be submitted. */}
-                            <input
-                                type="text"
-                                name="boardTitle"
-                                id="boardTitle"
-                                autoComplete="boardTitle"
-                                className="block w-full rounded-md border-gray-300 shadow-sm outline-none focus:drop-shadow-lg transition-all duration-500 sm:text-xl p-4"
-                                value={state.boardTitle}
-                                onChange={handleUserInput}
-                            />
-                        </div>
-                        <div className="col-span-2 ml-4">
-                            <label
-                                htmlFor="boardTag"
-                                className="block text-xl text-left font-medium text-gray-500 mb-2"
-                            >
-                                Tag
-                            </label>
-                            <input
-                                type="text"
-                                name="boardTag"
-                                id="boardTag"
-                                autoComplete="boardTag"
-                                className="block w-full rounded-md outline-none border-gray-300 shadow-sm focus:drop-shadow-lg transition-all duration-500 sm:text-xl p-4"
-                                value={state.boardTag}
-                                onChange={handleUserInput}
-                            />
-                        </div>
-                    </div>
-                    <div className="flex flex-row justify-end mt-10">
-                        {/* <button
-                            className="px-4 py-2 bg-gradient-to-r from-slate-300 to-slate-400 rounded-lg text-gray-50 drop-shadow-md transition-transform hover:scale-105 duration-500"
-                            onClick={() => {}}
-                        >
-                            Cancel
-                        </button> */}
-                        <div className="group items-end content-end inline-flex">
-                            {state.boardTitle.length < 1 && (
-                                <span className="font-light italic text-sm mr-4 opacity-0 group-hover:opacity-100 transition-color duration-500">
-                                    Title cannot be empty
-                                </span>
-                            )}
+                                <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+                                    <form
+                                        className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
+                                        onSubmit={handleSubmit}
+                                    >
+                                        <div className="h-0 flex-1 overflow-y-auto">
+                                            <div className="bg-offset-bg py-6 px-4 sm:px-6">
+                                                <div className="flex items-center justify-between">
+                                                    <Dialog.Title className="text-lg font-medium text-slate-600">
+                                                        {boardTitle}
+                                                    </Dialog.Title>
 
-                            <button
-                                className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 rounded-lg text-gray-50 drop-shadow-md transition-transform hover:scale-105 duration-500 disabled:bg-green-600/[0.5] disabled:cursor-not-allowed"
-                                type="submit"
-                                disabled={
-                                    state.boardTitle.length < 1 ? true : false
-                                }
-                            >
-                                Save
-                            </button>
+                                                    <div className="ml-3 flex h-7 items-center">
+                                                        <button
+                                                            type="button"
+                                                            className="rounded-md transparent text-slate-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                                                            onClick={() =>
+                                                                setShowBoardForm(
+                                                                    false
+                                                                )
+                                                            }
+                                                        >
+                                                            <span className="sr-only">
+                                                                Close panel
+                                                            </span>
+                                                            <MdClose
+                                                                className="h-6 w-6"
+                                                                aria-hidden="true"
+                                                            />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div className="mt-1">
+                                                    <p className="text-sm text-slate-500">
+                                                        Fill out the information
+                                                        below and do not forget
+                                                        to save!
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-1 flex-col justify-between">
+                                                <div className="px-2 sm:px-4">
+                                                    <div className="space-y-4 pt-6 pb-5 px-1">
+                                                        <div>
+                                                            <label
+                                                                htmlFor="boardTitle"
+                                                                className="block text-sm font-medium text-slate-600"
+                                                            >
+                                                                Board Title
+                                                            </label>
+                                                            <div className="mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    name="boardTitle"
+                                                                    id="boardTitle"
+                                                                    value={
+                                                                        boardTitle
+                                                                    }
+                                                                    placeholder={
+                                                                        boardTitle
+                                                                            ? boardTitle
+                                                                            : 'Give your board a title.'
+                                                                    }
+                                                                    className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                                    onChange={
+                                                                        handleBoardTitleInputChange
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {/* Map through tags, on edit show tag form. */}
+
+                                                    <div
+                                                        id="tags"
+                                                        className="items-center justify-between gap-3 w-full flex-wrap space-y-4 max-h-96 overflow-y-auto no-scrollbar pb-4 px-1"
+                                                    >
+                                                        {boardTags ? (
+                                                            // if a user has inputted some tags already, map through them with inputs provided.
+                                                            boardTags.map(
+                                                                (
+                                                                    tag,
+                                                                    index
+                                                                ) => (
+                                                                    <div
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        className="space-y-4"
+                                                                    >
+                                                                        <TagForm
+                                                                            text={
+                                                                                tag.text
+                                                                            }
+                                                                            color={
+                                                                                tag.color
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                )
+                                                            )
+                                                        ) : (
+                                                            // if the user has not provided any tags (undefined), allow them to add some.
+                                                            <div className="flex flex-row gap-3 justify-between space-y-4">
+                                                                <TagForm
+                                                                    text=""
+                                                                    color={{
+                                                                        name: 'transparent',
+                                                                        value: '#00ffffff',
+                                                                        textDark:
+                                                                            true,
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="mb-6">
+                                                        <div className="flex space-x-3 items-end text-sm group">
+                                                            <button
+                                                                type="button"
+                                                                className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow"
+                                                                onClick={
+                                                                    handleAddTag
+                                                                }
+                                                            >
+                                                                <span className="sr-only">
+                                                                    Add a Column
+                                                                </span>
+                                                                <MdOutlineAdd
+                                                                    className="h-5 w-5"
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </button>
+                                                            <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                                Add a Tag
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Map through columns, on edit show column form. */}
+                                                    <div
+                                                        id="columns"
+                                                        className="items-center justify-between gap-3 w-full flex-wrap max-h-[30rem] overflow-y-auto no-scrollbar mt-8 px-1"
+                                                    >
+                                                        {boardColumns &&
+                                                            Object.values(
+                                                                boardColumns
+                                                            ).map(
+                                                                (
+                                                                    column: TColumn,
+                                                                    index: number
+                                                                ) => {
+                                                                    return (
+                                                                        // return column info with edit button
+                                                                        <div
+                                                                            className="mb-4 space-y-4 pb-4"
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                        >
+                                                                            <ColumnForm
+                                                                                index={
+                                                                                    index
+                                                                                }
+                                                                                column={
+                                                                                    column
+                                                                                }
+                                                                            />
+                                                                        </div>
+                                                                        // return column form on edit.
+                                                                    );
+                                                                }
+                                                            )}
+                                                    </div>
+                                                    <div className="my-6">
+                                                        <div className="flex space-x-3 items-end text-sm group">
+                                                            <button
+                                                                type="button"
+                                                                className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow"
+                                                                onClick={
+                                                                    handleAddColumn
+                                                                }
+                                                            >
+                                                                <span className="sr-only">
+                                                                    Add a Column
+                                                                </span>
+                                                                <MdOutlineAdd
+                                                                    className="h-5 w-5"
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </button>
+                                                            <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                                Add a Column
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-shrink-0 justify-end px-4 py-4">
+                                            <button
+                                                type="button"
+                                                className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                                onClick={handleCancelEdit}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-dark-alt focus:outline-none transition-color duration-300"
+                                            >
+                                                Save
+                                            </button>
+                                        </div>
+                                    </form>
+                                </Dialog.Panel>
+                            </Transition.Child>
                         </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </Dialog>
+        </Transition.Root>
     );
 };
 

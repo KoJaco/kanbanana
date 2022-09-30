@@ -1,5 +1,12 @@
 import Dexie, { Table } from 'dexie';
-import { Board, BoardTags, BoardTag } from '@/core/types/kanbanBoard';
+import {
+    Board,
+    BoardTags,
+    BoardTag,
+    Columns,
+    Tasks,
+} from '@/core/types/kanbanBoard';
+import { stringToRandomSlug } from '@/core/utils/misc';
 
 // https://dexie.org/docs/Version/Version.stores()
 // https://dexie.org/docs/Table/Table.update()
@@ -51,50 +58,56 @@ export class KanbanBoardDexie extends Dexie {
             });
     }
 
-    addBoard(boardTitle: string, boardTags: BoardTags, boardSlug: string) {
+    addBoard(
+        title: string,
+        tags: BoardTags,
+        tasks: Tasks,
+        columns: Columns,
+        columnOrder: string[]
+    ) {
         // initialising a board after use inputs a title and a tag
         // returns a promise that resolves when the underlying indexedDB request succeeds.
         // use promise chaining or async/await pattern.
         return this.boards.add({
-            title: boardTitle,
-            tags: boardTags,
-            slug: boardSlug,
+            title: title,
+            tags: tags,
+            slug: stringToRandomSlug(title),
             // is this guaranteed to be unique? no, practically impossible but still no... need to fix.
             createdAt: new Date(Date.now()).toLocaleString(),
             updatedAt: new Date(Date.now()).toLocaleString(),
+            tasks: tasks,
             // initialise tasks, always start with one blank task.
-            tasks: {
-                'task-1': {
-                    id: 1,
-                    content: '',
-                    color: {
-                        r: 255,
-                        g: 255,
-                        b: 255,
-                        a: 1,
-                    },
-                    completed: false,
-                    createdAt: new Date(Date.now()).toLocaleString(),
-                    updatedAt: new Date(Date.now()).toLocaleString(),
-                },
-            },
+            // tasks: {
+            //     'task-1': {
+            //         id: 1,
+            //         content: '',
+            //         color: {
+            //             name: 'transparent',
+            //             value: '#00ffffff',
+            //             textDark: true,
+            //         },
+            //         completed: false,
+            //         createdAt: new Date(Date.now()).toLocaleString(),
+            //         updatedAt: new Date(Date.now()).toLocaleString(),
+            //     },
+            // },
+            columns: columns,
             // initialise columns, always start with one blank column.
-            columns: {
-                'column-1': {
-                    id: 'column-1',
-                    title: '',
-                    badgeColor: {
-                        r: 255,
-                        g: 255,
-                        b: 255,
-                        a: 1,
-                    },
-                    type: 'simple',
-                    completedTaskOrder: 'noChange',
-                    taskIds: ['task-1'],
-                },
-            },
-            columnOrder: ['column-1'],
+            // columns: {
+            //     'column-1': {
+            //         id: 'column-1',
+            //         title: '',
+            //         badgeColor: {
+            //             name: 'transparent',
+            //             value: '#00ffffff',
+            //             textDark: true,
+            //         },
+            //         type: 'simple',
+            //         completedTaskOrder: 'noChange',
+            //         taskIds: ['task-1'],
+            //     },
+            // },
+            columnOrder: columnOrder,
         });
     }
 

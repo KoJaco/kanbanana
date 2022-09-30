@@ -12,17 +12,14 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { ModifyError } from 'dexie';
 import { db } from '@/server/db';
 import { stringToRandomSlug } from '@/core/utils/misc';
-import {
-    getMaxIdFromString,
-    initEmptyColumns,
-    initEmptyTags,
-} from '@/core/utils/kanbanBoard';
+import { getMaxIdFromString } from '@/core/utils/kanbanBoard';
 
 import { useKanbanStore } from '@/stores/KanbanStore';
 
 import ColumnForm from './ColumnForm';
 import TagForm from './TagForm';
 import router from 'next/router';
+
 const initialBoardTag = {
     id: 1,
     color: '#fff',
@@ -74,7 +71,19 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
             setCurrentBoardSlug(board.slug);
             setBoardColumns(board.columns);
             setBoardTags(
-                board.tags ? board.tags : [{ id: 1, text: '', color: '#fff' }]
+                board.tags
+                    ? board.tags
+                    : [
+                          {
+                              id: 1,
+                              text: '',
+                              color: {
+                                  name: 'transparent',
+                                  value: '#00ffffff',
+                                  textDark: true,
+                              },
+                          },
+                      ]
             );
             setColumnCount(Object.keys(board.columns).length);
             setMaxColumnId(getMaxIdFromString(board.columns));
@@ -100,10 +109,9 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
                 type: 'simple',
                 completedTaskOrder: 'noChange',
                 badgeColor: {
-                    r: 255,
-                    g: 255,
-                    b: 255,
-                    a: 1,
+                    name: 'transparent',
+                    value: '#00ffffff',
+                    textDark: true,
                 },
                 taskIds: [],
             };
@@ -118,7 +126,11 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
             const newTag: BoardTag = {
                 id: boardTags.length + 1,
                 text: '',
-                color: '#fff',
+                color: {
+                    name: 'transparent',
+                    value: '#00ffffff',
+                    textDark: true,
+                },
             };
             setBoardTags([...boardTags, newTag]);
         } else {
@@ -133,7 +145,19 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
             setCurrentBoardSlug(board.slug);
             setBoardColumns(board.columns);
             setBoardTags(
-                board.tags ? board.tags : [{ id: 1, text: '', color: '#fff' }]
+                board.tags
+                    ? board.tags
+                    : [
+                          {
+                              id: 1,
+                              text: '',
+                              color: {
+                                  name: 'transparent',
+                                  value: '#00ffffff',
+                                  textDark: true,
+                              },
+                          },
+                      ]
             );
             setColumnCount(Object.keys(board.columns).length);
             setMaxColumnId(getMaxIdFromString(board.columns));
@@ -170,28 +194,6 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
                 console.error('Generic error: ' + e);
             });
     }
-
-    // const createBoard = async (board: Board) => {
-    //     const slug = stringToRandomSlug(board.title);
-    //     try {
-    //         db.boards.add(board, [slug]);
-    //         console.info(
-    //             `A new board was created with title: ${board.title} and tag: ${board.tag}`
-    //         );
-    //         setCurrentBoardSlug(slug);
-    //         // push to board detail endpoint
-    //         router
-    //             .push(`/boards/${slug}`, undefined, { shallow: false })
-    //             .then(() => router.reload());
-    //     } catch (error) {
-    //         console.error(`Failed to add board`);
-    //         // push to fail page...
-    //         router.push(`/`);
-    //     }
-    // };
-
-    // if ((!board && boardColumns === undefined) || boardTags == undefined)
-    //     return null;
 
     return (
         <Transition.Root show={props.showBoardForm} as={Fragment}>
@@ -329,7 +331,12 @@ const BoardForm = ({ setShowBoardForm, ...props }: BoardFormProps) => {
                                                             <div className="flex flex-row gap-3 justify-between space-y-4">
                                                                 <TagForm
                                                                     text=""
-                                                                    color=""
+                                                                    color={{
+                                                                        name: 'transparent',
+                                                                        value: '#00ffffff',
+                                                                        textDark:
+                                                                            true,
+                                                                    }}
                                                                 />
                                                             </div>
                                                         )}
