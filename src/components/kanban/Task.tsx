@@ -95,12 +95,12 @@ const Task = ({ id, editing = false, ...props }: TaskProps) => {
     return (
         <div
             ref={isEditingRef}
-            className="w-full py-1 px-2 border-[1.5px] border-gray-300 rounded-lg bg-gray-50  focus-within:border-gray-500 focus-within:ring-0.5 focus-within:ring-slate-500 focus-within:drop-shadow group h-full max-w-auto"
+            className="w-full py-1 px-2 border-[1.5px] border-gray-300 rounded-sm bg-gray-50  focus-within:border-gray-500 focus-within:ring-0.5 focus-within:ring-slate-500 focus-within:drop-shadow group h-full max-w-auto"
         >
             <BaseModal open={showColorPicker} setOpen={setShowColorPicker}>
                 <div className="flex min-h-full items-center justify-center p-4 text-center">
                     <div
-                        className="bg-gray-50 py-8 px-12 rounded-md "
+                        className="bg-gray-50 py-8 px-12 rounded-sm"
                         ref={colorPickerRef}
                     >
                         <div className="flex justify-between items-center pb-2 mb-4 text-slate-600 text-xl font-regular">

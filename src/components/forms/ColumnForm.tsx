@@ -34,22 +34,35 @@ const taskSortingOptions: {
 ];
 
 const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
-    const [title, setTitle] = useState('');
-    const [columnType, setColumnType] = useState(columnOptions[0]);
+    const [title, setTitle] = useState(
+        props.column === undefined ? '' : props.column.title
+    );
+    const [columnType, setColumnType] = useState(
+        props.column === undefined
+            ? columnOptions[0]
+            : columnOptions[findColumnTypeIndex(props.column.type)]
+    );
     const [taskSortingType, setTaskSortingType] = useState(
-        taskSortingOptions[0]
+        props.column === undefined
+            ? taskSortingOptions[0]
+            : taskSortingOptions[
+                  findTaskSortingTypeIndex(props.column.completedTaskOrder)
+              ]
     );
     const [taskIds, setTaskIds] = useState<string[]>(
         props.id === 1 ? ['task-1'] : []
     );
 
     const [showColorPicker, setShowColorPicker] = useState(false);
-
-    const [badgeColor, setBadgeColor] = useState<Color>({
-        name: 'white',
-        value: '#fff',
-        textDark: true,
-    });
+    const [badgeColor, setBadgeColor] = useState<Color>(
+        props.column === undefined
+            ? {
+                  name: 'white',
+                  value: '#fff',
+                  textDark: true,
+              }
+            : props.column.badgeColor
+    );
 
     const colorPickerRef = useRef(null);
     useOnClickOutside(colorPickerRef, () => setShowColorPicker(false));
@@ -63,6 +76,27 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
     }
     function handleToggleColorPicker() {
         setShowColorPicker(!showColorPicker);
+    }
+
+    function findColumnTypeIndex(type: 'simple' | 'checklist') {
+        // returns the index of the matching column options, else returns 0
+        for (let i = 0; i < columnOptions.length; i++) {
+            let option = columnOptions[i];
+            if (option?.key === type) {
+                return i;
+            }
+        }
+        return 0;
+    }
+    function findTaskSortingTypeIndex(type: 'start' | 'end' | 'noChange') {
+        // returns the index of the matching column options, else returns 0
+        for (let i = 0; i < taskSortingOptions.length; i++) {
+            let option = taskSortingOptions[i];
+            if (option?.key === type) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     // need to conditionally change styling using this const, as HeadlessUi Listbox doesn't seem to pass down disabled?
@@ -335,10 +369,13 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                 <div className="flex space-x-3 items-end text-sm group mt-3">
                     <button
                         type="button"
-                        className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow"
+                        className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed"
                         onClick={() => {
                             handleAddColumn({
-                                id: `column-${props.id}`,
+                                id:
+                                    props.column === undefined
+                                        ? `column-${props.id}`
+                                        : props.column.id,
                                 title: title,
                                 type: columnType!.key,
                                 completedTaskOrder: taskSortingType!.key,
@@ -346,15 +383,16 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                                 taskIds: taskIds,
                             });
                         }}
+                        disabled={title.length === 0}
                     >
                         <span className="sr-only">Add</span>
                         <MdOutlineAdd className="h-5 w-5" aria-hidden="true" />
                     </button>
-                    {/* <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                                        Add a
-                                                                        Tag
-                                                                    </span> */}
-                    {/*  */}
+                    {title.length === 0 && (
+                        <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            You must add a title to add a column.
+                        </span>
+                    )}
                 </div>
                 {showColorPicker && (
                     <div

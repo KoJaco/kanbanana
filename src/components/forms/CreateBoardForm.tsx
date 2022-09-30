@@ -80,22 +80,25 @@ const CreateBoardForm = ({
     setShowBoardForm,
     ...props
 }: CreateBoardFormProps) => {
+    // TODO: Need to fix edit column form, it updates all columns when saving. also, change the plus into a tick icon.
     // controlled inputs for form fields, everything we're editing
     const [boardTitle, setBoardTitle] = useState<string>('');
     // need separate form for editing a single tag
     const [boardTags, setBoardTags] = useState<BoardTags>();
     // need separate form for editing a single column
-    const [boardColumns, setBoardColumns] = useState<Columns>();
+    const [boardColumns, setBoardColumns] = useState<Columns | undefined>();
     const [boardColumnOrder, setBoardColumnOrder] = useState<string[]>();
 
     const [showTagForm, setShowTagForm] = useState<boolean>(false);
     const [showColumnForm, setShowColumnForm] = useState<boolean>(false);
 
+    const [columnFormState, setColumnFormState] = useState<'add' | 'edit'>(
+        'add'
+    );
+    const [currentColumnId, setCurrentColumnId] = useState<string>('column-1');
+
     const { setCurrentBoardSlug, columnCount, setColumnCount, setMaxColumnId } =
         useKanbanStore();
-
-    console.log('boardCOlumnOrder ' + boardColumnOrder);
-    console.log(boardColumns !== undefined && Object.keys(boardColumns));
 
     function handleBoardTitleInputChange(
         event: React.ChangeEvent<HTMLInputElement>
@@ -148,6 +151,19 @@ const CreateBoardForm = ({
         }
     }
 
+    function handleEditColumn(columnId: string) {
+        setCurrentColumnId(columnId);
+        setColumnFormState('edit');
+        if (showColumnForm) {
+            setShowColumnForm(false);
+            setTimeout(() => {
+                setShowColumnForm(true);
+            }, 100);
+        } else {
+            handleToggleColumnForm();
+        }
+    }
+
     function handleAddTag(tag: BoardTag) {
         if (boardTags === undefined || boardTags.length === 0) {
             setBoardTags([tag]);
@@ -156,6 +172,7 @@ const CreateBoardForm = ({
             newTags.push(tag);
             setBoardTags(newTags);
         }
+        setShowTagForm(false);
     }
 
     function handleRemoveTag(index: number) {
@@ -314,7 +331,7 @@ const CreateBoardForm = ({
                                         className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
                                         onSubmit={handleSubmit}
                                     >
-                                        <div className="h-0 flex-1 overflow-y-auto">
+                                        <div className="h-0 flex-1 overflow-y-auto no-scrollbar">
                                             {/* HEADER SECTION */}
                                             <div className="bg-offset-bg py-6 px-4 sm:px-6">
                                                 <div className="flex items-center justify-between">
@@ -450,7 +467,7 @@ const CreateBoardForm = ({
                                                                     </div>
                                                                 </div>
                                                                 {/* columns */}
-                                                                <div className="w-auto max-h-96 overflow-y-auto">
+                                                                <div className="w-auto max-h-96 overflow-y-auto no-scrollbar">
                                                                     <label
                                                                         htmlFor="board-columns"
                                                                         className="block text-sm font-medium text-slate-600 "
@@ -488,13 +505,27 @@ const CreateBoardForm = ({
                                                                                                     column
                                                                                                         .badgeColor
                                                                                                         .value,
-                                                                                                color: column
-                                                                                                    .badgeColor
-                                                                                                    .textDark
-                                                                                                    ? '#333'
-                                                                                                    : '#fff',
                                                                                             }}
-                                                                                        ></div>
+                                                                                        >
+                                                                                            <button
+                                                                                                type="button"
+                                                                                                className="opacity-0 group-hover:opacity-100 flex justify-end transition-opacity duration-300"
+                                                                                                style={{
+                                                                                                    color: column
+                                                                                                        .badgeColor
+                                                                                                        .textDark
+                                                                                                        ? '#333'
+                                                                                                        : '#fff',
+                                                                                                }}
+                                                                                                onClick={() =>
+                                                                                                    handleEditColumn(
+                                                                                                        column.id
+                                                                                                    )
+                                                                                                }
+                                                                                            >
+                                                                                                <MdModeEdit className="w-5" />
+                                                                                            </button>
+                                                                                        </div>
                                                                                         <div className="flex flex-col p-2 divide-x">
                                                                                             {/* upper flex, column number and badge
                                                                                             <div
@@ -562,14 +593,14 @@ const CreateBoardForm = ({
                                                                                             <button
                                                                                                 type="button"
                                                                                                 name="delete-tag"
-                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-2"
                                                                                                 onClick={() =>
                                                                                                     handleRemoveColumn(
                                                                                                         column.id
                                                                                                     )
                                                                                                 }
                                                                                             >
-                                                                                                <TiDelete className="text-slate-600" />
+                                                                                                <TiDelete className="text-slate-600 w-5 h-5" />
                                                                                             </button>
                                                                                         </div>
                                                                                     </div>
@@ -653,15 +684,35 @@ const CreateBoardForm = ({
                                                                 leaveFrom="transform opacity-100 scale-100"
                                                                 leaveTo="transform opacity-0 scale-95"
                                                             >
-                                                                <ColumnForm
-                                                                    id={
-                                                                        retrieveMaxColumnId() +
-                                                                        1
-                                                                    }
-                                                                    handleAddColumn={
-                                                                        handleAddColumn
-                                                                    }
-                                                                />
+                                                                {columnFormState ===
+                                                                    'edit' &&
+                                                                boardColumns !==
+                                                                    undefined ? (
+                                                                    <ColumnForm
+                                                                        id={
+                                                                            retrieveMaxColumnId() +
+                                                                            1
+                                                                        }
+                                                                        column={
+                                                                            boardColumns[
+                                                                                currentColumnId
+                                                                            ]
+                                                                        }
+                                                                        handleAddColumn={
+                                                                            handleAddColumn
+                                                                        }
+                                                                    />
+                                                                ) : (
+                                                                    <ColumnForm
+                                                                        id={
+                                                                            retrieveMaxColumnId() +
+                                                                            1
+                                                                        }
+                                                                        handleAddColumn={
+                                                                            handleAddColumn
+                                                                        }
+                                                                    />
+                                                                )}
                                                             </Transition>
                                                         </div>
                                                     </div>

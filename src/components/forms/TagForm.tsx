@@ -100,7 +100,7 @@ const TagForm = (props: TagFormProps) => {
                 <div className="flex space-x-3 items-end text-sm group">
                     <button
                         type="button"
-                        className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow"
+                        className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed"
                         onClick={() =>
                             props.handleAddTag({
                                 id: props.id,
@@ -108,14 +108,16 @@ const TagForm = (props: TagFormProps) => {
                                 color: colorState,
                             })
                         }
+                        disabled={tagText.length === 0}
                     >
                         <span className="sr-only">Add</span>
                         <MdOutlineAdd className="h-5 w-5" aria-hidden="true" />
                     </button>
-                    {/* <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                                        Add a
-                                                                        Tag
-                                                                    </span> */}
+                    {tagText.length === 0 && (
+                        <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            Your tag cannot be empty.
+                        </span>
+                    )}
                 </div>
             </div>
 
