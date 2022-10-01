@@ -5,7 +5,7 @@ import { BsBrush } from 'react-icons/bs';
 import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
 import { Color } from '@/core/types/kanbanBoard';
 import { useOnClickOutside } from '@/core/hooks/index';
-import { MdOutlineAdd } from 'react-icons/md';
+import { MdOutlineDone } from 'react-icons/md';
 import { BoardTag } from '@/core/types/kanbanBoard';
 
 type TagFormProps = {
@@ -111,7 +111,7 @@ const TagForm = (props: TagFormProps) => {
                         disabled={tagText.length === 0}
                     >
                         <span className="sr-only">Add</span>
-                        <MdOutlineAdd className="h-5 w-5" aria-hidden="true" />
+                        <MdOutlineDone className="h-5 w-5" aria-hidden="true" />
                     </button>
                     {tagText.length === 0 && (
                         <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

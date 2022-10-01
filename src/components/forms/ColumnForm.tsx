@@ -3,7 +3,7 @@ import { Listbox, Transition } from '@headlessui/react';
 import { BsBrush, BsCheck, BsChevronBarDown } from 'react-icons/bs';
 import { TColumn, Color } from '@/core/types/kanbanBoard';
 import clsx from 'clsx';
-import { MdOutlineAdd } from 'react-icons/md';
+import { MdOutlineDone } from 'react-icons/md';
 import { useOnClickOutside } from '@/core/hooks/index';
 import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
 
@@ -34,6 +34,9 @@ const taskSortingOptions: {
 ];
 
 const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
+    const [columnId, setColumnId] = useState<string>(
+        props.column === undefined ? `column-${props.id}` : props.column.id
+    );
     const [title, setTitle] = useState(
         props.column === undefined ? '' : props.column.title
     );
@@ -50,7 +53,7 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
               ]
     );
     const [taskIds, setTaskIds] = useState<string[]>(
-        props.id === 1 ? ['task-1'] : []
+        columnId === 'column-1' ? ['task-1'] : []
     );
 
     const [showColorPicker, setShowColorPicker] = useState(false);
@@ -63,6 +66,8 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
               }
             : props.column.badgeColor
     );
+
+    console.log(columnId);
 
     const colorPickerRef = useRef(null);
     useOnClickOutside(colorPickerRef, () => setShowColorPicker(false));
@@ -106,10 +111,7 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
     console.log('id being passed is ' + props.id);
     return (
         <>
-            <div
-                // make the id be the column key after I've refactored this component.
-                id={`column-${props.id}`}
-            >
+            <div id={columnId}>
                 <div className="flex justify-between w-full gap-x-2 mb-3">
                     {/* Column Title input */}
                     <div className="w-full">
@@ -369,24 +371,24 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                 <div className="flex space-x-3 items-end text-sm group mt-3">
                     <button
                         type="button"
-                        className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed"
+                        className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary  drop-shadow disabled:cursor-not-allowed"
                         onClick={() => {
                             handleAddColumn({
-                                id:
-                                    props.column === undefined
-                                        ? `column-${props.id}`
-                                        : props.column.id,
+                                id: columnId,
                                 title: title,
                                 type: columnType!.key,
                                 completedTaskOrder: taskSortingType!.key,
                                 badgeColor: badgeColor,
-                                taskIds: taskIds,
+                                taskIds: [],
                             });
                         }}
                         disabled={title.length === 0}
                     >
                         <span className="sr-only">Add</span>
-                        <MdOutlineAdd className="h-5 w-5" aria-hidden="true" />
+                        <MdOutlineDone
+                            className="h-5 w-5 "
+                            aria-hidden="true"
+                        />
                     </button>
                     {title.length === 0 && (
                         <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

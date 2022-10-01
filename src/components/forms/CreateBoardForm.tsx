@@ -9,6 +9,7 @@ import {
     MdClose,
     MdOutlineAdd,
     MdModeEdit,
+    MdOutlineDone,
     MdFormatListBulleted,
     MdOutlineChecklist,
     MdSort,
@@ -106,24 +107,25 @@ const CreateBoardForm = ({
         setBoardTitle(event.currentTarget.value);
     }
 
-    function initNewColumn() {
-        if (boardColumns !== undefined) {
-            const columnId = `column-${getMaxIdFromString(boardColumns)}`;
-            const newColumn: TColumn = {
-                id: columnId,
-                title: '',
-                type: 'simple',
-                completedTaskOrder: 'noChange',
-                badgeColor: { name: 'white', value: 'fff', textDark: true },
-                taskIds: columnId === 'column-1' ? ['task-1'] : [],
-            };
-            return newColumn;
-        } else {
-            throw new Error('Error trying to initialise new column.');
-        }
-    }
+    // function initNewColumn() {
+    //     if (boardColumns !== undefined) {
+    //         const columnId = `column-${getMaxIdFromString(boardColumns)}`;
+    //         const newColumn: TColumn = {
+    //             id: columnId,
+    //             title: '',
+    //             type: 'simple',
+    //             completedTaskOrder: 'noChange',
+    //             badgeColor: { name: 'white', value: 'fff', textDark: true },
+    //             taskIds: columnId === 'column-1' ? ['task-1'] : [],
+    //         };
+    //         return newColumn;
+    //     } else {
+    //         throw new Error('Error trying to initialise new column.');
+    //     }
+    // }
 
     function handleAddColumn(column: TColumn) {
+        console.log('add column... columnId: ', column.id);
         if (boardColumnOrder === undefined || boardColumnOrder.length === 0) {
             setBoardColumns({ [column.id]: column });
             setBoardColumnOrder([column.id]);
@@ -134,6 +136,13 @@ const CreateBoardForm = ({
             setBoardColumnOrder(newColumnOrder);
         }
         setShowColumnForm(false);
+    }
+
+    function handleUpdateColumn(column: TColumn) {
+        console.log('edit column ... columnId: ', column.id);
+        setBoardColumns({ ...boardColumns, [column.id]: column });
+        setShowColumnForm(false);
+        setColumnFormState('add');
     }
 
     function handleRemoveColumn(columnId: string) {
@@ -206,17 +215,22 @@ const CreateBoardForm = ({
     }
 
     function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
+        // insert an initial task in the first column, this is necessary so that auto creation of IDS works in our indexDB
         let tags = boardTags === undefined ? initialTags : boardTags;
         let columns =
             boardColumns === undefined ? initialColumns : boardColumns;
+
+        if (boardColumns !== undefined) {
+            // if the user has made some columns, make sure that the first column references the first task.
+            // object ordering is not guaranteed, this is also NOT the very optimised as we're creating an array of all columns just to insert one value.
+            Object.values(columns)[0]!.taskIds = ['task-1'];
+        }
         let columnOrder =
             boardColumnOrder === undefined
                 ? initialColumnOrder
                 : boardColumnOrder;
-        console.log(boardTitle);
         // remember to set the key from task options object
         db.transaction('rw', db.boards, async () => {
-            // modify the board state, assert board slug is not undefined.
             await db.addBoard(
                 boardTitle,
                 tags,
@@ -699,7 +713,7 @@ const CreateBoardForm = ({
                                                                             ]
                                                                         }
                                                                         handleAddColumn={
-                                                                            handleAddColumn
+                                                                            handleUpdateColumn
                                                                         }
                                                                     />
                                                                 ) : (
