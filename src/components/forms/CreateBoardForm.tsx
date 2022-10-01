@@ -223,13 +223,13 @@ const CreateBoardForm = ({
         if (boardColumns !== undefined) {
             // if the user has made some columns, make sure that the first column references the first task.
             // object ordering is not guaranteed, this is also NOT the very optimised as we're creating an array of all columns just to insert one value.
+            // if boardColumns is undefined, we will have used initialColumns, which references task-1
             Object.values(columns)[0]!.taskIds = ['task-1'];
         }
         let columnOrder =
             boardColumnOrder === undefined
                 ? initialColumnOrder
                 : boardColumnOrder;
-        // remember to set the key from task options object
         db.transaction('rw', db.boards, async () => {
             await db.addBoard(
                 boardTitle,

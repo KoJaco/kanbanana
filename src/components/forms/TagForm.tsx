@@ -122,10 +122,7 @@ const TagForm = (props: TagFormProps) => {
             </div>
 
             {showColorPicker && (
-                <div
-                    ref={colorPickerRef}
-                    className="flex justify-center relative mt-4"
-                >
+                <div ref={colorPickerRef} className="relative mt-4">
                     <ColorPickerPalette handlePickColor={handleSetColor} />
                 </div>
             )}

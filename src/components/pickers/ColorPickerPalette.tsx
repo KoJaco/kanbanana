@@ -20,7 +20,8 @@ const ColorPickerPalette = (props: ColorPickerPaletteProps) => {
     }, []);
 
     return (
-        <div className="drop-shadow-sm z-1000 hover:scale-105 hover:drop-shadow-lg transition-transform duration-300">
+        // positioned absolutely to be like a tooltip, need to select direction.
+        <div className="absolute right top drop-shadow-sm z-1000 hover:scale-105 hover:drop-shadow-lg transition-transform duration-300">
             <div className="p-4 shadow-lg grid grid-cols-10 justify-start items-end w-60 max-h-40 overflow-y-auto rounded-md bg-white gap-y-1 gap-x-1 no-scrollbar">
                 {colorPalette.map((color, index) => (
                     <button
