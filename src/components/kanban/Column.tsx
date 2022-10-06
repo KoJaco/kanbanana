@@ -203,7 +203,7 @@ const Column = ({ children, columnTasks, ...props }: ColumnProps) => {
             <Draggable draggableId={props.column.id} index={props.index}>
                 {(draggableProvided) => (
                     <div
-                        className="flex flex-col w-52 md:w-80 lg:w-96 xl:w-[30rem] sm:px-1 bg-gray-100 mx-1 rounded-sm group"
+                        className="flex flex-col w-52 md:w-80 lg:w-96 xl:w-[30rem] bg-gray-100 sm:px-1 mx-1 rounded-md group"
                         {...draggableProvided.draggableProps}
                         ref={draggableProvided.innerRef}
                     >

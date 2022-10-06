@@ -29,6 +29,8 @@ import {
 } from 'react-icons/hi';
 import { FiEdit } from 'react-icons/fi';
 
+import Tag from '@/components/elements/Tag';
+
 type KanbanProps = {
     slug: string;
 };
@@ -324,12 +326,27 @@ const Kanban = ({ slug }: KanbanProps) => {
                                 ? 'Add a Board Title...'
                                 : boardState.title}
                         </h1>
+
                         <button
                             className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
                             onClick={() => setShowBoardForm(true)}
                         >
                             <MdOutlineEdit className="w-5 h-5" />
                         </button>
+                    </div>
+                    <div className="flex justify-between items-end gap-8">
+                        <div>
+                            {boardState.tags?.map((tag) => (
+                                <div className="inline-flex" key={tag.id}>
+                                    <Tag text={tag.text} color={tag.color} />
+                                </div>
+                            ))}
+                        </div>
+                        <div>
+                            <p className="text-sm font-light p-2 text-slate-600">
+                                {boardState.updatedAt}
+                            </p>
+                        </div>
                     </div>
                 </div>
                 {/* Carousel component  */}

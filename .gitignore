@@ -44,3 +44,5 @@ yarn-error.log*
 
 # misc
 todo.md
+
+./components/sortable/*

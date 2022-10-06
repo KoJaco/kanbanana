@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { fullColorPalette } from '@/core/consts/branding';
 
 type TColor = {
+    positionInContainer?: 'right' | 'left' | 'top' | 'bottom';
+    attachToCorner?: 'topRight' | 'bottomRight' | 'bottomLeft' | 'topLeft';
     // name is in tailwind format, could be templated into className
     name: string;
     // value is in HEX

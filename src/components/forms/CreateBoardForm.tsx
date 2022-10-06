@@ -98,8 +98,15 @@ const CreateBoardForm = ({
     );
     const [currentColumnId, setCurrentColumnId] = useState<string>('column-1');
 
-    const { setCurrentBoardSlug, columnCount, setColumnCount, setMaxColumnId } =
-        useKanbanStore();
+    const router = useRouter();
+
+    const {
+        setCurrentBoardSlug,
+        columnCount,
+        setColumnCount,
+        setMaxColumnId,
+        increaseBoardCount,
+    } = useKanbanStore();
 
     function handleBoardTitleInputChange(
         event: React.ChangeEvent<HTMLInputElement>
@@ -216,6 +223,7 @@ const CreateBoardForm = ({
 
     function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         // insert an initial task in the first column, this is necessary so that auto creation of IDS works in our indexDB
+        let slug = stringToRandomSlug(boardTitle);
         let tags = boardTags === undefined ? initialTags : boardTags;
         let columns =
             boardColumns === undefined ? initialColumns : boardColumns;
@@ -230,25 +238,27 @@ const CreateBoardForm = ({
             boardColumnOrder === undefined
                 ? initialColumnOrder
                 : boardColumnOrder;
-        db.transaction('rw', db.boards, async () => {
-            await db.addBoard(
-                boardTitle,
-                tags,
-                initialTasks,
-                columns,
-                columnOrder
-            );
-        });
-        // // Catch modification error and generic error.
-        // .catch('ModifyError', (e: ModifyError) => {
-        //     // Failed with ModifyError, check e.failures.
-        //     console.error(
-        //         'ModifyError occurred: ' + e.failures.length + ' failures'
-        //     );
-        // })
-        // .catch((e: Error) => {
-        //     console.error('Generic error: ' + e);
-        // });
+        try {
+            db.transaction('rw', db.boards, async () => {
+                await db.addBoard(
+                    boardTitle,
+                    slug,
+                    tags,
+                    initialTasks,
+                    columns,
+                    columnOrder
+                );
+            });
+            increaseBoardCount();
+            console.info(`A new board was created with title: ${boardTitle}`);
+            router
+                .push(`/boards/${slug}`, undefined, { shallow: false })
+                .then(() => router.reload());
+        } catch (error) {
+            console.error(`Failed to add board`);
+            // push to fail page
+            router.push(`/`);
+        }
     }
 
     function resetState() {
@@ -389,17 +399,16 @@ const CreateBoardForm = ({
                                                             <div>
                                                                 <label
                                                                     htmlFor="boardTitle"
-                                                                    className="block text-sm font-medium text-slate-600"
+                                                                    className="block text-sm font-medium text-slate-600 after:content-['*'] after:ml-0.5 after:text-red-500"
                                                                 >
                                                                     Board Title
-                                                                    *
                                                                 </label>
 
                                                                 <div className="mt-1">
                                                                     <input
                                                                         type="text"
-                                                                        name="boardTitle"
-                                                                        id="boardTitle"
+                                                                        name="board-title"
+                                                                        id="board-title"
                                                                         value={
                                                                             boardTitle
                                                                         }
@@ -408,11 +417,17 @@ const CreateBoardForm = ({
                                                                                 ? boardTitle
                                                                                 : 'Give your board a title.'
                                                                         }
-                                                                        className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                                        className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                                        required
                                                                         onChange={
                                                                             handleBoardTitleInputChange
                                                                         }
                                                                     />
+                                                                    {/* <p className="invisible peer-invalid:visible text-red-400 font-regular text-sm ml-1">
+                                                                        Title
+                                                                        cannot
+                                                                        be empty
+                                                                    </p> */}
                                                                 </div>
                                                             </div>
                                                             {/* small display for tag and column info */}

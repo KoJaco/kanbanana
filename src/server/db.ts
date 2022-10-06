@@ -60,6 +60,7 @@ export class KanbanBoardDexie extends Dexie {
 
     addBoard(
         title: string,
+        slug: string,
         tags: BoardTags,
         tasks: Tasks,
         columns: Columns,
@@ -71,7 +72,7 @@ export class KanbanBoardDexie extends Dexie {
         return this.boards.add({
             title: title,
             tags: tags,
-            slug: stringToRandomSlug(title),
+            slug: slug,
             // is this guaranteed to be unique? no, practically impossible but still no... need to fix.
             createdAt: new Date(Date.now()).toLocaleString(),
             updatedAt: new Date(Date.now()).toLocaleString(),
