@@ -3,10 +3,9 @@ import { Menu, Transition } from '@headlessui/react';
 import Tag from '@/components/elements/Tag';
 import { BsBrush } from 'react-icons/bs';
 import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
-import { Color } from '@/core/types/kanbanBoard';
 import { useOnClickOutside } from '@/core/hooks/index';
 import { MdOutlineDone } from 'react-icons/md';
-import { BoardTag } from '@/core/types/kanbanBoard';
+import { BoardTag, Color } from '@/core/types/sortableBoard';
 
 type TagFormProps = {
     id: number;
@@ -19,7 +18,7 @@ const TagForm = (props: TagFormProps) => {
     const [tagText, setTagText] = useState('');
     const [colorState, setColorState] = useState({
         name: 'white',
-        value: 'fff',
+        value: '#fff',
         textDark: true,
     });
     const [showColorPicker, setShowColorPicker] = useState(false);
@@ -47,7 +46,7 @@ const TagForm = (props: TagFormProps) => {
                             Tag:
                         </label>
 
-                        <Tag text={tagText} color={colorState} />
+                        <Tag text={tagText} backgroundColor={colorState} />
                     </div>
 
                     <div className="mt-1">
@@ -105,7 +104,7 @@ const TagForm = (props: TagFormProps) => {
                             props.handleAddTag({
                                 id: props.id,
                                 text: tagText,
-                                color: colorState,
+                                backgroundColor: colorState,
                             })
                         }
                         disabled={tagText.length === 0}

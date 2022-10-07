@@ -16,7 +16,7 @@ import { getMaxIdFromString } from '@/core/utils/kanbanBoard';
 
 import { useKanbanStore } from '@/stores/KanbanStore';
 
-import ColumnForm from './ColumnForm';
+import ColumnForm from './ContainerForm';
 import TagForm from './TagForm';
 import router from 'next/router';
 

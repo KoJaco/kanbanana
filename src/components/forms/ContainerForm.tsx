@@ -1,20 +1,24 @@
 import { Fragment, useState, useRef } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { BsBrush, BsCheck, BsChevronBarDown } from 'react-icons/bs';
-import { TColumn, Color } from '@/core/types/kanbanBoard';
+import {
+    TContainer,
+    Color,
+    UniqueIdentifier,
+} from '@/core/types/sortableBoard';
 import clsx from 'clsx';
 import { MdOutlineDone } from 'react-icons/md';
 import { useOnClickOutside } from '@/core/hooks/index';
 import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
 
-type ColumnFormProps = {
-    id: number;
-    // can optionally be given a column to edit.
-    column?: TColumn;
-    handleAddColumn: (column: TColumn) => void;
+type ContainerFormProps = {
+    id: UniqueIdentifier;
+    // can optionally be given a container to edit.
+    container?: TContainer;
+    handleAddContainer: (container: TContainer) => void;
 };
 
-const columnOptions: {
+const containerOptions: {
     id: number;
     key: 'simple' | 'checklist';
     name: string;
@@ -23,7 +27,7 @@ const columnOptions: {
     { id: 2, key: 'checklist', name: 'Checked Tasks' },
 ];
 
-const taskSortingOptions: {
+const itemSortingOptions: {
     id: number;
     key: 'start' | 'end' | 'noChange';
     name: string;
@@ -33,44 +37,51 @@ const taskSortingOptions: {
     { id: 3, key: 'noChange', name: 'No Change' },
 ];
 
-const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
-    const [columnId, setColumnId] = useState<string>(
-        props.column === undefined ? `column-${props.id}` : props.column.id
-    );
+const ContainerForm = ({
+    handleAddContainer,
+    ...props
+}: ContainerFormProps) => {
+    console.log('id: ' + props.id);
     const [title, setTitle] = useState(
-        props.column === undefined ? '' : props.column.title
+        props.container === undefined ? '' : props.container.title
     );
-    const [columnType, setColumnType] = useState(
-        props.column === undefined
-            ? columnOptions[0]
-            : columnOptions[findColumnTypeIndex(props.column.type)]
+    const [containerType, setContainerType] = useState(
+        props.container === undefined
+            ? containerOptions[0]
+            : containerOptions[findContainerTypeIndex(props.container.type)]
     );
-    const [taskSortingType, setTaskSortingType] = useState(
-        props.column === undefined
-            ? taskSortingOptions[0]
-            : taskSortingOptions[
-                  findTaskSortingTypeIndex(props.column.completedTaskOrder)
+    const [itemSortingType, setItemSortingType] = useState(
+        props.container === undefined
+            ? itemSortingOptions[0]
+            : itemSortingOptions[
+                  findTaskSortingTypeIndex(props.container.completedItemOrder)
               ]
-    );
-    const [taskIds, setTaskIds] = useState<string[]>(
-        columnId === 'column-1' ? ['task-1'] : []
     );
 
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [badgeColor, setBadgeColor] = useState<Color>(
-        props.column === undefined
+        props.container === undefined
             ? {
                   name: 'white',
                   value: '#fff',
                   textDark: true,
               }
-            : props.column.badgeColor
+            : props.container.badgeColor
     );
 
-    console.log(columnId);
+    console.log(props.id);
 
     const colorPickerRef = useRef(null);
     useOnClickOutside(colorPickerRef, () => setShowColorPicker(false));
+
+    // function getNextContainerId() {
+    //     if (props.container === undefined) {
+    //         return 'A';
+    //     }
+    //     const containerIds = Object.keys(boardContainerItemMapping);
+    //     const lastContainerId = containerIds[containerIds.length - 1];
+    //     return String.fromCharCode(lastContainerId!.charCodeAt(0) + 1);
+    // }
 
     function handleSetBadgeColor(color: Color) {
         setBadgeColor(color);
@@ -83,10 +94,10 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
         setShowColorPicker(!showColorPicker);
     }
 
-    function findColumnTypeIndex(type: 'simple' | 'checklist') {
-        // returns the index of the matching column options, else returns 0
-        for (let i = 0; i < columnOptions.length; i++) {
-            let option = columnOptions[i];
+    function findContainerTypeIndex(type: 'simple' | 'checklist') {
+        // returns the index of the matching container options, else returns 0
+        for (let i = 0; i < containerOptions.length; i++) {
+            let option = containerOptions[i];
             if (option?.key === type) {
                 return i;
             }
@@ -94,9 +105,9 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
         return 0;
     }
     function findTaskSortingTypeIndex(type: 'start' | 'end' | 'noChange') {
-        // returns the index of the matching column options, else returns 0
-        for (let i = 0; i < taskSortingOptions.length; i++) {
-            let option = taskSortingOptions[i];
+        // returns the index of the matching container options, else returns 0
+        for (let i = 0; i < itemSortingOptions.length; i++) {
+            let option = itemSortingOptions[i];
             if (option?.key === type) {
                 return i;
             }
@@ -106,17 +117,17 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
 
     // need to conditionally change styling using this const, as HeadlessUi Listbox doesn't seem to pass down disabled?
     const sortingOptionsDisabled =
-        columnType?.name === 'Simple Tasks' ? true : false;
+        containerType?.name === 'Simple Tasks' ? true : false;
 
     console.log('id being passed is ' + props.id);
     return (
         <>
-            <div id={columnId}>
+            <div id={`${props.id}`}>
                 <div className="flex justify-between w-full gap-x-2 mb-3">
-                    {/* Column Title input */}
+                    {/* Container Title input */}
                     <div className="w-full">
                         <label
-                            htmlFor="Column"
+                            htmlFor="Container"
                             className="block text-sm font-medium text-slate-600"
                         >
                             Title
@@ -127,7 +138,7 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                                 name="title"
                                 id="title"
                                 value={title}
-                                placeholder="Add a column title."
+                                placeholder="Add a container title."
                                 className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 onChange={handleInputChange}
                             />
@@ -167,9 +178,12 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                     </div>
                 </div>
                 <div className="flex flex-row gap-2">
-                    {/* Column type select. */}
+                    {/* Container type select. */}
                     <div className="w-full">
-                        <Listbox value={columnType} onChange={setColumnType}>
+                        <Listbox
+                            value={containerType}
+                            onChange={setContainerType}
+                        >
                             {({ open }) => (
                                 <>
                                     <Listbox.Label className="block text-sm font-medium text-gray-700">
@@ -178,7 +192,7 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                                     <div className="relative mt-1">
                                         <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
                                             <span className="block truncate">
-                                                {columnType?.name}
+                                                {containerType?.name}
                                             </span>
                                             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                 <BsChevronBarDown
@@ -196,58 +210,60 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                                             leaveTo="opacity-0"
                                         >
                                             <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                                {columnOptions.map((option) => (
-                                                    <Listbox.Option
-                                                        key={option.id}
-                                                        className={({
-                                                            active,
-                                                        }) =>
-                                                            clsx(
-                                                                active
-                                                                    ? 'text-white bg-indigo-600'
-                                                                    : 'text-gray-900',
-                                                                'relative cursor-default select-none py-2 pl-3 pr-9'
-                                                            )
-                                                        }
-                                                        value={option}
-                                                    >
-                                                        {({
-                                                            selected,
-                                                            active,
-                                                        }) => (
-                                                            <>
-                                                                <span
-                                                                    className={clsx(
-                                                                        selected
-                                                                            ? 'font-semibold'
-                                                                            : 'font-normal',
-                                                                        'block truncate'
-                                                                    )}
-                                                                >
-                                                                    {
-                                                                        option.name
-                                                                    }
-                                                                </span>
-
-                                                                {selected ? (
+                                                {containerOptions.map(
+                                                    (option) => (
+                                                        <Listbox.Option
+                                                            key={option.id}
+                                                            className={({
+                                                                active,
+                                                            }) =>
+                                                                clsx(
+                                                                    active
+                                                                        ? 'text-white bg-indigo-600'
+                                                                        : 'text-gray-900',
+                                                                    'relative cursor-default select-none py-2 pl-3 pr-9'
+                                                                )
+                                                            }
+                                                            value={option}
+                                                        >
+                                                            {({
+                                                                selected,
+                                                                active,
+                                                            }) => (
+                                                                <>
                                                                     <span
                                                                         className={clsx(
-                                                                            active
-                                                                                ? 'text-white'
-                                                                                : 'text-indigo-600',
-                                                                            'absolute inset-y-0 right-0 flex items-center pr-4'
+                                                                            selected
+                                                                                ? 'font-semibold'
+                                                                                : 'font-normal',
+                                                                            'block truncate'
                                                                         )}
                                                                     >
-                                                                        <BsCheck
-                                                                            className="h-5 w-5"
-                                                                            aria-hidden="true"
-                                                                        />
+                                                                        {
+                                                                            option.name
+                                                                        }
                                                                     </span>
-                                                                ) : null}
-                                                            </>
-                                                        )}
-                                                    </Listbox.Option>
-                                                ))}
+
+                                                                    {selected ? (
+                                                                        <span
+                                                                            className={clsx(
+                                                                                active
+                                                                                    ? 'text-white'
+                                                                                    : 'text-indigo-600',
+                                                                                'absolute inset-y-0 right-0 flex items-center pr-4'
+                                                                            )}
+                                                                        >
+                                                                            <BsCheck
+                                                                                className="h-5 w-5"
+                                                                                aria-hidden="true"
+                                                                            />
+                                                                        </span>
+                                                                    ) : null}
+                                                                </>
+                                                            )}
+                                                        </Listbox.Option>
+                                                    )
+                                                )}
                                             </Listbox.Options>
                                         </Transition>
                                     </div>
@@ -258,10 +274,10 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                     <div className="w-full">
                         {/* Completed Task Sorting */}
                         <Listbox
-                            value={taskSortingType}
-                            onChange={setTaskSortingType}
+                            value={itemSortingType}
+                            onChange={setItemSortingType}
                             disabled={
-                                columnType?.name === 'Simple Tasks'
+                                containerType?.name === 'Simple Tasks'
                                     ? true
                                     : false
                             }
@@ -288,7 +304,7 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                                     >
                                         <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
                                             <span className="block truncate">
-                                                {taskSortingType?.name}
+                                                {itemSortingType?.name}
                                             </span>
                                             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                 <BsChevronBarDown
@@ -306,7 +322,7 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                                             leaveTo="opacity-0"
                                         >
                                             <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                                {taskSortingOptions.map(
+                                                {itemSortingOptions.map(
                                                     (option) => (
                                                         <Listbox.Option
                                                             key={option.id}
@@ -373,13 +389,12 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                         type="button"
                         className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary  drop-shadow disabled:cursor-not-allowed"
                         onClick={() => {
-                            handleAddColumn({
-                                id: columnId,
+                            handleAddContainer({
+                                id: props.id,
                                 title: title,
-                                type: columnType!.key,
-                                completedTaskOrder: taskSortingType!.key,
+                                type: containerType!.key,
+                                completedItemOrder: itemSortingType!.key,
                                 badgeColor: badgeColor,
-                                taskIds: [],
                             });
                         }}
                         disabled={title.length === 0}
@@ -392,7 +407,7 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
                     </button>
                     {title.length === 0 && (
                         <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            You must add a title to add a column.
+                            You must add a title to add a container.
                         </span>
                     )}
                 </div>
@@ -411,4 +426,4 @@ const ColumnForm = ({ handleAddColumn, ...props }: ColumnFormProps) => {
     );
 };
 
-export default ColumnForm;
+export default ContainerForm;

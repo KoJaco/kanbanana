@@ -2,11 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import { db } from '@/server/db';
-
-import { useOnClickOutside, useOnClickInsideOnly } from '@/core/hooks';
-import { TTask, Tasks, TColumn, Color } from '@/core/types/kanbanBoard';
-import { RgbaColorPicker } from 'react-colorful';
-import { Disclosure, Transition } from '@headlessui/react';
+import { TTask, Tasks, Color } from '@/core/types/kanbanBoard';
 
 type TaskFormProps = {
     id: number;

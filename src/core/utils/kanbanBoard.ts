@@ -3,7 +3,10 @@ import { Board } from '@/core/types/kanbanBoard';
 const now = new Date(Date.now()).toLocaleString();
 
 export function getMaxIdFromString<T extends Object>(obj: T) {
-    // accepts format 'task-1' or 'column-1', etc... should really type of TTask | TColumn
+    /* 
+        * Adheres to structure '<name>-<id>', splits on '-' and tries to parse Id to number.
+        Takes an object with structure shown above and returns the id attached to it.
+    */
     const keys = Object.keys(obj);
     let idArray: number[] = [];
     keys.forEach((key) => {

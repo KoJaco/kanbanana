@@ -2,7 +2,7 @@ import React from 'react';
 
 type TagProps = {
     text: string;
-    color: { name: string; value: string; textDark: boolean };
+    backgroundColor: { name: string; value: string; textDark: boolean };
 };
 
 const Tag = (props: TagProps) => {
@@ -10,15 +10,14 @@ const Tag = (props: TagProps) => {
         <div
             className="flex items-center px-2 rounded-full"
             style={{
-                backgroundColor: props.color.value,
+                backgroundColor: props.backgroundColor.value,
             }}
         >
             <span
                 className="text-sm md:text-md font-medium"
-                style={{ color: props.color.textDark ? '#333' : '#fff' }}
-                // style={{
-                //     mixBlendMode: 'exclusion',
-                // }}
+                style={{
+                    color: props.backgroundColor.textDark ? '#333' : '#fff',
+                }}
             >
                 {props.text}
             </span>

@@ -2,12 +2,10 @@ import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 import type { Transform } from '@dnd-kit/utilities';
-
 import { Handle, Remove } from '../components';
-
-// import styles from './Item.module.css';
-
+import { TItem } from '@/core/types/sortableBoard';
 export interface ItemProps {
+    item?: TItem;
     dragOverlay?: boolean;
     color?: string;
     disabled?: boolean;
@@ -23,6 +21,7 @@ export interface ItemProps {
     style?: React.CSSProperties;
     transition?: string | null;
     wrapperStyle?: React.CSSProperties;
+    isEditing: boolean;
     value: React.ReactNode;
     onRemove?(): void;
     renderItem?(args: {
@@ -41,9 +40,10 @@ export interface ItemProps {
 }
 
 export const Item = React.memo(
-    React.forwardRef<HTMLLIElement, ItemProps>(
+    React.forwardRef<HTMLDivElement, ItemProps>(
         (
             {
+                item,
                 color,
                 dragOverlay,
                 dragging,
@@ -93,14 +93,8 @@ export const Item = React.memo(
                     value,
                 })
             ) : (
-                <li
-                    className=""
-                    // className={clsx(
-                    //     styles.Wrapper,
-                    //     fadeIn && styles.fadeIn,
-                    //     sorting && styles.sorting,
-                    //     dragOverlay && styles.dragOverlay
-                    // )}
+                <div
+                    className="row-span-1 w-full h-full py-1 px-2 border-[1.5px] border-gray-300 rounded-sm bg-gray-50  focus-within:border-slate-500 focus-within:ring-0.2 focus-within:ring-slate-500 focus-within:drop-shadow group max-w-auto"
                     style={
                         {
                             ...wrapperStyle,
@@ -125,6 +119,9 @@ export const Item = React.memo(
                     }
                     ref={ref}
                 >
+                    <label htmlFor="description" className="sr-only">
+                        Task, note, or item content
+                    </label>
                     <div
                         // className={clsx(
                         //     styles.Item,
@@ -156,7 +153,7 @@ export const Item = React.memo(
                             ) : null}
                         </span>
                     </div>
-                </li>
+                </div>
             );
         }
     )

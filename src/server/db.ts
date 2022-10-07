@@ -3,9 +3,10 @@ import {
     Board,
     BoardTags,
     BoardTag,
-    Columns,
-    Tasks,
-} from '@/core/types/kanbanBoard';
+    Containers,
+    ContainerItemMapping,
+    Items,
+} from '@/core/types/sortableBoard';
 import { stringToRandomSlug } from '@/core/utils/misc';
 
 // https://dexie.org/docs/Version/Version.stores()
@@ -34,41 +35,20 @@ export class KanbanBoardDexie extends Dexie {
                   .toArray();
     }
 
-    // getBoardsByTag(boardTagId: number) {
-    //     return this.boards
-    //         .orderBy('updatedAt')
-    //         .reverse()
-    //         .filter((board) => {
-    //             return board.tags.filter((tag) => tag.id === boardTagId);
-    //         });
-    // }
-
     getAllBoards(reverseOrder: boolean) {
         return reverseOrder
             ? this.boards.orderBy('updatedAt').reverse().toArray()
             : this.boards.orderBy('updatedAt').toArray();
     }
 
-    getColumn(id: string, boardSlug: string) {
-        return this.boards
-            .where('slug')
-            .equals(boardSlug)
-            .filter((item: any) => {
-                return item.columns[id];
-            });
-    }
-
     addBoard(
         title: string,
         slug: string,
         tags: BoardTags,
-        tasks: Tasks,
-        columns: Columns,
-        columnOrder: string[]
+        items: Items,
+        containers: Containers,
+        containerItemMapping: ContainerItemMapping
     ) {
-        // initialising a board after use inputs a title and a tag
-        // returns a promise that resolves when the underlying indexedDB request succeeds.
-        // use promise chaining or async/await pattern.
         return this.boards.add({
             title: title,
             tags: tags,
@@ -76,51 +56,17 @@ export class KanbanBoardDexie extends Dexie {
             // is this guaranteed to be unique? no, practically impossible but still no... need to fix.
             createdAt: new Date(Date.now()).toLocaleString(),
             updatedAt: new Date(Date.now()).toLocaleString(),
-            tasks: tasks,
-            // initialise tasks, always start with one blank task.
-            // tasks: {
-            //     'task-1': {
-            //         id: 1,
-            //         content: '',
-            //         color: {
-            //             name: 'transparent',
-            //             value: '#00ffffff',
-            //             textDark: true,
-            //         },
-            //         completed: false,
-            //         createdAt: new Date(Date.now()).toLocaleString(),
-            //         updatedAt: new Date(Date.now()).toLocaleString(),
-            //     },
-            // },
-            columns: columns,
-            // initialise columns, always start with one blank column.
-            // columns: {
-            //     'column-1': {
-            //         id: 'column-1',
-            //         title: '',
-            //         badgeColor: {
-            //             name: 'transparent',
-            //             value: '#00ffffff',
-            //             textDark: true,
-            //         },
-            //         type: 'simple',
-            //         completedTaskOrder: 'noChange',
-            //         taskIds: ['task-1'],
-            //     },
-            // },
-            columnOrder: columnOrder,
+            items: items,
+            containers: containers,
+            containerItemMapping: containerItemMapping,
         });
     }
 
-    deleteBoard(boardId: number) {
+    deleteBoard(slug: string) {
         return this.transaction('rw', this.boards, () => {
-            this.boards.delete(boardId);
+            this.boards.delete(slug);
         });
     }
-
-    addColumn(columnId: string) {}
-
-    addTask(taskId: number, taskContent: string) {}
 }
 
 export function resetDatabase() {

@@ -5,30 +5,22 @@ import { useKanbanStore } from '@/stores/KanbanStore';
 import { db } from '@/server/db';
 import { stringToRandomSlug } from '@/core/utils/misc';
 import { Dialog, Transition, Menu } from '@headlessui/react';
-import {
-    MdClose,
-    MdOutlineAdd,
-    MdModeEdit,
-    MdOutlineDone,
-    MdFormatListBulleted,
-    MdOutlineChecklist,
-    MdSort,
-} from 'react-icons/md';
+import { MdClose, MdModeEdit, MdSort } from 'react-icons/md';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 import { BsChevronBarDown } from 'react-icons/bs';
 import { TiDelete } from 'react-icons/ti';
 import {
     Board,
-    TColumn,
-    Tasks,
-    Columns,
+    TContainer,
+    Items,
+    Containers,
     BoardTags,
     BoardTag,
-} from '@/core/types/kanbanBoard';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { ModifyError } from 'dexie';
+    ContainerItemMapping,
+    UniqueIdentifier,
+} from '@/core/types/sortableBoard';
 import { getMaxIdFromString } from '@/core/utils/kanbanBoard';
-import ColumnForm from './ColumnForm';
+import ContainerForm from './ContainerForm';
 import TagForm from './TagForm';
 import Tag from '@/components/elements/Tag';
 import clsx from 'clsx';
@@ -38,36 +30,37 @@ type CreateBoardFormProps = {
     setShowBoardForm: (value: boolean) => void;
 };
 
+const defaultColor = { name: 'white', value: '#fff', textDark: true };
+
 // Array of tags, can map over
 const initialTags: BoardTags = [
     {
         id: 1,
-        color: { name: 'white', value: '#fff', textDark: true },
+        backgroundColor: defaultColor,
         text: '',
     },
 ];
 
-// object of columns, map through using column order.
-const initialColumns: Columns = {
-    'column-1': {
-        id: 'column-1',
+// object of containers, map through using container order.
+const initialContainers: Containers = {
+    A: {
+        id: 'A',
         title: '',
         type: 'simple',
-        completedTaskOrder: 'noChange',
-        badgeColor: { name: 'white', value: '#fff', textDark: true },
-        taskIds: ['task-1'],
+        completedItemOrder: 'noChange',
+        badgeColor: defaultColor,
     },
 };
 
-const defaultColor = { name: 'white', value: '#fff', textDark: true };
+const initialContainerItemMapping: ContainerItemMapping = {
+    A: ['A1'],
+};
 
-const initialColumnOrder: string[] = ['column-1'];
-
-// column-1 should point to this, don't do anything further with this just save to db upon submit.
-const initialTasks: Tasks = {
-    'task-1': {
-        id: 1,
-        color: { name: 'white', value: '#fff', textDark: true },
+// container-1 should point to this, don't do anything further with this just save to db upon submit.
+const initialItems: Items = {
+    A1: {
+        id: 'A1',
+        badgeColor: defaultColor,
         completed: false,
         content: '',
         updatedAt: '',
@@ -81,32 +74,33 @@ const CreateBoardForm = ({
     setShowBoardForm,
     ...props
 }: CreateBoardFormProps) => {
-    // TODO: Need to fix edit column form, it updates all columns when saving. also, change the plus into a tick icon.
+    // TODO: Need to fix edit container form, it updates all containers when saving. also, change the plus into a tick icon.
     // controlled inputs for form fields, everything we're editing
     const [boardTitle, setBoardTitle] = useState<string>('');
     // need separate form for editing a single tag
-    const [boardTags, setBoardTags] = useState<BoardTags>();
-    // need separate form for editing a single column
-    const [boardColumns, setBoardColumns] = useState<Columns | undefined>();
-    const [boardColumnOrder, setBoardColumnOrder] = useState<string[]>();
-
-    const [showTagForm, setShowTagForm] = useState<boolean>(false);
-    const [showColumnForm, setShowColumnForm] = useState<boolean>(false);
-
-    const [columnFormState, setColumnFormState] = useState<'add' | 'edit'>(
-        'add'
+    const [boardTags, setBoardTags] = useState<BoardTags | null>(null);
+    // need separate form for editing a single container
+    const [boardContainers, setBoardContainers] = useState<Containers | null>(
+        null
     );
-    const [currentColumnId, setCurrentColumnId] = useState<string>('column-1');
+    const [boardContainerItemMapping, setBoardContainerItemMapping] =
+        useState<ContainerItemMapping | null>(null);
+
+    // Form related state
+    const [showTagForm, setShowTagForm] = useState<boolean>(false);
+    const [showContainerForm, setShowContainerForm] = useState<boolean>(false);
+
+    const [containerFormState, setContainerFormState] = useState<
+        'add' | 'edit'
+    >('add');
+    const [currentContainerId, setCurrentContainerId] =
+        useState<UniqueIdentifier>('A');
 
     const router = useRouter();
 
-    const {
-        setCurrentBoardSlug,
-        columnCount,
-        setColumnCount,
-        setMaxColumnId,
-        increaseBoardCount,
-    } = useKanbanStore();
+    console.log(boardContainers);
+
+    const { increaseBoardCount } = useKanbanStore();
 
     function handleBoardTitleInputChange(
         event: React.ChangeEvent<HTMLInputElement>
@@ -114,76 +108,62 @@ const CreateBoardForm = ({
         setBoardTitle(event.currentTarget.value);
     }
 
-    // function initNewColumn() {
-    //     if (boardColumns !== undefined) {
-    //         const columnId = `column-${getMaxIdFromString(boardColumns)}`;
-    //         const newColumn: TColumn = {
-    //             id: columnId,
-    //             title: '',
-    //             type: 'simple',
-    //             completedTaskOrder: 'noChange',
-    //             badgeColor: { name: 'white', value: 'fff', textDark: true },
-    //             taskIds: columnId === 'column-1' ? ['task-1'] : [],
-    //         };
-    //         return newColumn;
-    //     } else {
-    //         throw new Error('Error trying to initialise new column.');
-    //     }
-    // }
-
-    function handleAddColumn(column: TColumn) {
-        console.log('add column... columnId: ', column.id);
-        if (boardColumnOrder === undefined || boardColumnOrder.length === 0) {
-            setBoardColumns({ [column.id]: column });
-            setBoardColumnOrder([column.id]);
+    function handleAddContainer(container: TContainer) {
+        if (boardContainers === null || boardContainerItemMapping === null) {
+            // set the board container in containers object.
+            setBoardContainers({ [container.id]: container });
+            // set an empty item array to the container identifier.
+            setBoardContainerItemMapping({ [container.id]: [] });
         } else {
-            let newColumnOrder = Array.from(boardColumnOrder);
-            setBoardColumns({ ...boardColumns, [column.id]: column });
-            newColumnOrder.push(column.id);
-            setBoardColumnOrder(newColumnOrder);
+            setBoardContainers({
+                ...boardContainers,
+                [container.id]: container,
+            });
+            setBoardContainerItemMapping({
+                ...boardContainerItemMapping,
+                [container.id]: [],
+            });
         }
-        setShowColumnForm(false);
+        setShowContainerForm(false);
     }
 
-    function handleUpdateColumn(column: TColumn) {
-        console.log('edit column ... columnId: ', column.id);
-        setBoardColumns({ ...boardColumns, [column.id]: column });
-        setShowColumnForm(false);
-        setColumnFormState('add');
+    function handleUpdateContainer(container: TContainer) {
+        setBoardContainers({ ...boardContainers, [container.id]: container });
+        setShowContainerForm(false);
+        // switch form state back to add.
+        setContainerFormState('add');
     }
 
-    function handleRemoveColumn(columnId: string) {
-        if (boardColumnOrder !== undefined) {
-            let newColumns = omit(boardColumns, columnId);
-            let newColumnOrder = Array.from(boardColumnOrder);
-            for (let i = 0; i < newColumnOrder.length; i++) {
-                let id = newColumnOrder[i];
-                if (id === columnId) {
-                    newColumnOrder.splice(i, 1);
-                }
-            }
-            setBoardColumns(newColumns);
-            setBoardColumnOrder(newColumnOrder);
+    function handleRemoveContainer(containerId: UniqueIdentifier) {
+        if (boardContainers !== null || boardContainerItemMapping !== null) {
+            let newContainers = omit(boardContainers, containerId);
+            let newContainerBoardMapping = omit(
+                boardContainerItemMapping,
+                containerId
+            );
+
+            setBoardContainers(newContainers);
+            setBoardContainerItemMapping(newContainerBoardMapping);
         }
     }
 
-    function handleEditColumn(columnId: string) {
-        setCurrentColumnId(columnId);
-        setColumnFormState('edit');
-        if (showColumnForm) {
-            setShowColumnForm(false);
+    function handleEditContainer(containerId: UniqueIdentifier) {
+        setCurrentContainerId(containerId);
+        setContainerFormState('edit');
+        if (showContainerForm) {
+            setShowContainerForm(false);
             setTimeout(() => {
-                setShowColumnForm(true);
+                setShowContainerForm(true);
             }, 100);
         } else {
-            handleToggleColumnForm();
+            handleToggleContainerForm();
         }
     }
 
     function handleAddTag(tag: BoardTag) {
-        if (boardTags === undefined || boardTags.length === 0) {
+        if (boardTags === null) {
             setBoardTags([tag]);
-        } else {
+        } else if (boardTags !== null) {
             let newTags = Array.from(boardTags);
             newTags.push(tag);
             setBoardTags(newTags);
@@ -192,7 +172,7 @@ const CreateBoardForm = ({
     }
 
     function handleRemoveTag(index: number) {
-        if (boardTags !== undefined) {
+        if (boardTags !== null) {
             // id is simple the index + 1
             let newTags = Array.from(boardTags);
             newTags.splice(index, 1);
@@ -201,17 +181,17 @@ const CreateBoardForm = ({
     }
 
     function handleToggleTagForm() {
-        if (showColumnForm) {
-            setShowColumnForm(false);
+        if (showContainerForm) {
+            setShowContainerForm(false);
         }
         setShowTagForm((showTagForm) => !showTagForm);
     }
 
-    function handleToggleColumnForm() {
+    function handleToggleContainerForm() {
         if (showTagForm) {
             setShowTagForm(false);
         }
-        setShowColumnForm((showColumnForm) => !showColumnForm);
+        setShowContainerForm((showContainerForm) => !showContainerForm);
     }
 
     function handleCancelEdit() {
@@ -222,31 +202,32 @@ const CreateBoardForm = ({
     }
 
     function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
-        // insert an initial task in the first column, this is necessary so that auto creation of IDS works in our indexDB
+        // insert an initial task in the first container, this is necessary so that auto creation of IDS works in our indexDB
         let slug = stringToRandomSlug(boardTitle);
-        let tags = boardTags === undefined ? initialTags : boardTags;
-        let columns =
-            boardColumns === undefined ? initialColumns : boardColumns;
+        let tags = boardTags === null ? initialTags : boardTags;
+        let containers =
+            boardContainers === null ? initialContainers : boardContainers;
+        let containerItemMapping =
+            boardContainerItemMapping === null
+                ? initialContainerItemMapping
+                : boardContainerItemMapping;
 
-        if (boardColumns !== undefined) {
-            // if the user has made some columns, make sure that the first column references the first task.
-            // object ordering is not guaranteed, this is also NOT the very optimised as we're creating an array of all columns just to insert one value.
-            // if boardColumns is undefined, we will have used initialColumns, which references task-1
-            Object.values(columns)[0]!.taskIds = ['task-1'];
+        if (boardContainers !== null) {
+            // If containers are non null
+            Object.values(containerItemMapping)[0] = [
+                `${Object.keys(containers)[0]}1`,
+            ];
         }
-        let columnOrder =
-            boardColumnOrder === undefined
-                ? initialColumnOrder
-                : boardColumnOrder;
+
         try {
             db.transaction('rw', db.boards, async () => {
                 await db.addBoard(
                     boardTitle,
                     slug,
                     tags,
-                    initialTasks,
-                    columns,
-                    columnOrder
+                    initialItems,
+                    containers,
+                    containerItemMapping
                 );
             });
             increaseBoardCount();
@@ -265,23 +246,20 @@ const CreateBoardForm = ({
         // wait for transition to close, .5 sec timeout
         setTimeout(() => {
             setBoardTitle('');
-            setBoardTags(undefined);
-            setBoardColumns(undefined);
-            setBoardColumnOrder(undefined);
+            setBoardTags(null);
+            setBoardContainers(null);
+            setBoardContainerItemMapping(null);
+            setContainerFormState('add');
         }, 500);
     }
 
-    function retrieveMaxColumnId() {
-        if (boardColumns === undefined) {
-            return 0;
-        } else if (
-            boardColumnOrder === undefined ||
-            boardColumnOrder.length === 0
-        ) {
-            return 0;
-        } else {
-            return getMaxIdFromString(boardColumns);
+    function getNextContainerId() {
+        if (boardContainerItemMapping === null || boardContainers === null) {
+            return 'A';
         }
+        const containerIds = Object.keys(boardContainerItemMapping);
+        const lastContainerId = containerIds[containerIds.length - 1];
+        return String.fromCharCode(lastContainerId!.charCodeAt(0) + 1);
     }
 
     const reportError = useCallback(({ message }: { message: string }) => {
@@ -430,7 +408,7 @@ const CreateBoardForm = ({
                                                                     </p> */}
                                                                 </div>
                                                             </div>
-                                                            {/* small display for tag and column info */}
+                                                            {/* small display for tag and container info */}
                                                             <div className="flex flex-col w-full space-y-4 overflow-x-auto no-scrollbar">
                                                                 {/* tags */}
                                                                 <div className="flex flex-col max-h-16 ">
@@ -462,13 +440,13 @@ const CreateBoardForm = ({
                                                                                             className="text-sm rounded-full px-2"
                                                                                             style={{
                                                                                                 color: tag
-                                                                                                    .color
+                                                                                                    .backgroundColor
                                                                                                     .textDark
                                                                                                     ? '#333'
                                                                                                     : '#fff',
                                                                                                 backgroundColor:
                                                                                                     tag
-                                                                                                        .color
+                                                                                                        .backgroundColor
                                                                                                         .value,
                                                                                             }}
                                                                                         >
@@ -495,154 +473,137 @@ const CreateBoardForm = ({
                                                                         )}
                                                                     </div>
                                                                 </div>
-                                                                {/* columns */}
+                                                                {/* containers */}
                                                                 <div className="w-auto max-h-96 overflow-y-auto no-scrollbar">
                                                                     <label
-                                                                        htmlFor="board-columns"
+                                                                        htmlFor="board-containers"
                                                                         className="block text-sm font-medium text-slate-600 "
                                                                     >
-                                                                        Columns:
+                                                                        Containers:
                                                                     </label>
                                                                     <div className="mt-1 gap-y-2 gap-x-2 my-4">
-                                                                        {/* map through columns for display only*/}
-                                                                        {boardColumnOrder?.map(
-                                                                            (
-                                                                                columnId: string,
-                                                                                index: number
-                                                                            ) => {
-                                                                                const column =
-                                                                                    boardColumns![
-                                                                                        columnId
-                                                                                    ];
-                                                                                return column ==
-                                                                                    undefined ||
-                                                                                    column
-                                                                                        .title
-                                                                                        .length ===
-                                                                                        0 ? null : (
-                                                                                    // Column display card
-                                                                                    <div
-                                                                                        key={
-                                                                                            index
-                                                                                        }
-                                                                                        className="group rounded-md border shadow my-2 text-md"
-                                                                                    >
-                                                                                        <div
-                                                                                            className="flex flex-col p-2 rounded-t-md"
-                                                                                            style={{
-                                                                                                backgroundColor:
-                                                                                                    column
-                                                                                                        .badgeColor
-                                                                                                        .value,
-                                                                                            }}
-                                                                                        >
-                                                                                            <button
-                                                                                                type="button"
-                                                                                                className="opacity-0 group-hover:opacity-100 flex justify-end transition-opacity duration-300"
-                                                                                                style={{
-                                                                                                    color: column
-                                                                                                        .badgeColor
-                                                                                                        .textDark
-                                                                                                        ? '#333'
-                                                                                                        : '#fff',
-                                                                                                }}
-                                                                                                onClick={() =>
-                                                                                                    handleEditColumn(
-                                                                                                        column.id
-                                                                                                    )
-                                                                                                }
-                                                                                            >
-                                                                                                <MdModeEdit className="w-5" />
-                                                                                            </button>
-                                                                                        </div>
-                                                                                        <div className="flex flex-col p-2 divide-x">
-                                                                                            {/* upper flex, column number and badge
-                                                                                            <div
-                                                                                                className="flex items-center mb-2"
-                                                                                                style={{
-                                                                                                    backgroundColor:
-                                                                                                        column
-                                                                                                            .badgeColor
-                                                                                                            .value,
-                                                                                                }}
-                                                                                            >
-                                                                                                <div>{`${
-                                                                                                    index +
-                                                                                                    1
-                                                                                                }.`}</div>
-
+                                                                        {/* map through containers for display only*/}
+                                                                        {boardContainerItemMapping !==
+                                                                            null &&
+                                                                            boardContainers !==
+                                                                                null && (
+                                                                                <>
+                                                                                    {Object.keys(
+                                                                                        boardContainerItemMapping
+                                                                                    ).map(
+                                                                                        (
+                                                                                            containerId: UniqueIdentifier,
+                                                                                            index: number
+                                                                                        ) => {
+                                                                                            const container =
+                                                                                                boardContainers[
+                                                                                                    containerId
+                                                                                                ];
+                                                                                            return container ==
+                                                                                                undefined ||
+                                                                                                container
+                                                                                                    .title
+                                                                                                    .length ===
+                                                                                                    0 ? null : (
+                                                                                                // Container display card
                                                                                                 <div
-                                                                                                    className="flex ml-auto w-5 h-5 rounded-full"
-                                                                                                    style={{
-                                                                                                        backgroundColor:
-                                                                                                            column
-                                                                                                                .badgeColor
-                                                                                                                .value,
-                                                                                                    }}
-                                                                                                ></div>
-                                                                                            </div> */}
-
-                                                                                            <div className="flex gap-x-12 items-center text-slate-600">
-                                                                                                <div className="flex flex-col">
-                                                                                                    <label className="text-sm font-medium">
-                                                                                                        Title
-                                                                                                    </label>
-                                                                                                    <div>
-                                                                                                        {
-                                                                                                            column.title
-                                                                                                        }
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div className="flex flex-col">
-                                                                                                    <label className="text-sm font-medium">
-                                                                                                        Type
-                                                                                                    </label>
-                                                                                                    <div>
-                                                                                                        {
-                                                                                                            column.type
-                                                                                                        }
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                {column.type ===
-                                                                                                    'checklist' && (
-                                                                                                    <div className="flex flex-col">
-                                                                                                        <label className="text-sm font-medium">
-                                                                                                            Ordering
-                                                                                                        </label>
-                                                                                                        <div>
-                                                                                                            {
-                                                                                                                column.completedTaskOrder
+                                                                                                    key={
+                                                                                                        index
+                                                                                                    }
+                                                                                                    className="group rounded-md border shadow my-2 text-md"
+                                                                                                >
+                                                                                                    <div
+                                                                                                        className="flex flex-col p-2 rounded-t-md"
+                                                                                                        style={{
+                                                                                                            backgroundColor:
+                                                                                                                container
+                                                                                                                    .badgeColor
+                                                                                                                    .value,
+                                                                                                        }}
+                                                                                                    >
+                                                                                                        <button
+                                                                                                            type="button"
+                                                                                                            className="opacity-0 group-hover:opacity-100 flex justify-end transition-opacity duration-300"
+                                                                                                            style={{
+                                                                                                                color: container
+                                                                                                                    .badgeColor
+                                                                                                                    .textDark
+                                                                                                                    ? '#333'
+                                                                                                                    : '#fff',
+                                                                                                            }}
+                                                                                                            onClick={() =>
+                                                                                                                handleEditContainer(
+                                                                                                                    container.id
+                                                                                                                )
                                                                                                             }
+                                                                                                        >
+                                                                                                            <MdModeEdit className="w-5" />
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div className="flex flex-col p-2 divide-x">
+                                                                                                        <div className="flex gap-x-12 items-center text-slate-600">
+                                                                                                            <div className="flex flex-col">
+                                                                                                                <label className="text-sm font-medium">
+                                                                                                                    Title
+                                                                                                                </label>
+                                                                                                                <div>
+                                                                                                                    {
+                                                                                                                        container.title
+                                                                                                                    }
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="flex flex-col">
+                                                                                                                <label className="text-sm font-medium">
+                                                                                                                    Type
+                                                                                                                </label>
+                                                                                                                <div>
+                                                                                                                    {
+                                                                                                                        container.type
+                                                                                                                    }
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            {container.type ===
+                                                                                                                'checklist' && (
+                                                                                                                <div className="flex flex-col">
+                                                                                                                    <label className="text-sm font-medium">
+                                                                                                                        Ordering
+                                                                                                                    </label>
+                                                                                                                    <div>
+                                                                                                                        {
+                                                                                                                            container.completedItemOrder
+                                                                                                                        }
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            )}
                                                                                                         </div>
                                                                                                     </div>
-                                                                                                )}
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div className="flex items-center justify-end mt-2">
-                                                                                            <button
-                                                                                                type="button"
-                                                                                                name="delete-tag"
-                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-2"
-                                                                                                onClick={() =>
-                                                                                                    handleRemoveColumn(
-                                                                                                        column.id
-                                                                                                    )
-                                                                                                }
-                                                                                            >
-                                                                                                <TiDelete className="text-slate-600 w-5 h-5" />
-                                                                                            </button>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                );
-                                                                            }
-                                                                        )}
+                                                                                                    <div className="flex items-center justify-end mt-2">
+                                                                                                        <button
+                                                                                                            type="button"
+                                                                                                            name="delete-tag"
+                                                                                                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-2"
+                                                                                                            onClick={() =>
+                                                                                                                handleRemoveContainer(
+                                                                                                                    container.id
+                                                                                                                )
+                                                                                                            }
+                                                                                                        >
+                                                                                                            <TiDelete className="text-slate-600 w-5 h-5" />
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            );
+                                                                                        }
+                                                                                    )}
+                                                                                </>
+                                                                            )}
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {/* Board tag/column input*/}
+                                                {/* Board tag/container input*/}
                                                 <div className="flex flex-1 flex-col justify-between border-b border-gray-100">
                                                     <div className="px-2 sm:px-4">
                                                         <div className="space-y-2 px-1">
@@ -674,7 +635,7 @@ const CreateBoardForm = ({
                                                                 <TagForm
                                                                     id={
                                                                         boardTags ===
-                                                                        undefined
+                                                                        null
                                                                             ? 1
                                                                             : boardTags.length
                                                                     }
@@ -693,10 +654,11 @@ const CreateBoardForm = ({
                                                                 type="button"
                                                                 className="inline-flex w-full justify-end rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:shadow-sm hover:bg-gray-50 focus:outline-none mb-4"
                                                                 onClick={
-                                                                    handleToggleColumnForm
+                                                                    handleToggleContainerForm
                                                                 }
                                                             >
-                                                                Add some columns
+                                                                Add some
+                                                                containers
                                                                 <BsChevronBarDown
                                                                     className="-mr-1 ml-2 h-5 w-5"
                                                                     aria-hidden="true"
@@ -704,7 +666,7 @@ const CreateBoardForm = ({
                                                             </button>
                                                             <Transition
                                                                 show={
-                                                                    showColumnForm
+                                                                    showContainerForm
                                                                 }
                                                                 enter="transition ease-out duration-100"
                                                                 enterFrom="transform opacity-0 scale-95"
@@ -713,32 +675,28 @@ const CreateBoardForm = ({
                                                                 leaveFrom="transform opacity-100 scale-100"
                                                                 leaveTo="transform opacity-0 scale-95"
                                                             >
-                                                                {columnFormState ===
+                                                                {containerFormState ===
                                                                     'edit' &&
-                                                                boardColumns !==
-                                                                    undefined ? (
-                                                                    <ColumnForm
+                                                                boardContainers !==
+                                                                    null ? (
+                                                                    <ContainerForm
                                                                         id={
-                                                                            retrieveMaxColumnId() +
-                                                                            1
+                                                                            currentContainerId
                                                                         }
-                                                                        column={
-                                                                            boardColumns[
-                                                                                currentColumnId
+                                                                        container={
+                                                                            boardContainers[
+                                                                                currentContainerId
                                                                             ]
                                                                         }
-                                                                        handleAddColumn={
-                                                                            handleUpdateColumn
+                                                                        handleAddContainer={
+                                                                            handleUpdateContainer
                                                                         }
                                                                     />
                                                                 ) : (
-                                                                    <ColumnForm
-                                                                        id={
-                                                                            retrieveMaxColumnId() +
-                                                                            1
-                                                                        }
-                                                                        handleAddColumn={
-                                                                            handleAddColumn
+                                                                    <ContainerForm
+                                                                        id={getNextContainerId()}
+                                                                        handleAddContainer={
+                                                                            handleAddContainer
                                                                         }
                                                                     />
                                                                 )}

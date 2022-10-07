@@ -41,41 +41,19 @@ import { Item } from './item';
 import { createRange } from '@/core/utils/createRange';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
-import { Board, Columns } from '@/core/types/kanbanBoard';
+import { Board, TItem } from './types';
+import { getMaxIdFromString, initializeBoard } from '@/core/utils/kanbanBoard';
+import { useKanbanStore } from '@/stores/KanbanStore';
+import { newBoard } from './consts';
+import { ContainerItemMapping } from '@/core/types/sortableBoard';
 // local components
-
-const boardStructure = {
-    title: 'Board 1',
-    // ... take columns as the items object, use column-id and task-ids as the array.
-    containers: {
-        'container-1': {
-            title: 'C-1',
-            taskIds: ['task-1', 'task-2'],
-        },
-        'container-2': {
-            title: 'c-2',
-            taskIds: ['task-3'],
-        },
-    },
-    tasks: {
-        'task-1': {
-            title: 'task-1',
-        },
-        'task-2': {
-            title: 'task-2',
-        },
-        'task-3': {
-            title: 'task-3',
-        },
-    },
-    columnOrder: ['column-1', 'column-2'],
-};
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
     defaultAnimateLayoutChanges({ ...args, wasDragging: true });
 
 function DroppableContainer({
     children,
+    container,
     columns = 1,
     disabled,
     id,
@@ -113,6 +91,7 @@ function DroppableContainer({
     return (
         <Container
             ref={disabled ? undefined : setNodeRef}
+            container={container}
             style={{
                 ...style,
                 transition,
@@ -197,48 +176,47 @@ export default function SortableBoard({
     vertical = false,
     scrollable,
 }: SortableBoardProps) {
-    // TODO: Make this work with current board database config
-    // * Column order can be the containers array, init the state as column order... on drag end update both the column order and columns.
+    const [boardState, setBoardState] = useState<Board>(newBoard);
 
-    // Server-client state with dexie.
-    const board: Board | undefined = useLiveQuery(
-        () => db.boards.get('giddy-up-032d76f2'),
-        []
+    const [items, setItems] = useState<ContainerItemMapping>(
+        boardState.containerItemMapping
     );
-
-    const [cols, setCols] = useState<Columns | undefined>();
-    const [conts, setConts] = useState<UniqueIdentifier[] | undefined>();
-
-    console.log(cols);
-
-    useEffect(() => {
-        if (board) {
-            setCols(board.columns);
-            setConts(Object.keys(board.columns) as UniqueIdentifier[]);
-        }
-    }, [board]);
-
-    const [items, setItems] = useState<Items>(
-        () =>
-            initialItems ?? {
-                A: createRange(itemCount, (index) => `A${index + 1}`),
-                B: createRange(itemCount, (index) => `B${index + 1}`),
-                C: createRange(itemCount, (index) => `C${index + 1}`),
-                D: createRange(itemCount, (index) => `D${index + 1}`),
-            }
-    );
-
-    // Make this column order, map columns out to column order
     const [containers, setContainers] = useState(
         Object.keys(items) as UniqueIdentifier[]
     );
 
-    console.log('containers ' + containers);
+    // Zustand store state
+    const {
+        taskCount,
+        columnCount,
+        setTaskCount,
+        setColumnCount,
+        increaseColumnCount,
+        currentBoardSlug,
+        setCurrentBoardSlug,
+        maxColumnId,
+        maxTaskId,
+        setMaxTaskId,
+        setMaxColumnId,
+    } = useKanbanStore();
+
+    // useLiveQuery() for indexDB state management, watch for changes in local board state.
+    const board: Board | undefined = useLiveQuery(
+        () => db.boards.get(slug),
+        [taskCount, columnCount, slug]
+    );
 
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
     const lastOverId = useRef<UniqueIdentifier | null>(null);
     const recentlyMovedToNewContainer = useRef(false);
     const isSortingContainer = activeId ? containers.includes(activeId) : false;
+
+    useEffect(() => {
+        if (board !== undefined) {
+            setBoardState(board);
+            setCurrentBoardSlug(slug);
+        }
+    }, [board, setBoardState, setCurrentBoardSlug, slug]);
 
     /**
      * Custom collision detection strategy optimized for multiple containers
@@ -332,7 +310,6 @@ export default function SortableBoard({
         if (id in items) {
             return id;
         }
-
         return Object.keys(items).find((key) => items[key]!.includes(id));
     };
 
@@ -365,9 +342,7 @@ export default function SortableBoard({
         });
     }, [items]);
 
-    if (items === undefined) return null;
-
-    console.log(items);
+    if (items === undefined || boardState === undefined) return null;
 
     return (
         <DndContext
@@ -400,9 +375,14 @@ export default function SortableBoard({
                     return;
                 }
 
-                if (activeContainer !== overContainer) {
-                    // @ts-ignore
+                if (
+                    activeContainer !== overContainer &&
+                    activeContainer !== undefined
+                ) {
                     setItems((items) => {
+                        if (items === undefined) {
+                            return newBoard.containerMappings;
+                        }
                         const activeItems = items[activeContainer];
                         const overItems = items[overContainer];
                         const overIndex = overItems?.indexOf(overId);
@@ -429,25 +409,17 @@ export default function SortableBoard({
 
                         recentlyMovedToNewContainer.current = true;
 
-                        if (items === undefined) {
-                            return;
-                        }
-
                         return {
                             ...items,
-                            [activeContainer]: items[activeContainer]?.filter(
+                            [activeContainer]: items[activeContainer].filter(
                                 (item) => item !== active.id
                             ),
                             [overContainer]: [
-                                // @ts-ignore
                                 ...items[overContainer].slice(0, newIndex),
-                                // @ts-ignore
                                 items[activeContainer][activeIndex],
-                                // @ts-ignore
                                 ...items[overContainer].slice(
                                     newIndex,
-                                    // @ts-ignore
-                                    items[overContainer].length
+                                    items[overContainer]!.length
                                 ),
                             ],
                         };
@@ -460,7 +432,6 @@ export default function SortableBoard({
                         const activeIndex = containers.indexOf(active.id);
                         const overIndex = containers.indexOf(over.id);
                         console.log('containers ' + containers);
-                        // save containers array state to column-order
                         return arrayMove(containers, activeIndex, overIndex);
                     });
                 }
@@ -538,13 +509,10 @@ export default function SortableBoard({
             modifiers={modifiers}
         >
             <div
-                className="inline-grid grid-flow-col grid-auto-cols auto-cols-max"
-                // style={{
-                //     display: 'inline-grid',
-                //     boxSizing: 'border-box',
-                //     padding: 20,
-                //     gridAutoFlow: vertical ? 'row' : 'column',
-                // }}
+                className="inline-grid grid-auto-cols grid-auto-rows auto-cols-max py-10 h-auto"
+                style={{
+                    gridAutoFlow: vertical ? 'row' : 'column',
+                }}
             >
                 <SortableContext
                     items={[...containers, PLACEHOLDER_ID]}
@@ -554,43 +522,66 @@ export default function SortableBoard({
                             : horizontalListSortingStrategy
                     }
                 >
-                    {containers.map((containerId) => (
-                        <DroppableContainer
-                            key={containerId}
-                            id={containerId}
-                            label={
-                                minimal ? undefined : `Column ${containerId}`
-                            }
-                            columns={columns}
-                            items={items[containerId]}
-                            scrollable={scrollable}
-                            style={containerStyle}
-                            unstyled={minimal}
-                            onRemove={() => handleRemove(containerId)}
-                        >
-                            <SortableContext
-                                items={items[containerId]}
-                                strategy={strategy}
-                            >
-                                {items[containerId].map((value, index) => {
-                                    return (
-                                        <SortableItem
-                                            disabled={isSortingContainer}
-                                            key={value}
-                                            id={value}
-                                            index={index}
-                                            handle={handle}
-                                            style={getItemStyles}
-                                            wrapperStyle={wrapperStyle}
-                                            renderItem={renderItem}
-                                            containerId={containerId}
-                                            getIndex={getIndex}
-                                        />
-                                    );
-                                })}
-                            </SortableContext>
-                        </DroppableContainer>
-                    ))}
+                    {containers.map((containerId) => {
+                        const container = boardState.containers[containerId];
+
+                        return (
+                            <>
+                                <DroppableContainer
+                                    key={containerId}
+                                    id={containerId}
+                                    container={
+                                        boardState.containers[containerId]
+                                    }
+                                    itemCount={items[containerId]!.length}
+                                    label={
+                                        container === undefined
+                                            ? 'Add a title'
+                                            : container.title
+                                    }
+                                    columns={columns}
+                                    items={items[containerId]}
+                                    scrollable={scrollable}
+                                    style={containerStyle}
+                                    unstyled={minimal}
+                                    onRemove={() => handleRemove(containerId)}
+                                >
+                                    <SortableContext
+                                        items={items[containerId]}
+                                        strategy={strategy}
+                                    >
+                                        {items[containerId].map(
+                                            (value, index) => {
+                                                const item =
+                                                    boardState.items[value];
+                                                return (
+                                                    <SortableItem
+                                                        item={item}
+                                                        disabled={
+                                                            isSortingContainer
+                                                        }
+                                                        key={value}
+                                                        id={value}
+                                                        index={index}
+                                                        handle={handle}
+                                                        style={getItemStyles}
+                                                        wrapperStyle={
+                                                            wrapperStyle
+                                                        }
+                                                        renderItem={renderItem}
+                                                        containerId={
+                                                            containerId
+                                                        }
+                                                        getIndex={getIndex}
+                                                    />
+                                                );
+                                            }
+                                        )}
+                                    </SortableContext>
+                                </DroppableContainer>
+                            </>
+                        );
+                    })}
                     {minimal ? undefined : (
                         <DroppableContainer
                             id={PLACEHOLDER_ID}
@@ -599,7 +590,9 @@ export default function SortableBoard({
                             onClick={handleAddColumn}
                             placeholder
                         >
-                            + Add column
+                            <button className="flex items-center justify-center h-full opacity-50">
+                                + Add column
+                            </button>
                         </DroppableContainer>
                     )}
                 </SortableContext>
@@ -611,7 +604,10 @@ export default function SortableBoard({
                 >
                     {activeId
                         ? containers.includes(activeId)
-                            ? renderContainerDragOverlay(activeId)
+                            ? renderContainerDragOverlay(
+                                  activeId,
+                                  boardState.containers[activeId]?.title
+                              )
                             : renderSortableItemDragOverlay(activeId)
                         : null}
                 </DragOverlay>,
@@ -626,6 +622,7 @@ export default function SortableBoard({
     function renderSortableItemDragOverlay(id: UniqueIdentifier) {
         return (
             <Item
+                isEditing={false}
                 value={id}
                 handle={handle}
                 style={getItemStyles({
@@ -645,10 +642,17 @@ export default function SortableBoard({
         );
     }
 
-    function renderContainerDragOverlay(containerId: UniqueIdentifier) {
+    function renderContainerDragOverlay(
+        containerId: UniqueIdentifier,
+        containerTitle: string | undefined
+    ) {
         return (
             <Container
-                label={`Column ${containerId}`}
+                label={
+                    containerTitle
+                        ? containerTitle
+                        : `Moving column ${containerId}`
+                }
                 columns={columns}
                 style={{
                     height: '100%',
@@ -658,6 +662,7 @@ export default function SortableBoard({
             >
                 {items[containerId].map((item, index) => (
                     <Item
+                        isEditing={true}
                         key={item}
                         value={item}
                         handle={handle}
@@ -749,6 +754,7 @@ function Trash({ id }: { id: UniqueIdentifier }) {
 }
 
 interface SortableItemProps {
+    item?: TItem;
     containerId: UniqueIdentifier;
     id: UniqueIdentifier;
     index: number;
@@ -761,6 +767,7 @@ interface SortableItemProps {
 }
 
 function SortableItem({
+    item,
     disabled,
     id,
     index,
@@ -789,6 +796,8 @@ function SortableItem({
 
     return (
         <Item
+            item={item}
+            isEditing={false}
             ref={disabled ? undefined : setNodeRef}
             value={id}
             dragging={isDragging}
