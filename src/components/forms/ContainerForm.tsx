@@ -10,6 +10,7 @@ import clsx from 'clsx';
 import { MdOutlineDone } from 'react-icons/md';
 import { useOnClickOutside } from '@/core/hooks/index';
 import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
+import Tooltip from '@/components/tooltip/Tooltip';
 
 type ContainerFormProps = {
     id: UniqueIdentifier;
@@ -41,7 +42,6 @@ const ContainerForm = ({
     handleAddContainer,
     ...props
 }: ContainerFormProps) => {
-    console.log('id: ' + props.id);
     const [title, setTitle] = useState(
         props.container === undefined ? '' : props.container.title
     );
@@ -68,8 +68,6 @@ const ContainerForm = ({
               }
             : props.container.badgeColor
     );
-
-    console.log(props.id);
 
     const colorPickerRef = useRef(null);
     useOnClickOutside(colorPickerRef, () => setShowColorPicker(false));
@@ -119,7 +117,6 @@ const ContainerForm = ({
     const sortingOptionsDisabled =
         containerType?.name === 'Simple Tasks' ? true : false;
 
-    console.log('id being passed is ' + props.id);
     return (
         <>
             <div id={`${props.id}`}>

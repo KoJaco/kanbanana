@@ -338,7 +338,10 @@ const Kanban = ({ slug }: KanbanProps) => {
                         <div>
                             {boardState.tags?.map((tag) => (
                                 <div className="inline-flex" key={tag.id}>
-                                    <Tag text={tag.text} color={tag.color} />
+                                    <Tag
+                                        text={tag.text}
+                                        backgroundColor={tag.backgroundColor}
+                                    />
                                 </div>
                             ))}
                         </div>

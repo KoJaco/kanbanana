@@ -17,6 +17,7 @@ import {
     BoardTags,
     BoardTag,
     ContainerItemMapping,
+    ContainerOrder,
     UniqueIdentifier,
 } from '@/core/types/sortableBoard';
 import { getMaxIdFromString } from '@/core/utils/kanbanBoard';
@@ -52,14 +53,16 @@ const initialContainers: Containers = {
     },
 };
 
+const initialContainerOrder: ContainerOrder = ['A'];
+
 const initialContainerItemMapping: ContainerItemMapping = {
-    A: ['A1'],
+    A: ['1'],
 };
 
 // container-1 should point to this, don't do anything further with this just save to db upon submit.
 const initialItems: Items = {
-    A1: {
-        id: 'A1',
+    '1': {
+        id: '1',
         badgeColor: defaultColor,
         completed: false,
         content: '',
@@ -97,8 +100,6 @@ const CreateBoardForm = ({
         useState<UniqueIdentifier>('A');
 
     const router = useRouter();
-
-    console.log(boardContainers);
 
     const { increaseBoardCount } = useKanbanStore();
 
@@ -207,16 +208,21 @@ const CreateBoardForm = ({
         let tags = boardTags === null ? initialTags : boardTags;
         let containers =
             boardContainers === null ? initialContainers : boardContainers;
+        let containerOrder =
+            boardContainerItemMapping === null
+                ? initialContainerOrder
+                : Object.keys(boardContainerItemMapping);
+
         let containerItemMapping =
             boardContainerItemMapping === null
                 ? initialContainerItemMapping
                 : boardContainerItemMapping;
 
-        if (boardContainers !== null) {
-            // If containers are non null
-            Object.values(containerItemMapping)[0] = [
-                `${Object.keys(containers)[0]}1`,
-            ];
+        if (boardContainers && boardContainerItemMapping) {
+            for (const [key, value] of Object.entries(containerItemMapping)) {
+                containerItemMapping[key] = ['1'];
+                break;
+            }
         }
 
         try {
@@ -227,6 +233,7 @@ const CreateBoardForm = ({
                     tags,
                     initialItems,
                     containers,
+                    containerOrder,
                     containerItemMapping
                 );
             });
@@ -636,8 +643,9 @@ const CreateBoardForm = ({
                                                                     id={
                                                                         boardTags ===
                                                                         null
-                                                                            ? 1
-                                                                            : boardTags.length
+                                                                            ? 0
+                                                                            : boardTags.length -
+                                                                              1
                                                                     }
                                                                     handleAddTag={
                                                                         handleAddTag

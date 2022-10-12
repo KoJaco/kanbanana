@@ -1,0 +1,54 @@
+import { useState } from 'react';
+import styles from './Tooltip.module.css';
+
+type TooltipProps = {
+    content: string;
+    direction?: 'left' | 'right' | 'top' | 'bottom';
+    delay?: number;
+    textColor?: string;
+    backgroundColor?: string;
+    children: JSX.Element;
+};
+
+const Tooltip = ({ delay = 300, children, ...props }: TooltipProps) => {
+    let timeout: ReturnType<typeof setTimeout>;
+    const [active, setActive] = useState(false);
+
+    function showTooltip() {
+        timeout = setTimeout(() => {
+            setActive(true);
+        }, delay);
+    }
+
+    function hideTooltip() {
+        clearInterval(timeout);
+        setActive(false);
+    }
+
+    return (
+        <div
+            // className="Wrapper"
+            className="Wrapper"
+            onMouseEnter={showTooltip}
+            onMouseLeave={hideTooltip}
+        >
+            {/* wraps children */}
+            {children}
+            {active && (
+                <div
+                    className={`Tooltip ${props.direction || 'top'}`}
+                    // style={{
+                    //     backgroundColor: props.backgroundColor
+                    //         ? props.backgroundColor
+                    //         : '#333',
+                    //     color: props.textColor ? props.textColor : '#fff',
+                    // }}
+                >
+                    {props.content}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default Tooltip;

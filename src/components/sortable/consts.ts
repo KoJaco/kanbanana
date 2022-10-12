@@ -1,4 +1,4 @@
-import { Board } from './types';
+import { Board } from '@/core/types/sortableBoard';
 
 export const newBoard: Board = {
     title: 'first-board',

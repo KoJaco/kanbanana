@@ -4,6 +4,7 @@ import {
     BoardTags,
     BoardTag,
     Containers,
+    ContainerOrder,
     ContainerItemMapping,
     Items,
 } from '@/core/types/sortableBoard';
@@ -47,6 +48,7 @@ export class KanbanBoardDexie extends Dexie {
         tags: BoardTags,
         items: Items,
         containers: Containers,
+        containerOrder: ContainerOrder,
         containerItemMapping: ContainerItemMapping
     ) {
         return this.boards.add({
@@ -58,6 +60,7 @@ export class KanbanBoardDexie extends Dexie {
             updatedAt: new Date(Date.now()).toLocaleString(),
             items: items,
             containers: containers,
+            containerOrder: containerOrder,
             containerItemMapping: containerItemMapping,
         });
     }

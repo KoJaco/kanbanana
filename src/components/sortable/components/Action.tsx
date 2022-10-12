@@ -14,7 +14,7 @@ export const Action = forwardRef<HTMLButtonElement, ActionProps>(
             <button
                 ref={ref}
                 {...props}
-                className=""
+                className="text-slate-600"
                 tabIndex={0}
                 style={
                     {

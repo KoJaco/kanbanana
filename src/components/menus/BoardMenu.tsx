@@ -32,7 +32,6 @@ const BoardMenu = () => {
 
     const initialBoardCount = useLiveQuery(() => db.boards.count());
 
-    console.log(initialBoardCount);
     useEffect(() => {
         // board count is also updated in the CreateBoardForm component, and also when boards are deleted.
         initialBoardCount !== undefined && setBoardCount(initialBoardCount);

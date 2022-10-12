@@ -5,19 +5,24 @@ import { db } from '@/server/db';
 import { TTask, Tasks, Color } from '@/core/types/kanbanBoard';
 
 type TaskFormProps = {
-    id: number;
-    columnId: string;
-    taskCount: number;
-    color: Color;
-    previousTaskContent: string;
-    currentBoardSlug: string;
-    showForm: boolean;
-    setIsEditing: (value: boolean) => void;
-    resetColor: () => void;
-    children: JSX.Element;
+    id: string | number;
+    columnId?: string;
+    totalItemCount?: number;
+    color?: Color;
+    previousTaskContent?: string;
+    currentBoardSlug?: string;
+    showForm?: boolean;
+    setIsEditing?: (value: boolean) => void;
+    resetColor?: () => void;
+    children?: JSX.Element;
 };
 
-const TaskForm = ({ id, setIsEditing, taskCount, ...props }: TaskFormProps) => {
+const TaskForm = ({
+    id,
+    setIsEditing,
+    totalItemCount,
+    ...props
+}: TaskFormProps) => {
     const [taskContent, setTaskContent] = useState<string>(
         props.previousTaskContent
     );
@@ -131,7 +136,7 @@ const TaskForm = ({ id, setIsEditing, taskCount, ...props }: TaskFormProps) => {
                     <button
                         type="button"
                         className="w-5 h-5 rounded-md hover:bg-red-600 cursor-pointer text-gray-500 hover:text-gray-50 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                        disabled={taskCount === 1 ? true : false}
+                        disabled={totalItemCount === 1 ? true : false}
                         onClick={handleRemoveTask}
                     >
                         <AiOutlineDelete className="w-4 h-4" />

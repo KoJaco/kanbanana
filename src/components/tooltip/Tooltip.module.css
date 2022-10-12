@@ -1,0 +1,84 @@
+:root {
+    --tooltip-text-color: white;
+    --tooltip-background-color: black;
+    --tooltip-margin: 30px;
+    --tooltip-arrow-size: 6px;
+}
+
+/* wrapper */
+.Wrapper {
+    display: inline-block;
+    position: relative;
+}
+
+/* absolute positioning, conditionally style text/background with props */
+
+.Tooltip {
+    position: absolute;
+    color: var(--tooltip-text-color);
+    background-color: var(--tooltip-background-color);
+    border-radius: 4px;
+    left: 50%;
+    transform: translate(-50%);
+    padding: 6px;
+    z-index: 100;
+    white-space: nowrap;
+}
+
+/* CSS border triangles */
+.Tooltip::before {
+    content: '';
+    left: 50%;
+    border: solid transparent;
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-width: var(--tooltip-arrow-size);
+    margin-left: calc(var(--tooltip-arrow-size) * -1);
+}
+
+.Tooltip.top {
+    top: calc(var(--tooltip-margin) * - 1);
+}
+
+.Tooltip.top::before {
+    top: 100%;
+    border-top-color: var(--tooltip-background-color);
+}
+.Tooltip.right {
+    left: calc(100% + var(--tooltip-margin));
+    top: 50%;
+    transform: translateX(0) translateY(-50%);
+}
+
+.Tooltip.right::before {
+    left: calc(100% + var(--tooltip-arrow-size));
+    top: 50%;
+    transform: translateX(0) translateY(-50%);
+    border-right-color: var(--tooltip-background-color);
+}
+
+.Tooltip.bottom {
+    bottom: calc(var(--tooltip-margin) * -1);
+}
+
+.Tooltip.bottom::before {
+    bottom: 100%;
+    border-bottom-color: var(--tooltip-background-color);
+}
+
+.Tooltip.left {
+    left: auto;
+    right: calc(100% + var(--tooltip-margin));
+    top: 50%;
+    transform: translateX(0) translateY(-50%);
+}
+
+.Tooltip.left::before {
+    left: auto;
+    right: calc(var(--tooltip-arrow-size) * -2);
+    top: 50%;
+    transform: translateX(0) translateY(-50%);
+    border-left-color: var(--tooltip-background-color);
+}

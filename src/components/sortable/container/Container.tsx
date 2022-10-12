@@ -2,10 +2,15 @@ import React, { forwardRef } from 'react';
 import clsx from 'clsx';
 // import styles from './Container.module.css';
 import { Handle, Remove } from '../components';
-import { MdAdd, MdDragIndicator, MdOutlineEdit } from 'react-icons/md';
-import { Board, TContainer, TItem, UniqueIdentifier } from '../types';
+import { MdAdd, MdOutlineEdit } from 'react-icons/md';
+import {
+    Board,
+    TContainer,
+    TItem,
+    UniqueIdentifier,
+} from '@/core/types/sortableBoard';
 import { AiOutlineDelete } from 'react-icons/ai';
-import Dexie, { ModifyError } from 'dexie';
+import { ModifyError } from 'dexie';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
 
@@ -50,17 +55,22 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
         ref
     ) => {
         // global store
-        const { currentBoardSlug } = useKanbanStore();
+        const { maxItemId, increaseMaxItemId, currentBoardSlug } =
+            useKanbanStore();
 
         function handleAddItem() {
-            const newItemIdentifier: UniqueIdentifier = `${
-                container!.id
-            }${itemCount}`;
+            // maxItemId has been set in upon loading the board in SortableBoard.
+
+            const newItemIdentifier: UniqueIdentifier = `${maxItemId + 1}`;
 
             let newItem: TItem = {
                 id: newItemIdentifier,
                 content: '',
-                badgeColor: { name: 'white', value: '#fff', textDark: true },
+                badgeColor: {
+                    name: 'white',
+                    value: '#fff',
+                    textDark: true,
+                },
                 createdAt: new Date(Date.now()).toLocaleString(),
                 updatedAt: new Date(Date.now()).toLocaleString(),
                 completed: false,
@@ -75,8 +85,8 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         // add item to item object
                         boardItem.items[newItemIdentifier] = newItem;
                         // props.columnId will always be defined.
-                        boardItem.containerMappings[container!.id].push(
-                            newItem
+                        boardItem.containerItemMapping[container!.id].push(
+                            newItemIdentifier
                         );
                     });
             })
@@ -92,9 +102,9 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                 .catch((e: Error) => {
                     console.error('Generic error: ' + e);
                 });
-        }
 
-        function handleRemoveContainer() {}
+            increaseMaxItemId();
+        }
 
         return (
             <div
@@ -106,7 +116,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         '--columns': columns,
                     } as React.CSSProperties
                 }
-                className="flex flex-col max-content h-full w-52 md:w-80 lg:w-96 xl:w-[30rem] bg-gray-100 sm:px-1 mx-1 rounded-md group py-2"
+                className="flex flex-col max-content h-full w-80 bg-gray-100 sm:px-1 mx-1 rounded-md group py-2 snap-start"
                 onClick={onClick}
                 tabIndex={onClick ? 0 : undefined}
             >
@@ -137,12 +147,14 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                     </ul>
                 )}
                 <div className="flex my-2 w-full h-auto justify-start">
-                    <button
-                        className="bg-transparent hover:scale-110 text-gray-500 transition-transform duration-300"
-                        onClick={handleAddItem}
-                    >
-                        <MdAdd className="w-5 h-5 text-gray-500" />
-                    </button>
+                    {container && (
+                        <button
+                            className="bg-transparent hover:scale-110 text-gray-500 transition-transform duration-300"
+                            onClick={handleAddItem}
+                        >
+                            <MdAdd className="w-5 h-5 text-gray-500" />
+                        </button>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-between mt-auto inset-y-0 opacity-0 border-t group-hover:opacity-100 transition-opacity duration-300 py-2">
@@ -153,13 +165,14 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         disabled={
                             columns === 1 ? true : false
                             // ||
-                            //   taskCount ===
+                            //   totalItemCount ===
                             //       columnTasks!.length
                         }
-                        onClick={handleRemoveContainer}
+                        // onClick={handleRemoveContainer}
                     >
                         <AiOutlineDelete className="w-4 h-4" />
                     </button>
+
                     <button className="items-center justify-end text-slate-500 py-2 rounded-full hover:text-red-500 cursor-pointer transition-color duration-300">
                         <MdOutlineEdit className="w-5 h-5" />
                     </button>

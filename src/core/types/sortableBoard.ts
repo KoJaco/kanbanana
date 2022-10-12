@@ -56,7 +56,7 @@ export interface Containers {
 
 export type ContainerId = keyof Containers;
 
-export type ContainerOrder = Array<keyof Containers>;
+export type ContainerOrder = UniqueIdentifier[];
 
 export type ContainerItemMapping = Record<UniqueIdentifier, UniqueIdentifier[]>;
 
@@ -72,6 +72,7 @@ export interface Board {
     createdAt: string;
     // auto generated per mutation.
     updatedAt: string;
+    containerOrder: ContainerOrder;
     containerItemMapping: ContainerItemMapping;
     // nested objects indexed by '<task/column>-x', where x is a unique positive integer.
     items: Items;

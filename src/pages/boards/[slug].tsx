@@ -7,6 +7,11 @@ const Kanban = dynamic(() => import('@/components/kanban/Kanban'), {
     ssr: false,
 });
 
+const SortableBoard = dynamic(
+    () => import('@/components/sortable/SortableBoard'),
+    { ssr: false }
+);
+
 const BoardDetail: NextPage = () => {
     const router = useRouter();
     // extract slug from query, must check type.
@@ -25,7 +30,8 @@ const BoardDetail: NextPage = () => {
 
     return (
         <>
-            <Kanban slug={parseSlug(slug)} />
+            {/* <Kanban slug={parseSlug(slug)} /> */}
+            <SortableBoard slug={parseSlug(slug)} />
         </>
     );
 };

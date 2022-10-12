@@ -12,14 +12,14 @@ export type State = {
     // local state for a board detail page.
     // counts
     columnCount: number;
-    taskCount: number;
+    totalItemCount: number;
     // current board info tracking
     currentBoardSlug: string;
     currentTaskSlug: string;
     currentColumnSlug: string;
     currentColumnId: string;
     // keep track of how the highest task id, used in creating a new task to avoid conflicts in task deletion.
-    maxTaskId: number;
+    maxItemId: number;
     maxColumnId: number;
 
     currentTaskId: string;
@@ -35,7 +35,7 @@ export type State = {
     increaseBoardCount: () => void;
     decreaseBoardCount: () => void;
     setColumnCount: (count: number) => void;
-    setTaskCount: (count: number) => void;
+    setTotalItemCount: (count: number) => void;
     resetCounts: () => void;
 
     increaseColumnCount: () => void;
@@ -43,15 +43,15 @@ export type State = {
     increaseTaskCount: () => void;
     decreaseTaskCount: () => void;
 
-    increaseMaxTaskId: () => void;
+    increaseMaxItemId: () => void;
 
     // current task/col/board
     setCurrentBoardSlug: (slug: string) => void;
     setCurrentColumnSlug: (slug: string) => void;
     setCurrentTaskSlug: (slug: string) => void;
     setCurrentColumnId: (columnId: string) => void;
-    setMaxTaskId: (maxTaskId: number) => void;
-    setMaxColumnId: (maxTaskId: number) => void;
+    setMaxItemId: (maxItemId: number) => void;
+    setMaxColumnId: (maxItemId: number) => void;
     setCurrentTaskId: (taskId: string) => void;
 };
 
@@ -63,13 +63,13 @@ export const useKanbanStore = create<State>((set) => ({
     // deleting this last task/column is not allowed, however, a user can delete their last board.
     boardCount: undefined,
     columnCount: 0,
-    taskCount: 0,
+    totalItemCount: 0,
     // must be set!
     currentBoardSlug: '',
     currentColumnSlug: '',
     currentTaskSlug: '',
     currentColumnId: 'column-1',
-    maxTaskId: 1,
+    maxItemId: 0,
     maxColumnId: 1,
     currentTaskId: 'task-1',
 
@@ -102,22 +102,26 @@ export const useKanbanStore = create<State>((set) => ({
     setColumnCount: (count: number) => {
         set(() => ({ columnCount: count }));
     },
-    setTaskCount: (count: number) => {
-        set(() => ({ taskCount: count }));
+    setTotalItemCount: (count: number) => {
+        set(() => ({ totalItemCount: count }));
     },
-    resetCounts: () => set({ columnCount: 1, taskCount: 1 }),
+    resetCounts: () => set({ columnCount: 1, totalItemCount: 1 }),
 
     increaseColumnCount: () =>
         set((state) => ({ columnCount: state.columnCount + 1 })),
     decreaseColumnCount: () =>
         set((state) => ({ columnCount: state.columnCount - 1 })),
     increaseTaskCount: () =>
-        set((state) => ({ taskCount: state.taskCount + 1 })),
+        set((state) => ({
+            totalItemCount: state.totalItemCount + 1,
+        })),
     decreaseTaskCount: () =>
-        set((state) => ({ taskCount: state.taskCount - 1 })),
+        set((state) => ({
+            totalItemCount: state.totalItemCount - 1,
+        })),
 
-    increaseMaxTaskId: () =>
-        set((state) => ({ maxTaskId: state.maxTaskId + 1 })),
+    increaseMaxItemId: () =>
+        set((state) => ({ maxItemId: state.maxItemId + 1 })),
 
     // current task/col/board
     setCurrentBoardSlug: (slug: string) =>
@@ -128,7 +132,7 @@ export const useKanbanStore = create<State>((set) => ({
         set(() => ({ currentTaskSlug: slug })),
     setCurrentColumnId: (columnId: string) =>
         set(() => ({ currentColumnId: columnId })),
-    setMaxTaskId: (maxTaskId: number) => set(() => ({ maxTaskId: maxTaskId })),
+    setMaxItemId: (maxItemId: number) => set(() => ({ maxItemId: maxItemId })),
     setMaxColumnId: (maxColumnId: number) =>
         set(() => ({ maxColumnId: maxColumnId })),
     setCurrentTaskId: (taskId: string) =>
