@@ -4,12 +4,15 @@ import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 import type { Transform } from '@dnd-kit/utilities';
 import { Handle, Remove } from '../components';
 import { TItem } from '@/core/types/sortableBoard';
-import TaskForm from './TaskForm';
+import ItemForm from './ItemForm';
+import { FiEdit } from 'react-icons/fi';
 import ArrowIcon from '@/components/elements/ArrowIcon';
 
 import styles from './Item.module.css';
 export interface ItemProps {
     item?: TItem;
+    showItemForm: boolean;
+    setShowItemForm: (value: boolean) => void;
     dragOverlay?: boolean;
     color?: string;
     disabled?: boolean;
@@ -149,7 +152,7 @@ export const Item = React.memo(
                         {...props}
                         tabIndex={!handle ? 0 : undefined}
                     >
-                        <div className="flex flex-row w-full">
+                        <div className="flex flex-row w-full opacity-0 hover:opacity-75 transition-opacity duration:300">
                             {/* <button
                                 className="flex rounded-md border-1 border-gray-300 p-1 w-4 h-4"
                                 // style={{
@@ -161,21 +164,49 @@ export const Item = React.memo(
                             >
                             </button> */}
 
-                            <div className="flex ml-auto opacity-50 transition-opacity duration-300">
+                            <div className="flex ml-auto transition-opacity duration-300 gap-x-2">
                                 {/* <Remove className="" onClick={onRemove} /> */}
+                                <button
+                                    type="button"
+                                    className="w-4 h-4"
+                                    onClick={() =>
+                                        props.setShowItemForm(
+                                            !props.showItemForm
+                                        )
+                                    }
+                                >
+                                    <FiEdit />
+                                </button>
 
                                 <Handle {...handleProps} {...listeners} />
                             </div>
                         </div>
-                        <div className="flex flex-row">
-                            {/* content */}
-                            <div
-                                id={`${value}`}
-                                className="whitespace-normal pb-2 text-slate-600 break-all"
-                            >
-                                {item && item.content ? item.content : value}
+                        {props.showItemForm && item ? (
+                            <ItemForm
+                                item={item}
+                                containerType="simple"
+                                containerId="B"
+                                showForm={props.showItemForm}
+                                setShowForm={
+                                    props.setShowItemForm
+                                        ? props.setShowItemForm
+                                        : () => {}
+                                }
+                                handleRemoveItem={() => {}}
+                            />
+                        ) : (
+                            <div className="flex flex-row">
+                                {/* content */}
+                                <div
+                                    id={`${value}`}
+                                    className="whitespace-normal pb-2 text-slate-600 break-all"
+                                >
+                                    {item && item.content
+                                        ? item.content
+                                        : value}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </li>
             );

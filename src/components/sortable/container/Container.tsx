@@ -116,7 +116,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         '--columns': columns,
                     } as React.CSSProperties
                 }
-                className="flex flex-col max-content h-full w-80 bg-gray-100 sm:px-1 mx-1 rounded-md pt-1 snap-start group"
+                className="flex flex-col max-content h-full w-96 sm:w-80 bg-gray-100 px-1 mx-1 rounded-md pt-1 snap-start group"
                 onClick={onClick}
                 tabIndex={onClick ? 0 : undefined}
             >
@@ -151,26 +151,28 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                     )}
                 </div>
 
-                <div className="flex items-center justify-between mt-auto inset-y-0  border-t opacity-0 group-hover:opacity-100 transition-opacity duration-300 py-2">
-                    <button
-                        type="button"
-                        className="w-5 h-5 rounded-md hover:bg-red-600 cursor-pointer text-gray-500 hover:text-gray-50 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                        // button is disabled if we only have one column, OR if we will be deleting all our tasks.
-                        // disabled={
-                        //     columns === 1 ? true : false
-                        //     // ||
-                        //     //   totalItemCount ===
-                        //     //       columnTasks!.length
-                        // }
-                        onClick={onRemove}
-                    >
-                        <AiOutlineDelete className="w-4 h-4" />
-                    </button>
+                {container && (
+                    <div className="flex items-center justify-between mt-auto inset-y-0  border-t opacity-0 group-hover:opacity-100 transition-opacity duration-300 py-2">
+                        <button
+                            type="button"
+                            className="w-5 h-5 rounded-md hover:bg-red-600 cursor-pointer text-gray-500 hover:text-gray-50 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                            // button is disabled if we only have one column, OR if we will be deleting all our tasks.
+                            // disabled={
+                            //     columns === 1 ? true : false
+                            //     // ||
+                            //     //   totalItemCount ===
+                            //     //       columnTasks!.length
+                            // }
+                            onClick={onRemove}
+                        >
+                            <AiOutlineDelete className="w-4 h-4" />
+                        </button>
 
-                    <button className="items-center justify-end text-slate-500 py-2 rounded-full hover:text-red-500 cursor-pointer transition-color duration-300">
-                        <MdOutlineEdit className="w-5 h-5" />
-                    </button>
-                </div>
+                        <button className="items-center justify-end text-slate-500 py-2 rounded-full hover:text-red-500 cursor-pointer transition-color duration-300">
+                            <MdOutlineEdit className="w-5 h-5" />
+                        </button>
+                    </div>
+                )}
             </div>
         );
     }

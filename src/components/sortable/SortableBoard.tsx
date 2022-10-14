@@ -65,7 +65,10 @@ import {
     HiChevronLeft,
     HiChevronRight,
 } from 'react-icons/hi';
-import { restrictToParentElement } from '@dnd-kit/modifiers';
+import {
+    createSnapModifier,
+    restrictToParentElement,
+} from '@dnd-kit/modifiers';
 // local components
 
 // import DroppableContainer from './DroppableContainer';
@@ -521,97 +524,11 @@ export default function SortableBoard({
                         });
                     }
                 }}
-                // onDragOver={({ active, over }) => {
-                //     console.log('active');
-                //     console.log(active);
-                //     console.log('over');
-                //     console.log(over);
-                //     // local state on drag over, set server-client state on drag end.
-                //     const overId = over?.id;
-
-                //     if (overId == null || active.id in items) {
-                //         return;
-                //     }
-
-                //     const overContainer = findContainer(overId);
-                //     const activeContainer = findContainer(active.id);
-
-                //     if (!overContainer || !activeContainer) {
-                //         // return early if either are undefined
-                //         return;
-                //     }
-
-                //     if (activeContainer !== overContainer) {
-                //         // @ts-ignore
-                //         setItems((items) => {
-                //             if (items === undefined) {
-                //                 return board.containerItemMapping;
-                //             }
-                //             const activeItems = items[activeContainer];
-                //             const overItems = items[overContainer];
-
-                //             const overIndex = overItems?.indexOf(overId);
-                //             const activeIndex = activeItems!.indexOf(active.id);
-
-                //             let newIndex: number;
-
-                //             if (overItems && overId in items) {
-                //                 newIndex = overItems.length + 1;
-                //             } else {
-                //                 const isBelowOverItem =
-                //                     over &&
-                //                     active.rect.current.translated &&
-                //                     active.rect.current.translated.top >
-                //                         over.rect.top + over.rect.height;
-
-                //                 const modifier = isBelowOverItem ? 1 : 0;
-
-                //                 newIndex =
-                //                     overIndex && overIndex >= 0
-                //                         ? overIndex + modifier
-                //                         : overItems!.length + 1;
-                //             }
-
-                //             recentlyMovedToNewContainer.current = true;
-
-                //             return {
-                //                 ...items,
-                //                 [activeContainer]: items[
-                //                     activeContainer
-                //                 ]!.filter((item) => item !== active.id),
-                //                 [overContainer]: [
-                //                     ...items[overContainer]!.slice(0, newIndex),
-                //                     items[activeContainer]![activeIndex],
-                //                     ...items[overContainer]!.slice(
-                //                         newIndex,
-                //                         items[overContainer]!.length
-                //                     ),
-                //                 ],
-                //             };
-                //         });
-                //     }
-                // }}
                 onDragEnd={({ active, over }) => {
                     if (!items) {
-                        // if items is somehow undefined, sect activeId null and return;
                         setActiveId(null);
                         return;
                     }
-
-                    // let newContainers: UniqueIdentifier[] =
-                    //     Array.from(containers);
-                    // console.log(newContainers);
-
-                    // if (active.id in items && over?.id) {
-                    //     const activeIndex = containers.indexOf(active.id);
-                    //     const overIndex = containers.indexOf(over.id);
-                    //     newContainers = arrayMove(
-                    //         newContainers,
-                    //         activeIndex,
-                    //         overIndex
-                    //     );
-
-                    // }
 
                     const activeContainer = findContainer(active.id);
 
@@ -677,22 +594,6 @@ export default function SortableBoard({
 
                         setActiveId(null);
                         return;
-
-                        // unstable_batchedUpdates(() => {
-                        //     setContainers((containers) => [
-                        //         ...containers,
-                        //         newContainerId,
-                        //     ]);
-
-                        //     const newItems: ContainerItemMapping = {
-                        //         ...items,
-                        //         [activeContainer]: newActiveContainer,
-                        //         [newContainerId]: newContainer,
-                        //     };
-
-                        //     setItems(newItems);
-                        //     setActiveId(null);
-                        // });
                     }
 
                     db.boards
@@ -712,174 +613,14 @@ export default function SortableBoard({
                             }
                         });
 
-                    // const overContainer = findContainer(overId);
-
-                    // const activeIndex = items[activeContainer]!.indexOf(
-                    //     active.id
-                    // );
-                    // const overIndex: number =
-                    //     items[overContainer]!.indexOf(overId);
-
-                    // const newOverContainer = arrayMove(
-                    //     items[overContainer]!,
-                    //     activeIndex,
-                    //     overIndex
-                    // );
-
-                    // if (activeIndex !== overIndex) {
-                    //     const newItems = {
-                    //         ...items,
-                    //         [overContainer]: newOverContainer,
-                    //     };
-
-                    //     setItems(newItems);
-                    // }
-
                     setActiveId(null);
-
-                    // async save items and containers to database.
-
-                    // db.transaction('rw', db.boards, async () => {
-                    //     await db.boards
-                    //         .where('slug')
-                    //         .equals(currentBoardSlug)
-                    //         .modify((boardItem: any) => {
-                    //             boardItem.containerOrder = containers;
-                    //             boardItem.containerItemMapping = items;
-                    //         });
-                    // });
                 }}
-                // onDragEnd={({ active, over }) => {
-                //     if (active.id in items && over?.id) {
-                //         // dragging containers, set container order.
-                //         const activeIndex = containers.indexOf(active.id);
-                //         const overIndex = containers.indexOf(over.id);
-
-                //         const newContainerOrder: UniqueIdentifier[] = arrayMove(
-                //             containers,
-                //             activeIndex,
-                //             overIndex
-                //         );
-                //         db.transaction('rw', db.boards, async () => {
-                //             await db.boards
-                //                 .where('slug')
-                //                 .equals(currentBoardSlug)
-                //                 .modify((boardItem: any) => {
-                //                     boardItem.containerOrder =
-                //                         newContainerOrder;
-                //                 });
-                //         });
-                //     }
-
-                //     const activeContainer = findContainer(active.id);
-
-                //     if (!activeContainer) {
-                //         setActiveId(null);
-                //         return;
-                //     }
-
-                //     const overId = over?.id;
-
-                //     if (overId == null) {
-                //         setActiveId(null);
-                //         return;
-                //     }
-
-                //     if (overId === PLACEHOLDER_ID) {
-                //         // dragging items over placeholder, results in adding a containers
-
-                //         const newContainerId = getNextContainerId();
-
-                //         let newContainer: TContainer = {
-                //             id: newContainerId,
-                //             title: '',
-                //             badgeColor: {
-                //                 name: 'white',
-                //                 value: '#fff',
-                //                 textDark: true,
-                //             },
-                //             type: 'simple',
-                //             completedItemOrder: 'noChange',
-                //         };
-
-                //         const newContainerOrder = [
-                //             ...containers,
-                //             newContainerId,
-                //         ];
-                //         const newContainerItemMapping = {
-                //             ...items,
-                //             [activeContainer]: items[activeContainer]?.filter(
-                //                 (id) => id !== activeId
-                //             ),
-                //             [newContainerId]: [activeId],
-                //         };
-
-                //         db.transaction('rw', db.boards, async () => {
-                //             await db.boards
-                //                 .where('slug')
-                //                 .equals(currentBoardSlug)
-                //                 .modify((boardItem: any) => {
-                //                     boardItem.containers[newContainerId] =
-                //                         newContainer;
-
-                //                     boardItem.containerOrder =
-                //                         newContainerOrder;
-                //                     boardItem.containerItemMapping =
-                //                         newContainerItemMapping;
-                //                 });
-                //             setActiveId(null);
-                //         });
-                //         return;
-                //     }
-
-                //     const overContainer = findContainer(overId);
-
-                //     if (
-                //         overContainer === undefined ||
-                //         activeContainer === undefined
-                //     ) {
-                //         return;
-                //     } else if (
-                //         items[overContainer] === undefined ||
-                //         items[activeContainer] === undefined
-                //     ) {
-                //         return;
-                //     }
-
-                //     // dragging items, set container item mappings in db.
-                //     const activeIndex = items[activeContainer]!.indexOf(
-                //         active.id
-                //     );
-                //     const overIndex = items[overContainer]!.indexOf(overId);
-
-                //     const newContainerItemMapping = {
-                //         ...items,
-                //         [overContainer]: arrayMove(
-                //             items[overContainer]!,
-                //             activeIndex,
-                //             overIndex
-                //         ),
-                //     };
-
-                //     // if (activeIndex !== overIndex) {
-                //     db.transaction('rw', db.boards, async () => {
-                //         await db.boards
-                //             .where('slug')
-                //             .equals(currentBoardSlug)
-                //             .modify((boardItem: any) => {
-                //                 boardItem.containerItemMapping =
-                //                     newContainerItemMapping;
-                //             });
-                //     });
-
-                //     setActiveId(null);
-                // }}
                 cancelDrop={cancelDrop}
                 onDragCancel={onDragCancel}
                 modifiers={modifiers}
             >
                 {/* TITLE */}
-                <div className="my-8 ml-2 px-2 sm:px-6 md:px-8 ">
+                <div className="my-8 ml-2 px-4 sm:px-6 md:px-8">
                     <div className="flex justify-between items-end gap-8">
                         <h1 className="text-2xl font-semibold text-slate-600">
                             {board?.title.length === 0
@@ -914,10 +655,10 @@ export default function SortableBoard({
                 </div>
                 <div
                     id="carousel"
-                    className="pb-10 sm:mx-8 overflow-x-scroll scroll scrollbar-rounded-horizontal snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500"
+                    className="pb-10 mx-6 sm:mx-8 overflow-x-scroll scroll scrollbar-rounded-horizontal snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500"
                 >
                     <div
-                        className="inline-grid grid-auto-cols auto-cols-max h-auto relative "
+                        className="inline-grid grid-auto-cols auto-cols-max h-auto relative"
                         style={{
                             gridAutoFlow: vertical ? 'row' : 'column',
                         }}
@@ -1054,7 +795,7 @@ export default function SortableBoard({
                         document.body
                     )}
                 </div>
-                <div className="my-8 max-w-7xl px-2 sm:px-6 md:px-8 text-slate-600 space-x-2">
+                <div className="my-8 ml-8 px-2 sm:px-6 md:px-8  max-w-7xl text-slate-600 space-x-2 w-fit bg-white rounded-full drop-shadow-lg fixed bottom-4 right-4 sm:static">
                     {scrollButtons.map((button, index) => (
                         <button
                             key={index}
@@ -1074,7 +815,13 @@ export default function SortableBoard({
     function renderSortableItemDragOverlay(id: UniqueIdentifier) {
         return (
             <Item
-                value={id}
+                value={
+                    board?.items[id]?.content.length === 0
+                        ? '...'
+                        : board?.items[id]?.content
+                }
+                showItemForm={false}
+                setShowItemForm={() => {}}
                 handle={handle}
                 style={getItemStyles({
                     containerId: findContainer(id) as UniqueIdentifier,
@@ -1085,7 +832,7 @@ export default function SortableBoard({
                     isDragging: true,
                     isDragOverlay: true,
                 })}
-                color={getColor(id)}
+                color={board?.items[id]?.badgeColor.value}
                 wrapperStyle={wrapperStyle({ index: 0 })}
                 renderItem={renderItem}
                 dragOverlay
@@ -1111,7 +858,9 @@ export default function SortableBoard({
                 {items[containerId]?.map((itemId, index) => (
                     <Item
                         key={index}
-                        value={itemId}
+                        showItemForm={false}
+                        setShowItemForm={() => {}}
+                        value={board?.items[itemId]?.content}
                         handle={handle}
                         style={getItemStyles({
                             containerId,
@@ -1122,7 +871,7 @@ export default function SortableBoard({
                             isSorting: false,
                             isDragOverlay: false,
                         })}
-                        color={getColor(itemId)}
+                        color={board?.items[itemId]?.badgeColor.value}
                         wrapperStyle={wrapperStyle({ index })}
                         renderItem={renderItem}
                     />
@@ -1293,6 +1042,7 @@ function DroppableContainer({
 
 interface SortableItemProps {
     item?: TItem;
+    setShowItemForm?: (value: boolean) => void;
     containerId: UniqueIdentifier;
     id: UniqueIdentifier;
     index: number;
@@ -1358,11 +1108,14 @@ function SortableItem({
     });
     const mounted = useMountStatus();
     const mountedWhileDragging = isDragging && !mounted;
+    const [showItemForm, setShowItemForm] = useState(false);
 
     return (
         <Item
             item={item}
             ref={disabled ? undefined : setNodeRef}
+            showItemForm={showItemForm}
+            setShowItemForm={setShowItemForm}
             value={id}
             dragging={isDragging}
             sorting={isSorting}
