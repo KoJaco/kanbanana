@@ -25,7 +25,6 @@ export interface ItemProps {
     style?: React.CSSProperties;
     transition?: string | null;
     wrapperStyle?: React.CSSProperties;
-    isEditing?: boolean;
     value: React.ReactNode;
     onRemove?(): void;
     renderItem?(args: {
@@ -99,8 +98,8 @@ export const Item = React.memo(
             ) : (
                 <li
                     key={index}
-                    // className="list-none row-span-1 w-full h-full py-1 px-2 border-[1.5px] border-gray-300 rounded-sm bg-gray-50  focus-within:border-slate-500 focus-within:ring-0.2 focus-within:ring-slate-500 focus-within:drop-shadow max-w-auto"
                     className={clsx(
+                        'group',
                         styles.Wrapper,
                         fadeIn && styles.fadeIn,
                         sorting && styles.sorting,
@@ -130,29 +129,29 @@ export const Item = React.memo(
                     }
                     ref={ref}
                 >
-                    <label htmlFor="description" className="sr-only">
+                    <label htmlFor="content" className="sr-only">
                         Task, note, or item content
                     </label>
+                    {/* main item content after wrapper */}
                     <div
                         // className="flex flex-row justify-between w-full items-center pt-1 mb-4"
                         className={clsx(
+                            'w-full bg-white',
                             styles.Item,
                             dragging && styles.dragging,
                             handle && styles.withHandle,
                             dragOverlay && styles.dragOverlay,
                             disabled && styles.disabled,
-                            item?.badgeColor && styles.color
+                            color && styles.color
                         )}
                         style={style}
                         data-cypress="draggable-item"
                         {...props}
-                        // {...(!handle ? listeners : undefined)}
-
                         tabIndex={!handle ? 0 : undefined}
                     >
-                        <div className="flex">
-                            <button
-                                className="rounded-md border-1 border-gray-300 p-1 w-4 h-4"
+                        <div className="flex flex-row w-full">
+                            {/* <button
+                                className="flex rounded-md border-1 border-gray-300 p-1 w-4 h-4"
                                 // style={{
                                 //     backgroundColor: parseColorToString(props.color),
                                 // }}
@@ -160,57 +159,23 @@ export const Item = React.memo(
                                 // disable when selecting color, let useOnClickOutside handle close
                                 // disabled={showColorPicker ? true : false}
                             >
-                                {/* colour picker component, fixed to bottom of screen */}
-                            </button>
-                        </div>
+                            </button> */}
 
-                        <div className="flex ml-auto opacity-50 hover:opacity-100 transition-opacity duration-300">
-                            {/* <Remove className="" onClick={onRemove} /> */}
+                            <div className="flex ml-auto opacity-50 transition-opacity duration-300">
+                                {/* <Remove className="" onClick={onRemove} /> */}
 
-                            <Handle {...handleProps} {...listeners} />
+                                <Handle {...handleProps} {...listeners} />
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col">
-                        {props.isEditing && item ? (
-                            <>
-                                <TaskForm
-                                    id={item.id}
-                                    // columnId={props.columnId}
-                                    // totalItemCount={totalItemCount}
-                                    // color={props.color}
-                                    // previousTaskContent={props.content}
-                                    // currentBoardSlug={currentBoardSlug}
-                                    // showForm={isEditing}
-                                    // setIsEditing={setIsEditing}
-                                    // resetColor={handleColorReset}
-                                >
-                                    <>
-                                        <div className="flex opacity-0 group-hover:opacity-100 space-x-2 transition-opacity duration-300">
-                                            <ArrowIcon
-                                                direction="left"
-                                                disabled={false}
-                                            />
-                                            <ArrowIcon
-                                                direction="right"
-                                                disabled={false}
-                                            />
-                                            <ArrowIcon
-                                                direction="up"
-                                                disabled={false}
-                                            />
-                                            <ArrowIcon
-                                                direction="down"
-                                                disabled={false}
-                                            />
-                                        </div>
-                                    </>
-                                </TaskForm>
-                            </>
-                        ) : (
-                            <div className="whitespace-normal pb-2 text-slate-600 break-all">
+                        <div className="flex flex-row">
+                            {/* content */}
+                            <div
+                                id={`${value}`}
+                                className="whitespace-normal pb-2 text-slate-600 break-all"
+                            >
                                 {item && item.content ? item.content : value}
                             </div>
-                        )}
+                        </div>
                     </div>
                 </li>
             );
