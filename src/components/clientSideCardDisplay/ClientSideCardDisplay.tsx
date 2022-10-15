@@ -14,7 +14,7 @@ const ClientSideCardDisplay = () => {
 
     return (
         <>
-            {boards === undefined ? (
+            {/* {boards === undefined ? (
                 <div>Get Creating Boards!</div>
             ) : (
                 <ul
@@ -102,7 +102,7 @@ const ClientSideCardDisplay = () => {
                         );
                     })}
                 </ul>
-            )}
+            )} */}
         </>
     );
 };

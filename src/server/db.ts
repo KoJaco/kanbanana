@@ -2,13 +2,11 @@ import Dexie, { Table } from 'dexie';
 import {
     Board,
     BoardTags,
-    BoardTag,
     Containers,
     ContainerOrder,
     ContainerItemMapping,
     Items,
 } from '@/core/types/sortableBoard';
-import { stringToRandomSlug } from '@/core/utils/misc';
 
 // https://dexie.org/docs/Version/Version.stores()
 // https://dexie.org/docs/Table/Table.update()

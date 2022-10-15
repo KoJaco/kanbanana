@@ -1,5 +1,3 @@
-import { Board } from '@/core/types/kanbanBoard';
-
 const now = new Date(Date.now()).toLocaleString();
 
 export function getMaxIdFromString<T extends Object>(obj: T) {
@@ -37,53 +35,4 @@ export function getMaxIdFromString<T extends Object>(obj: T) {
     });
     // return the max
     return Math.max(...idArray);
-}
-
-export function initializeBoard(): Board {
-    return {
-        title: '',
-        slug: '',
-        createdAt: now,
-        updatedAt: now,
-        tags: [
-            {
-                id: 1,
-                text: '',
-                color: {
-                    name: 'transparent',
-                    value: '#00ffffff',
-                    textDark: true,
-                },
-            },
-        ],
-        tasks: {
-            'task-1': {
-                id: 1,
-                content: '',
-                color: {
-                    name: 'transparent',
-                    value: '#00ffffff',
-                    textDark: true,
-                },
-                completed: false,
-                createdAt: now,
-                updatedAt: now,
-            },
-        },
-        columns: {
-            'column-1': {
-                id: 'column-1',
-                title: '',
-                badgeColor: {
-                    name: 'transparent',
-                    value: '#00ffffff',
-                    textDark: true,
-                },
-                taskIds: ['task-1'],
-                type: 'simple',
-                completedTaskOrder: 'noChange',
-            },
-        },
-        columnOrder: ['column-1'],
-    };
 }

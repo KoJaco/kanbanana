@@ -1,5 +1,6 @@
 import type { NextPage } from 'next';
 import dynamic from 'next/dynamic';
+
 const ClientSideCardDisplay = dynamic(
     () => import('@/components/clientSideCardDisplay/ClientSideCardDisplay'),
     {
@@ -20,12 +21,6 @@ const Home: NextPage = () => {
             <h1 className="text-2xl font-semibold text-slate-600">
                 All Boards
             </h1>
-            <div className="overflow-x-auto">
-                <SortableBoard slug="first-board-22113892" />
-            </div>
-            {/* <div className="mt-20">
-                <SortableBoard2 />
-            </div> */}
         </div>
     );
 };
