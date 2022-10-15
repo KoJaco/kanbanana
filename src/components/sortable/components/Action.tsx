@@ -6,6 +6,7 @@ export interface ActionProps extends React.HTMLAttributes<HTMLButtonElement> {
         background: string;
     };
     cursor?: CSSProperties['cursor'];
+    initialOpacity?: string;
 }
 
 export const Action = forwardRef<HTMLButtonElement, ActionProps>(
@@ -14,7 +15,7 @@ export const Action = forwardRef<HTMLButtonElement, ActionProps>(
             <button
                 ref={ref}
                 {...props}
-                className="text-slate-600"
+                className="text-slate-600 rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-slate-600 focus-visible:scale-105 transition-transform duration-300"
                 tabIndex={0}
                 style={
                     {

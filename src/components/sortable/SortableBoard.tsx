@@ -389,6 +389,8 @@ export default function SortableBoard({
         }
     };
 
+    console.log(board);
+
     if (!items || !board) return null;
 
     return (
@@ -557,8 +559,8 @@ export default function SortableBoard({
                             id: newContainerId,
                             title: '',
                             badgeColor: {
-                                name: 'white',
-                                value: '#fff',
+                                name: 'gray-100',
+                                value: '#f3f4f6',
                                 textDark: true,
                             },
                             type: 'simple',
@@ -655,7 +657,7 @@ export default function SortableBoard({
                 </div>
                 <div
                     id="carousel"
-                    className="pb-10 mx-6 sm:mx-8 overflow-x-scroll scroll scrollbar-rounded-horizontal snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500"
+                    className="pb-10 mx-6 sm:mx-8 overflow-x-scroll scroll no-scrollbar sm:scrollbar-rounded-horizontal snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500 "
                 >
                     <div
                         className="inline-grid grid-auto-cols auto-cols-max h-auto relative"
@@ -787,7 +789,7 @@ export default function SortableBoard({
                                 ? containers.includes(activeId)
                                     ? renderContainerDragOverlay(
                                           activeId,
-                                          board?.containers[activeId]?.title
+                                          board?.containers[activeId]
                                       )
                                     : renderSortableItemDragOverlay(activeId)
                                 : null}
@@ -820,6 +822,7 @@ export default function SortableBoard({
                         ? '...'
                         : board?.items[id]?.content
                 }
+                containerId={''}
                 showItemForm={false}
                 setShowItemForm={() => {}}
                 handle={handle}
@@ -842,15 +845,18 @@ export default function SortableBoard({
 
     function renderContainerDragOverlay(
         containerId: UniqueIdentifier,
-        containerTitle: string | undefined
+        container: TContainer | undefined
     ) {
+        console.log(container);
         return (
             <Container
-                label={containerTitle ? containerTitle : `Moving column`}
+                container={container}
+                label={container?.title ? container.title : `Moving column`}
                 itemCount={items[containerId]!.length}
                 columns={columns}
                 style={{
                     height: '100%',
+                    backgroundColor: container?.badgeColor.value,
                 }}
                 shadow
                 unstyled={false}
@@ -858,9 +864,14 @@ export default function SortableBoard({
                 {items[containerId]?.map((itemId, index) => (
                     <Item
                         key={index}
+                        containerId={containerId}
                         showItemForm={false}
                         setShowItemForm={() => {}}
-                        value={board?.items[itemId]?.content}
+                        value={
+                            board?.items[itemId]
+                                ? board?.items[itemId]?.content
+                                : '...'
+                        }
                         handle={handle}
                         style={getItemStyles({
                             containerId,
@@ -932,8 +943,8 @@ export default function SortableBoard({
             id: newContainerId,
             title: '',
             badgeColor: {
-                name: 'white',
-                value: '#fff',
+                name: 'gray-100',
+                value: '#f3f4f6',
                 textDark: true,
             },
             type: 'simple',
@@ -1066,21 +1077,6 @@ function useMountStatus() {
     return isMounted;
 }
 
-function getColor(id: UniqueIdentifier) {
-    switch (String(id)[0]) {
-        case 'A':
-            return '#7193f1';
-        case 'B':
-            return '#ffda6c';
-        case 'C':
-            return '#00bcd4';
-        case 'D':
-            return '#ef769f';
-    }
-
-    return undefined;
-}
-
 function SortableItem({
     item,
     disabled,
@@ -1113,10 +1109,11 @@ function SortableItem({
     return (
         <Item
             item={item}
+            containerId={containerId}
             ref={disabled ? undefined : setNodeRef}
             showItemForm={showItemForm}
             setShowItemForm={setShowItemForm}
-            value={id}
+            value={item?.content || '...'}
             dragging={isDragging}
             sorting={isSorting}
             handle={handle}

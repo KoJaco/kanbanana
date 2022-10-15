@@ -14,7 +14,7 @@ var omit = require('object.omit');
 
 type ItemFormProps = {
     containerType: 'checklist' | 'simple';
-    containerId: string;
+    containerId: UniqueIdentifier;
     item: TItem;
     showForm: boolean;
     children?: JSX.Element;
@@ -78,25 +78,31 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
         setShowForm(false);
     }
 
-    function handleRemoveItem() {
-        return;
-        // db.transaction('rw', db.boards, async () => {
-        //     await db.boards
-        //         .where('slug')
-        //         .equals(currentBoardSlug)
-        //         .modify((boardItem: any) => {
-        //             const newItems = omit(boardItem.items, itemState.id);
-        //             const newContainerItemMapping =
-        //                 boardItem.containerItemMapping[
-        //                     props.containerId
-        //                 ].filter((itemId: UniqueIdentifier) => {
-        //                     return itemId === itemState.id;
-        //                 });
+    console.log(props.containerId);
+    console.log(itemState.id);
 
-        //             boardItem.items = newItems;
-        //             boardItem.containerItemMapping = newContainerItemMapping;
-        //         });
-        // });
+    function handleRemoveItem() {
+        db.transaction('rw', db.boards, async () => {
+            await db.boards
+                .where('slug')
+                .equals(currentBoardSlug)
+                .modify((boardItem: any) => {
+                    const newItems = omit(boardItem.items, itemState.id);
+                    const newContainerItemMap = boardItem.containerItemMapping[
+                        props.containerId
+                    ].filter(
+                        (itemId: UniqueIdentifier) => itemId !== itemState.id
+                    );
+                    const newContainerItemMapping = {
+                        ...boardItem.containerItemMapping,
+                        [props.containerId]: newContainerItemMap,
+                    };
+
+                    boardItem.items = newItems;
+                    boardItem.containerItemMapping = newContainerItemMapping;
+                });
+            // catch any errors
+        });
     }
 
     return (

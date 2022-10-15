@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 import type { Transform } from '@dnd-kit/utilities';
 import { Handle, Remove } from '../components';
-import { TItem } from '@/core/types/sortableBoard';
+import { TItem, UniqueIdentifier } from '@/core/types/sortableBoard';
 import ItemForm from './ItemForm';
 import { FiEdit } from 'react-icons/fi';
 import ArrowIcon from '@/components/elements/ArrowIcon';
@@ -12,6 +12,7 @@ import styles from './Item.module.css';
 export interface ItemProps {
     item?: TItem;
     showItemForm: boolean;
+    containerId: UniqueIdentifier;
     setShowItemForm: (value: boolean) => void;
     dragOverlay?: boolean;
     color?: string;
@@ -50,6 +51,7 @@ export const Item = React.memo(
         (
             {
                 item,
+                containerId,
                 color,
                 dragOverlay,
                 dragging,
@@ -139,7 +141,7 @@ export const Item = React.memo(
                     <div
                         // className="flex flex-row justify-between w-full items-center pt-1 mb-4"
                         className={clsx(
-                            'w-full bg-white',
+                            'w-full bg-white group',
                             styles.Item,
                             dragging && styles.dragging,
                             handle && styles.withHandle,
@@ -152,7 +154,16 @@ export const Item = React.memo(
                         {...props}
                         tabIndex={!handle ? 0 : undefined}
                     >
-                        <div className="flex flex-row w-full opacity-0 hover:opacity-75 transition-opacity duration:300">
+                        <div
+                            // className={clsx(
+                            //     'flex flex-row w-full group',
+                            //     styles.actionBar
+                            // )}
+                            className={clsx(
+                                'flex flex-row w-full transition-opacity duration-300 focus-visible:opacity-75 group-focus:opacity-75',
+                                styles.actionBar
+                            )}
+                        >
                             {/* <button
                                 className="flex rounded-md border-1 border-gray-300 p-1 w-4 h-4"
                                 // style={{
@@ -164,11 +175,11 @@ export const Item = React.memo(
                             >
                             </button> */}
 
-                            <div className="flex ml-auto transition-opacity duration-300 gap-x-2">
+                            <div className="flex ml-auto gap-x-2">
                                 {/* <Remove className="" onClick={onRemove} /> */}
                                 <button
                                     type="button"
-                                    className="w-4 h-4"
+                                    className="w-4 h-4 rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-slate-600 focus-visible:scale-105 transition-transform duration-300"
                                     onClick={() =>
                                         props.setShowItemForm(
                                             !props.showItemForm
@@ -185,7 +196,7 @@ export const Item = React.memo(
                             <ItemForm
                                 item={item}
                                 containerType="simple"
-                                containerId="B"
+                                containerId={containerId}
                                 showForm={props.showItemForm}
                                 setShowForm={
                                     props.setShowItemForm
@@ -201,9 +212,7 @@ export const Item = React.memo(
                                     id={`${value}`}
                                     className="whitespace-normal pb-2 text-slate-600 break-all"
                                 >
-                                    {item && item.content
-                                        ? item.content
-                                        : value}
+                                    {value}
                                 </div>
                             </div>
                         )}

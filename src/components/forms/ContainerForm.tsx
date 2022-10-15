@@ -16,7 +16,7 @@ type ContainerFormProps = {
     id: UniqueIdentifier;
     // can optionally be given a container to edit.
     container?: TContainer;
-    handleAddContainer: (container: TContainer) => void;
+    handleAddOrUpdateContainer: (container: TContainer) => void;
 };
 
 const containerOptions: {
@@ -24,8 +24,8 @@ const containerOptions: {
     key: 'simple' | 'checklist';
     name: string;
 }[] = [
-    { id: 1, key: 'simple', name: 'Simple Tasks' },
-    { id: 2, key: 'checklist', name: 'Checked Tasks' },
+    { id: 1, key: 'simple', name: 'Simple Items' },
+    { id: 2, key: 'checklist', name: 'Checked Items' },
 ];
 
 const itemSortingOptions: {
@@ -39,7 +39,7 @@ const itemSortingOptions: {
 ];
 
 const ContainerForm = ({
-    handleAddContainer,
+    handleAddOrUpdateContainer,
     ...props
 }: ContainerFormProps) => {
     const [title, setTitle] = useState(
@@ -54,7 +54,7 @@ const ContainerForm = ({
         props.container === undefined
             ? itemSortingOptions[0]
             : itemSortingOptions[
-                  findTaskSortingTypeIndex(props.container.completedItemOrder)
+                  findItemSortingTypeIndex(props.container.completedItemOrder)
               ]
     );
 
@@ -62,8 +62,8 @@ const ContainerForm = ({
     const [badgeColor, setBadgeColor] = useState<Color>(
         props.container === undefined
             ? {
-                  name: 'white',
-                  value: '#fff',
+                  name: 'gray-100',
+                  value: '#f3f4f6',
                   textDark: true,
               }
             : props.container.badgeColor
@@ -102,7 +102,7 @@ const ContainerForm = ({
         }
         return 0;
     }
-    function findTaskSortingTypeIndex(type: 'start' | 'end' | 'noChange') {
+    function findItemSortingTypeIndex(type: 'start' | 'end' | 'noChange') {
         // returns the index of the matching container options, else returns 0
         for (let i = 0; i < itemSortingOptions.length; i++) {
             let option = itemSortingOptions[i];
@@ -115,11 +115,11 @@ const ContainerForm = ({
 
     // need to conditionally change styling using this const, as HeadlessUi Listbox doesn't seem to pass down disabled?
     const sortingOptionsDisabled =
-        containerType?.name === 'Simple Tasks' ? true : false;
+        containerType?.name === 'Simple Items' ? true : false;
 
     return (
         <>
-            <div id={`${props.id}`}>
+            <div id={`${props.id}`} className="pb-4">
                 <div className="flex justify-between w-full gap-x-2 mb-3">
                     {/* Container Title input */}
                     <div className="w-full">
@@ -269,12 +269,12 @@ const ContainerForm = ({
                         </Listbox>
                     </div>
                     <div className="w-full">
-                        {/* Completed Task Sorting */}
+                        {/* Completed Item Sorting */}
                         <Listbox
                             value={itemSortingType}
                             onChange={setItemSortingType}
                             disabled={
-                                containerType?.name === 'Simple Tasks'
+                                containerType?.name === 'Simple Items'
                                     ? true
                                     : false
                             }
@@ -289,7 +289,7 @@ const ContainerForm = ({
                                                 : '1',
                                         }}
                                     >
-                                        Completed Task Sorting
+                                        Completed Item Sorting
                                     </Listbox.Label>
                                     <div
                                         className="relative mt-1"
@@ -386,7 +386,7 @@ const ContainerForm = ({
                         type="button"
                         className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary  drop-shadow disabled:cursor-not-allowed"
                         onClick={() => {
-                            handleAddContainer({
+                            handleAddOrUpdateContainer({
                                 id: props.id,
                                 title: title,
                                 type: containerType!.key,

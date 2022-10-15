@@ -3,10 +3,6 @@ import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 
 // dynamically import board component, depends on window.
-const Kanban = dynamic(() => import('@/components/kanban/Kanban'), {
-    ssr: false,
-});
-
 const SortableBoard = dynamic(
     () => import('@/components/sortable/SortableBoard'),
     { ssr: false }

@@ -31,13 +31,13 @@ type CreateBoardFormProps = {
     setShowBoardForm: (value: boolean) => void;
 };
 
-const defaultColor = { name: 'white', value: '#fff', textDark: true };
+const defaultColor = { name: 'gray-100', value: '#f3f4f6', textDark: true };
 
 // Array of tags, can map over
 const initialTags: BoardTags = [
     {
         id: 1,
-        backgroundColor: defaultColor,
+        backgroundColor: { name: 'white', value: '#fff', textDark: true },
         text: '',
     },
 ];
@@ -696,14 +696,14 @@ const CreateBoardForm = ({
                                                                                 currentContainerId
                                                                             ]
                                                                         }
-                                                                        handleAddContainer={
+                                                                        handleAddOrUpdateContainer={
                                                                             handleUpdateContainer
                                                                         }
                                                                     />
                                                                 ) : (
                                                                     <ContainerForm
                                                                         id={getNextContainerId()}
-                                                                        handleAddContainer={
+                                                                        handleAddOrUpdateContainer={
                                                                             handleAddContainer
                                                                         }
                                                                     />
