@@ -5,15 +5,8 @@ import Document, {
     Main,
     NextScript,
 } from 'next/document';
-import { resetServerContext } from 'react-beautiful-dnd';
 
 class MyDocument extends Document {
-    static async getInitialProps(ctx: DocumentContext) {
-        const page = await ctx.renderPage();
-        const initialProps = await Document.getInitialProps(ctx);
-        resetServerContext();
-        return { ...initialProps };
-    }
     // This <Head> element is to be used SOLELY for data you would like loaded on every single page.
     // See  https://nextjs.org/docs/advanced-features/custom-document
     render() {

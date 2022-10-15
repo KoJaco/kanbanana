@@ -8,13 +8,6 @@ const ClientSideCardDisplay = dynamic(
     }
 );
 
-// import { SortableBoard } from '@/components/sortable/SortableBoard';
-
-const SortableBoard = dynamic(
-    () => import('@/components/sortable/SortableBoard'),
-    { ssr: false }
-);
-
 const Home: NextPage = () => {
     return (
         <div className="my-8 ml-2 px-2 sm:px-6 md:px-8 flex flex-col">
