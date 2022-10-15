@@ -11,9 +11,7 @@ import {
 import { SiKibana } from 'react-icons/si';
 
 import ThemeSettings from '@/components/menus/ThemeSettings';
-import BaseModal from '@/components/modals/BaseModal';
 import CreateBoardForm from '@/components/forms/CreateBoardForm';
-import EditBoardForm from '@/components/forms/EditBoardForm';
 
 const BoardMenu = dynamic(() => import('@/components/menus/BoardMenu'), {
     ssr: false,

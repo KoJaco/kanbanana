@@ -46,9 +46,9 @@ import { Item } from './item';
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
-import { getMaxIdFromString, initializeBoard } from '@/core/utils/kanbanBoard';
+import { getMaxIdFromString } from '@/core/utils/kanbanBoard';
 import { useKanbanStore } from '@/stores/KanbanStore';
-import { newBoard } from './consts';
+import { blankBoard } from '@/core/consts/blankBoard';
 import {
     ContainerItemMapping,
     Containers,
@@ -127,6 +127,37 @@ const dropAnimation: DropAnimation = {
     }),
 };
 
+const scroller = (direction: string, value?: number) => {
+    let carousel = document.getElementById('carousel');
+    if (carousel !== null) {
+        switch (direction) {
+            case 'end':
+                carousel.scrollLeft =
+                    carousel.scrollWidth - carousel.offsetWidth;
+                break;
+            case 'start':
+                carousel.scrollLeft =
+                    carousel.clientWidth - carousel.offsetWidth;
+                break;
+            case 'left':
+                carousel.scrollLeft = value
+                    ? carousel.scrollLeft - value
+                    : carousel.scrollLeft - 500;
+                break;
+            case 'right':
+                carousel.scrollLeft = value
+                    ? carousel.scrollLeft + value
+                    : carousel.scrollLeft + 500;
+                break;
+            default:
+                break;
+        }
+    } else {
+        // report the error.
+        throw new Error('Something went wrong!');
+    }
+};
+
 const scrollButtons = [
     {
         id: 1,
@@ -194,7 +225,7 @@ export default function SortableBoard({
     scrollable = true,
 }: SortableBoardProps) {
     const [items, setItems] = useState<ContainerItemMapping>(
-        newBoard.containerItemMapping
+        blankBoard.containerItemMapping
     );
     const [containers, setContainers] = useState(
         Object.keys(items) as UniqueIdentifier[]
@@ -357,37 +388,6 @@ export default function SortableBoard({
             recentlyMovedToNewContainer.current = false;
         });
     }, [items]);
-
-    const scroller = (direction: string, value?: number) => {
-        let carousel = document.getElementById('carousel');
-        if (carousel !== null) {
-            switch (direction) {
-                case 'end':
-                    carousel.scrollLeft =
-                        carousel.scrollWidth - carousel.offsetWidth;
-                    break;
-                case 'start':
-                    carousel.scrollLeft =
-                        carousel.clientWidth - carousel.offsetWidth;
-                    break;
-                case 'left':
-                    carousel.scrollLeft = value
-                        ? carousel.scrollLeft - value
-                        : carousel.scrollLeft - 500;
-                    break;
-                case 'right':
-                    carousel.scrollLeft = value
-                        ? carousel.scrollLeft + value
-                        : carousel.scrollLeft + 500;
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            // report the error.
-            throw new Error('Something went wrong!');
-        }
-    };
 
     console.log(board);
 
