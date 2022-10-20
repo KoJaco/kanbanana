@@ -44,5 +44,6 @@ yarn-error.log*
 
 # misc
 todo.md
+./backupData
 
-./components/sortable/*
+

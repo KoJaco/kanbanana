@@ -5,7 +5,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import { createPortal, unstable_batchedUpdates } from 'react-dom';
+import { createPortal } from 'react-dom';
 import {
     CancelDrop,
     closestCenter,
@@ -20,7 +20,6 @@ import {
     MouseSensor,
     TouchSensor,
     Modifiers,
-    useDroppable,
     UniqueIdentifier,
     useSensors,
     useSensor,
@@ -56,6 +55,7 @@ import {
     Board,
     TItem,
     Items,
+    BoardTags,
 } from '@/core/types/sortableBoard';
 import { MdOutlineEdit } from 'react-icons/md';
 import Tag from '../elements/Tag';
@@ -65,14 +65,10 @@ import {
     HiChevronLeft,
     HiChevronRight,
 } from 'react-icons/hi';
-import {
-    createSnapModifier,
-    restrictToParentElement,
-} from '@dnd-kit/modifiers';
-// local components
+import InlineBoardForm from '@/components/forms/InlineBoardForm';
+import { BsChevronBarDown } from 'react-icons/bs';
+import { Transition } from '@headlessui/react';
 
-// import DroppableContainer from './DroppableContainer';
-// import SortableItem from './SortableItem';
 // TODO: fix up items undefined with active/overId selecting index
 
 function getMaxIdFromObjectKeyStrings(keyStrings: string[]): number {
@@ -108,6 +104,13 @@ function getMaxIdFromObjectKeyStrings(keyStrings: string[]): number {
     return Math.max(...idArray);
 }
 
+const initialTags: BoardTags = [
+    {
+        backgroundColor: { name: 'white', value: '#fff', textDark: true },
+        text: '',
+    },
+];
+
 const dropAnimation: DropAnimation = {
     // duration: 500,
     // easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
@@ -125,37 +128,6 @@ const dropAnimation: DropAnimation = {
             // },
         },
     }),
-};
-
-const scroller = (direction: string, value?: number) => {
-    let carousel = document.getElementById('carousel');
-    if (carousel !== null) {
-        switch (direction) {
-            case 'end':
-                carousel.scrollLeft =
-                    carousel.scrollWidth - carousel.offsetWidth;
-                break;
-            case 'start':
-                carousel.scrollLeft =
-                    carousel.clientWidth - carousel.offsetWidth;
-                break;
-            case 'left':
-                carousel.scrollLeft = value
-                    ? carousel.scrollLeft - value
-                    : carousel.scrollLeft - 500;
-                break;
-            case 'right':
-                carousel.scrollLeft = value
-                    ? carousel.scrollLeft + value
-                    : carousel.scrollLeft + 500;
-                break;
-            default:
-                break;
-        }
-    } else {
-        // report the error.
-        throw new Error('Something went wrong!');
-    }
 };
 
 const scrollButtons = [
@@ -231,6 +203,8 @@ export default function SortableBoard({
         Object.keys(items) as UniqueIdentifier[]
     );
 
+    const [showInlineBoardForm, setShowInlineBoardForm] = useState(false);
+
     // Zustand store state
     const {
         totalItemCount,
@@ -284,6 +258,37 @@ export default function SortableBoard({
      * - If there are no intersecting containers, return the last matched intersection
      *
      */
+
+    const scroller = (direction: string, value?: number) => {
+        let carousel = document.getElementById('carousel');
+        if (carousel !== null) {
+            switch (direction) {
+                case 'end':
+                    carousel.scrollLeft =
+                        carousel.scrollWidth - carousel.offsetWidth;
+                    break;
+                case 'start':
+                    carousel.scrollLeft =
+                        carousel.clientWidth - carousel.offsetWidth;
+                    break;
+                case 'left':
+                    carousel.scrollLeft = value
+                        ? carousel.scrollLeft - value
+                        : carousel.scrollLeft - 500;
+                    break;
+                case 'right':
+                    carousel.scrollLeft = value
+                        ? carousel.scrollLeft + value
+                        : carousel.scrollLeft + 500;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            // report the error.
+            throw new Error('Something went wrong!');
+        }
+    };
 
     const collisionDetectionStrategy: CollisionDetection = useCallback(
         (args) => {
@@ -389,8 +394,6 @@ export default function SortableBoard({
         });
     }, [items]);
 
-    console.log(board);
-
     if (!items || !board) return null;
 
     return (
@@ -440,14 +443,6 @@ export default function SortableBoard({
                     if (!items[activeContainer] || !items[overContainer]) {
                         return;
                     }
-
-                    console.log('active and over container: ');
-                    console.log(activeContainer);
-                    console.log(overContainer);
-                    console.log(
-                        'overId: ' + over.id + ' activeId: ' + active.id
-                    );
-                    console.log(overContainer);
 
                     if (activeContainer !== overContainer) {
                         // if we drag an item to a different container
@@ -550,7 +545,6 @@ export default function SortableBoard({
                     overId = over.id;
 
                     if (overId === PLACEHOLDER_ID) {
-                        console.log('triggered placeholder');
                         // when drop target is placeholder, we want to create a new container and move that item into this container.
                         const newContainerId = getNextContainerId();
 
@@ -631,8 +625,11 @@ export default function SortableBoard({
                         </h1>
 
                         <button
+                            type="button"
                             className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
-                            // onClick={() => setShowBoardForm(true)}
+                            onClick={() =>
+                                setShowInlineBoardForm((prev) => !prev)
+                            }
                         >
                             <MdOutlineEdit className="w-5 h-5" />
                         </button>
@@ -655,19 +652,52 @@ export default function SortableBoard({
                         </div>
                     </div>
                 </div>
+
+                {/* inline board form */}
+
+                <Transition
+                    show={showInlineBoardForm}
+                    enter="transition ease-out duration-200"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                >
+                    <div
+                        id="boardFormContainer"
+                        className="my-8 ml-2 px-4 sm:px-6 md:px-8"
+                    >
+                        <InlineBoardForm
+                            title={board.title}
+                            slug={currentBoardSlug}
+                            tags={board.tags ? board.tags : initialTags}
+                            setShowForm={setShowInlineBoardForm}
+                        />
+                    </div>
+                </Transition>
+                {/* {showInlineBoardForm && (
+                    <div
+                        id="boardFormContainer"
+                        className="my-8 ml-2 px-4 sm:px-6 md:px-8"
+                    >
+                        <InlineBoardForm
+                            title={board.title}
+                            slug={currentBoardSlug}
+                            tags={board.tags ? board.tags : initialTags}
+                        />
+                    </div>
+                )} */}
+
                 <div
                     id="carousel"
-                    className="pb-10 mx-6 sm:mx-8 overflow-x-scroll scroll no-scrollbar sm:scrollbar-rounded-horizontal snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500 "
+                    className="pb-10 mx-6 sm:mx-8 overflow-x-scroll scroll no-scrollbar sm:scrollbar-rounded-horizontal snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500"
                 >
                     <div
                         className="inline-grid grid-auto-cols auto-cols-max h-auto relative"
                         style={{
                             gridAutoFlow: vertical ? 'row' : 'column',
                         }}
-                        // className="pb-10 mx-2 sm:mx-8 inline-grid grid-auto-cols grid-auto-rows auto-cols-max py-10 h-auto overflow-x-auto"
-                        // style={{
-                        //     gridAutoFlow: vertical ? 'row' : 'column',
-                        // }}
                     >
                         <SortableContext
                             items={[...containers, PLACEHOLDER_ID]}
@@ -847,7 +877,6 @@ export default function SortableBoard({
         containerId: UniqueIdentifier,
         container: TContainer | undefined
     ) {
-        console.log(container);
         return (
             <Container
                 container={container}

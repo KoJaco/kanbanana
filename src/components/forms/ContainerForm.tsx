@@ -30,12 +30,13 @@ const containerOptions: {
 
 const itemSortingOptions: {
     id: number;
-    key: 'start' | 'end' | 'noChange';
+    key: 'start' | 'end' | 'noChange' | 'remove';
     name: string;
 }[] = [
     { id: 1, key: 'start', name: 'Start' },
     { id: 2, key: 'end', name: 'End' },
     { id: 3, key: 'noChange', name: 'No Change' },
+    { id: 4, key: 'remove', name: 'Remove' },
 ];
 
 const ContainerForm = ({
@@ -102,7 +103,9 @@ const ContainerForm = ({
         }
         return 0;
     }
-    function findItemSortingTypeIndex(type: 'start' | 'end' | 'noChange') {
+    function findItemSortingTypeIndex(
+        type: 'start' | 'end' | 'noChange' | 'remove'
+    ) {
         // returns the index of the matching container options, else returns 0
         for (let i = 0; i < itemSortingOptions.length; i++) {
             let option = itemSortingOptions[i];

@@ -19,7 +19,6 @@ export type TItem = {
 };
 
 export type BoardTag = {
-    id: number;
     backgroundColor: Color;
     // color: Color;
     text: string;
@@ -43,7 +42,7 @@ export type TContainer = {
     title: string;
     // strings b/c maybe add more types later.
     type: 'checklist' | 'simple';
-    completedItemOrder: 'start' | 'end' | 'noChange';
+    completedItemOrder: 'start' | 'end' | 'noChange' | 'remove';
     // must set a default value of 'transparent'
     badgeColor: Color;
     // timestamps not essential for columns?

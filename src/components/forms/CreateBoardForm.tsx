@@ -36,7 +36,6 @@ const defaultColor = { name: 'gray-100', value: '#f3f4f6', textDark: true };
 // Array of tags, can map over
 const initialTags: BoardTags = [
     {
-        id: 1,
         backgroundColor: { name: 'white', value: '#fff', textDark: true },
         text: '',
     },
@@ -377,7 +376,6 @@ const CreateBoardForm = ({
                                                 </div>
                                             </div>
                                             <div className=" mt-4 space-y-4 sm:mt-10">
-                                                {/* Board tag input*/}
                                                 <div className="flex flex-1 flex-col justify-between border-b border-gray-100">
                                                     <div className="px-2 sm:px-4">
                                                         <div className="space-y-4 pt-6 pb-5 px-1">
@@ -640,12 +638,8 @@ const CreateBoardForm = ({
                                                                 leaveTo="transform opacity-0 scale-95"
                                                             >
                                                                 <TagForm
-                                                                    id={
-                                                                        boardTags ===
-                                                                        null
-                                                                            ? 0
-                                                                            : boardTags.length -
-                                                                              1
+                                                                    labels={
+                                                                        true
                                                                     }
                                                                     handleAddTag={
                                                                         handleAddTag

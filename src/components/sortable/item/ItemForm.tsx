@@ -78,9 +78,6 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
         setShowForm(false);
     }
 
-    console.log(props.containerId);
-    console.log(itemState.id);
-
     function handleRemoveItem() {
         db.transaction('rw', db.boards, async () => {
             await db.boards

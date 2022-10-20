@@ -8,7 +8,10 @@ import { MdOutlineDone } from 'react-icons/md';
 import { BoardTag, Color } from '@/core/types/sortableBoard';
 
 type TagFormProps = {
-    id: number;
+    tagLabel?: string;
+    labels?: boolean;
+    inLineInputs?: boolean;
+    tagNextToSave?: boolean;
     // can optionally be given a tag, for editing
     tag?: BoardTag;
     handleAddTag: (tag: BoardTag) => void;
@@ -33,20 +36,50 @@ const TagForm = (props: TagFormProps) => {
         setShowColorPicker(!showColorPicker);
     }
 
+    function renderSaveButton() {
+        return (
+            <>
+                <button
+                    type="button"
+                    className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed"
+                    onClick={() =>
+                        props.handleAddTag({
+                            text: tagText,
+                            backgroundColor: colorState,
+                        })
+                    }
+                    disabled={tagText.length === 0}
+                >
+                    <span className="sr-only">Add</span>
+                    <MdOutlineDone className="h-5 w-5" aria-hidden="true" />
+                </button>
+                {tagText.length === 0 && (
+                    <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        Your tag cannot be empty.
+                    </span>
+                )}
+            </>
+        );
+    }
+
     // not a form per-say, just keeps track of inputs
     return (
         <>
             <div className="flex justify-between w-full gap-x-2">
                 <div className="w-full">
                     <div className="flex items-center space-x-2 justify-start">
-                        <label
-                            htmlFor="Tag"
-                            className="block text-sm font-medium text-slate-600"
-                        >
-                            Tag:
-                        </label>
+                        {props.labels && (
+                            <label
+                                htmlFor="Tag"
+                                className="block text-sm font-medium text-slate-600"
+                            >
+                                {props.tagLabel ? props.tagLabel : 'Tag:'}
+                            </label>
+                        )}
 
-                        <Tag text={tagText} backgroundColor={colorState} />
+                        {!props.tagNextToSave && (
+                            <Tag text={tagText} backgroundColor={colorState} />
+                        )}
                     </div>
 
                     <div className="mt-1">
@@ -66,12 +99,14 @@ const TagForm = (props: TagFormProps) => {
 
                 <div className="flex flex-col items-center justify-center">
                     <div className="flex items-center space-x-2 justify-start">
-                        <label
-                            htmlFor="tag-color"
-                            className="block text-sm font-medium text-slate-600"
-                        >
-                            Color
-                        </label>
+                        {props.labels && (
+                            <label
+                                htmlFor="tag-color"
+                                className="block text-sm font-medium text-slate-600"
+                            >
+                                Color
+                            </label>
+                        )}
                     </div>
                     <div className="mt-1">
                         <button
@@ -95,14 +130,14 @@ const TagForm = (props: TagFormProps) => {
                     </div>
                 </div>
             </div>
+
             <div className="mt-3">
-                <div className="flex space-x-3 items-end text-sm group">
+                <div className="items-end text-sm group flex">
                     <button
                         type="button"
                         className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed"
                         onClick={() =>
                             props.handleAddTag({
-                                id: props.id,
                                 text: tagText,
                                 backgroundColor: colorState,
                             })
@@ -112,6 +147,11 @@ const TagForm = (props: TagFormProps) => {
                         <span className="sr-only">Add</span>
                         <MdOutlineDone className="h-5 w-5" aria-hidden="true" />
                     </button>
+                    {props.tagNextToSave && (
+                        <span className="ml-4">
+                            <Tag text={tagText} backgroundColor={colorState} />
+                        </span>
+                    )}
                     {tagText.length === 0 && (
                         <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             Your tag cannot be empty.
