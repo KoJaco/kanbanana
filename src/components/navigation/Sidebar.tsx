@@ -23,14 +23,7 @@ type SidebarProps = {
 };
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
-    const [modalOpen, setModalOpen] = useState(false);
-
     const [showCreateBoardForm, setShowCreateBoardForm] = useState(false);
-
-    function handleOpenModal() {
-        setSidebarOpen(false);
-        setModalOpen(true);
-    }
 
     function handleShowCreateBoardForm() {
         setShowCreateBoardForm(true);

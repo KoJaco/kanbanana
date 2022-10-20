@@ -65,8 +65,8 @@ const initialItems: Items = {
         badgeColor: defaultColor,
         completed: false,
         content: '',
-        updatedAt: '',
-        createdAt: '',
+        updatedAt: new Date(Date.now()),
+        createdAt: new Date(Date.now()),
     },
 };
 

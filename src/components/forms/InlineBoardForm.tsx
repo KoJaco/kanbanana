@@ -1,11 +1,11 @@
 import { BoardTag, BoardTags } from '@/core/types/sortableBoard';
 import { useState } from 'react';
-import Tag from '@/components/elements/Tag';
 import TagForm from './TagForm';
 import { TiDelete } from 'react-icons/ti';
 import { BsChevronBarDown } from 'react-icons/bs';
 import { Transition } from '@headlessui/react';
 import { db } from '@/server/db';
+import { useRouter } from 'next/router';
 
 type InlineBoardFormProps = {
     title: string;
@@ -20,6 +20,8 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
     const [boardTags, setBoardTags] = useState<BoardTags>(props.tags);
 
     const [showTagForm, setShowTagForm] = useState(false);
+
+    const router = useRouter();
 
     function handleAddTag(boardTag: BoardTag) {
         let newTags = Array.from(boardTags);
@@ -52,6 +54,23 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
             updatedAt: new Date(Date.now()),
         });
         setShowForm(false);
+    }
+
+    async function handleDeleteBoard() {
+        let deleteCount = await db.boards
+            .where('slug')
+            .equals(props.slug)
+            .delete();
+
+        if (deleteCount === 1) {
+            console.info(`Successfully deleted board with slug: ${props.slug}`);
+            setShowForm(false);
+            router.push('/', undefined, { shallow: false });
+        } else {
+            console.info(
+                `Something went wrong when attempting to delete board with slug: ${props.slug}`
+            );
+        }
     }
 
     return (
@@ -152,7 +171,14 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                     </Transition>
                 </div>
             </div>
-            <div className="flex flex-shrink-0 justify-end px-4 py-4">
+            <div className="flex flex-shrink-0 justify-end pr-2 py-4">
+                <button
+                    type="button"
+                    className="rounded-md border mr-auto border-gray-300 bg-red-400 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onClick={handleDeleteBoard}
+                >
+                    Delete Board
+                </button>
                 <button
                     type="button"
                     className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
