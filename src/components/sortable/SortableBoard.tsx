@@ -632,10 +632,13 @@ export default function SortableBoard({
                             <MdOutlineEdit className="w-5 h-5" />
                         </button>
                     </div>
-                    <div className="flex justify-between items-start gap-8">
-                        <div>
+                    <div className="flex flex-row items-start gap-8">
+                        <div
+                            id="tags"
+                            className="inline-flex mt-auto mb-2 -ml-6 gap-x-2"
+                        >
                             {board?.tags?.map((tag, index) => (
-                                <div className="inline-flex mr-1" key={index}>
+                                <div className="flex" key={index}>
                                     <Tag
                                         text={tag.text}
                                         backgroundColor={tag.backgroundColor}
@@ -643,7 +646,8 @@ export default function SortableBoard({
                                 </div>
                             ))}
                         </div>
-                        <div>
+
+                        <div className="flex ml-auto">
                             <p className="text-sm font-light p-2 text-slate-600">
                                 {board?.updatedAt.toLocaleString()}
                             </p>
@@ -674,18 +678,6 @@ export default function SortableBoard({
                         />
                     </div>
                 </Transition>
-                {/* {showInlineBoardForm && (
-                    <div
-                        id="boardFormContainer"
-                        className="my-8 ml-2 px-4 sm:px-6 md:px-8"
-                    >
-                        <InlineBoardForm
-                            title={board.title}
-                            slug={currentBoardSlug}
-                            tags={board.tags ? board.tags : initialTags}
-                        />
-                    </div>
-                )} */}
 
                 <div
                     id="carousel"
@@ -950,6 +942,7 @@ export default function SortableBoard({
                     boardItem.containers = newContainers;
                     boardItem.containerOrder = newContainerOrder;
                     boardItem.containerItemMapping = newContainerItemMapping;
+                    boardItem.updatedAt = new Date(Date.now());
                 });
             if (deleteCount === 1) {
                 console.log('Deleted container ' + containerID);
@@ -989,16 +982,9 @@ export default function SortableBoard({
                     boardItem.containerOrder.push(newContainerId);
                     // add new empty array of itemIds to containerItemMapping object
                     boardItem.containerItemMapping[newContainerId] = [];
+                    boardItem.updatedAt = new Date(Date.now());
                 });
         });
-
-        // unstable_batchedUpdates(() => {
-        //     setContainers((containers) => [...containers, newContainerId]);
-        //     setItems((items) => ({
-        //         ...items,
-        //         [newContainerId]: [],
-        //     }));
-        // });
     }
 
     function getNextContainerId() {
