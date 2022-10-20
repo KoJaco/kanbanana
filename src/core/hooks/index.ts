@@ -26,19 +26,26 @@ interface UseEditFieldResult {
 }
 
 export function useOnClickOutside(
+    // primary ref
     ref: React.RefObject<any>,
-    // is the event parameter necessary?
-    handler: (e: MouseEvent | TouchEvent) => void
+    // handler callback
+    handler: (e: MouseEvent | TouchEvent) => void,
+    // optional excluded Ref for a button component...
+    excludedRef?: React.RefObject<any>
 ) {
     useEffect(() => {
         // add listener, called with addEventListener(s)
         const listener = (event: MouseEvent | TouchEvent) => {
-            if (!ref.current || ref.current.contains(event.target)) {
+            if (
+                !ref.current ||
+                ref.current.contains(event.target) ||
+                excludedRef?.current?.contains(event.target)
+            ) {
                 return;
             }
+
             handler(event);
         };
-
         // listen to both "mousedown" and "touchstart" for desktop/mobile devices
         document.addEventListener('mousedown', listener);
         document.addEventListener('touchstart', listener);
@@ -48,7 +55,7 @@ export function useOnClickOutside(
             document.removeEventListener('mousedown', listener);
             document.removeEventListener('touchstart', listener);
         };
-    }, [ref, handler]);
+    }, [ref, excludedRef, handler]);
 }
 
 export function useOnClickInsideOnly(

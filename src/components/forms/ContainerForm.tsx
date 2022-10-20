@@ -71,7 +71,13 @@ const ContainerForm = ({
     );
 
     const colorPickerRef = useRef(null);
-    useOnClickOutside(colorPickerRef, () => setShowColorPicker(false));
+    const excludedColorPickerRef = useRef(null);
+
+    useOnClickOutside(
+        colorPickerRef,
+        () => setShowColorPicker(false),
+        excludedColorPickerRef
+    );
 
     // function getNextContainerId() {
     //     if (props.container === undefined) {
@@ -156,6 +162,7 @@ const ContainerForm = ({
                         <div className="mt-1">
                             <button
                                 type="button"
+                                ref={excludedColorPickerRef}
                                 className="cursor-pointer rounded-full items-center p-1"
                                 style={{
                                     backgroundColor: badgeColor.value,

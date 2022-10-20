@@ -27,7 +27,12 @@ const TagForm = (props: TagFormProps) => {
     const [showColorPicker, setShowColorPicker] = useState(false);
 
     const colorPickerRef = useRef(null);
-    useOnClickOutside(colorPickerRef, () => setShowColorPicker(false));
+    const excludedColorPickerRef = useRef(null);
+    useOnClickOutside(
+        colorPickerRef,
+        () => setShowColorPicker(false),
+        excludedColorPickerRef
+    );
 
     function handleSetColor(color: Color) {
         setColorState(color);
@@ -111,6 +116,7 @@ const TagForm = (props: TagFormProps) => {
                     <div className="mt-1">
                         <button
                             type="button"
+                            ref={excludedColorPickerRef}
                             className="cursor-pointer rounded-full items-center p-1"
                             style={{
                                 backgroundColor: colorState.value,
