@@ -74,6 +74,7 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
             .equals(currentBoardSlug)
             .modify((boardItem: any) => {
                 boardItem.items[itemState.id] = itemState;
+                boardItem.updatedAt = new Date(Date.now());
             });
         setShowForm(false);
     }
@@ -97,6 +98,7 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
 
                     boardItem.items = newItems;
                     boardItem.containerItemMapping = newContainerItemMapping;
+                    boardItem.updatedAt = new Date(Date.now());
                 });
             // catch any errors
         });

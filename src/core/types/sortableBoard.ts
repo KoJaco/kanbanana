@@ -14,8 +14,8 @@ export type TItem = {
     // completed tag will change styling based on column type.
     completed: boolean;
     // timestamps, good to have.
-    updatedAt: string;
-    createdAt: string;
+    updatedAt: Date;
+    createdAt: Date;
 };
 
 export type BoardTag = {
@@ -68,9 +68,9 @@ export interface Board {
     // optional tag for categorising boards
     tags?: BoardTags;
     // auto generated upon instantiation.
-    createdAt: string;
+    createdAt: Date;
     // auto generated per mutation.
-    updatedAt: string;
+    updatedAt: Date;
     containerOrder: ContainerOrder;
     containerItemMapping: ContainerItemMapping;
     // nested objects indexed by '<task/column>-x', where x is a unique positive integer.

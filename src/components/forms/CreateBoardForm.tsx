@@ -202,6 +202,7 @@ const CreateBoardForm = ({
     }
 
     function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
+        event.preventDefault();
         // insert an initial task in the first container, this is necessary so that auto creation of IDS works in our indexDB
         let slug = stringToRandomSlug(boardTitle);
         let tags = boardTags === null ? initialTags : boardTags;
@@ -238,14 +239,13 @@ const CreateBoardForm = ({
             });
             increaseBoardCount();
             console.info(`A new board was created with title: ${boardTitle}`);
-            router
-                .push(`/boards/${slug}`, undefined, { shallow: false })
-                .then(() => router.reload());
+            router.push(`/boards/${slug}`, undefined, { shallow: false });
         } catch (error) {
             console.error(`Failed to add board`);
             // push to fail page
             router.push(`/`);
         }
+        setShowBoardForm(false);
     }
 
     function resetState() {

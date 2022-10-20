@@ -45,7 +45,6 @@ import { Item } from './item';
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
-import { getMaxIdFromString } from '@/core/utils/kanbanBoard';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import { blankBoard } from '@/core/consts/blankBoard';
 import {
@@ -66,7 +65,6 @@ import {
     HiChevronRight,
 } from 'react-icons/hi';
 import InlineBoardForm from '@/components/forms/InlineBoardForm';
-import { BsChevronBarDown } from 'react-icons/bs';
 import { Transition } from '@headlessui/react';
 
 // TODO: fix up items undefined with active/overId selecting index
@@ -286,7 +284,7 @@ export default function SortableBoard({
             }
         } else {
             // report the error.
-            throw new Error('Something went wrong!');
+            throw new Error('Something went wrong while scrolling!');
         }
     };
 
@@ -647,7 +645,7 @@ export default function SortableBoard({
                         </div>
                         <div>
                             <p className="text-sm font-light p-2 text-slate-600">
-                                {board?.updatedAt}
+                                {board?.updatedAt.toLocaleString()}
                             </p>
                         </div>
                     </div>

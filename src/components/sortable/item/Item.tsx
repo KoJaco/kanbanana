@@ -4,7 +4,7 @@ import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 import type { Transform } from '@dnd-kit/utilities';
 import { Handle, Remove } from '../components';
 import { TItem, UniqueIdentifier } from '@/core/types/sortableBoard';
-import ItemForm from './ItemForm';
+import ItemForm from '@/components/forms/ItemForm';
 import { FiEdit } from 'react-icons/fi';
 import ArrowIcon from '@/components/elements/ArrowIcon';
 

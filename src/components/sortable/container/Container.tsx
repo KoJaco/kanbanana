@@ -73,8 +73,8 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                     value: '#fff',
                     textDark: true,
                 },
-                createdAt: new Date(Date.now()).toLocaleString(),
-                updatedAt: new Date(Date.now()).toLocaleString(),
+                createdAt: new Date(Date.now()),
+                updatedAt: new Date(Date.now()),
                 completed: false,
             };
 
@@ -90,6 +90,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         boardItem.containerItemMapping[container!.id].push(
                             newItemIdentifier
                         );
+                        boardItem.updatedAt = new Date(Date.now());
                     });
             })
                 // Catch modification error and generic error.
@@ -115,6 +116,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                     .equals(currentBoardSlug)
                     .modify((boardItem: any) => {
                         boardItem.containers[container.id] = container;
+                        boardItem.updatedAt = new Date(Date.now());
                     });
             });
             setShowContainerForm(false);

@@ -54,8 +54,8 @@ export class KanbanBoardDexie extends Dexie {
             tags: tags,
             slug: slug,
             // is this guaranteed to be unique? no, practically impossible but still no... need to fix.
-            createdAt: new Date(Date.now()).toLocaleString(),
-            updatedAt: new Date(Date.now()).toLocaleString(),
+            createdAt: new Date(Date.now()),
+            updatedAt: new Date(Date.now()),
             items: items,
             containers: containers,
             containerOrder: containerOrder,

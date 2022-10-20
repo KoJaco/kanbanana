@@ -49,7 +49,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
         db.boards.update(props.slug, {
             title: boardTitle,
             tags: boardTags,
-            updatedAt: new Date(Date.now()).toLocaleString(),
+            updatedAt: new Date(Date.now()),
         });
         setShowForm(false);
     }
