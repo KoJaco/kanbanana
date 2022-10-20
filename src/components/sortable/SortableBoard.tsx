@@ -615,69 +615,70 @@ export default function SortableBoard({
             >
                 {/* TITLE */}
                 <div className="my-8 ml-2 px-4 sm:px-6 md:px-8">
-                    <div className="flex justify-between items-end gap-8">
-                        <h1 className="text-2xl font-semibold text-slate-600">
-                            {board?.title.length === 0
-                                ? 'Add a Board Title...'
-                                : board?.title}
-                        </h1>
+                    {showInlineBoardForm ? (
+                        <Transition
+                            show={showInlineBoardForm}
+                            enter="transition ease-out duration-200"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                        >
+                            <div id="boardFormContainer">
+                                <InlineBoardForm
+                                    title={board.title}
+                                    slug={currentBoardSlug}
+                                    tags={board.tags ? board.tags : initialTags}
+                                    setShowForm={setShowInlineBoardForm}
+                                />
+                            </div>
+                        </Transition>
+                    ) : (
+                        <>
+                            <div className="flex justify-between items-end gap-8">
+                                <h1 className="text-2xl font-semibold text-slate-600">
+                                    {board?.title.length === 0
+                                        ? 'Add a Board Title...'
+                                        : board?.title}
+                                </h1>
 
-                        <button
-                            type="button"
-                            className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
-                            onClick={() =>
-                                setShowInlineBoardForm((prev) => !prev)
-                            }
-                        >
-                            <MdOutlineEdit className="w-5 h-5" />
-                        </button>
-                    </div>
-                    <div className="flex flex-row items-start gap-8">
-                        <div
-                            id="tags"
-                            className="inline-flex mt-auto mb-2 -ml-6 gap-x-2"
-                        >
-                            {board?.tags?.map((tag, index) => (
-                                <div className="flex" key={index}>
-                                    <Tag
-                                        text={tag.text}
-                                        backgroundColor={tag.backgroundColor}
-                                    />
+                                <button
+                                    type="button"
+                                    className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
+                                    onClick={() =>
+                                        setShowInlineBoardForm((prev) => !prev)
+                                    }
+                                >
+                                    <MdOutlineEdit className="w-5 h-5" />
+                                </button>
+                            </div>
+                            <div className="flex flex-row items-start gap-8">
+                                <div
+                                    id="tags"
+                                    className="inline-flex mt-auto mb-2 -ml-6 gap-x-2"
+                                >
+                                    {board?.tags?.map((tag, index) => (
+                                        <div className="flex" key={index}>
+                                            <Tag
+                                                text={tag.text}
+                                                backgroundColor={
+                                                    tag.backgroundColor
+                                                }
+                                            />
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
 
-                        <div className="flex ml-auto">
-                            <p className="text-sm font-light p-2 text-slate-600">
-                                {board?.updatedAt.toLocaleString()}
-                            </p>
-                        </div>
-                    </div>
+                                <div className="flex ml-auto">
+                                    <p className="text-sm font-light p-2 text-slate-600">
+                                        {board?.updatedAt.toLocaleString()}
+                                    </p>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
-
-                {/* inline board form */}
-
-                <Transition
-                    show={showInlineBoardForm}
-                    enter="transition ease-out duration-200"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                >
-                    <div
-                        id="boardFormContainer"
-                        className="my-8 ml-2 px-4 sm:px-6 md:px-8"
-                    >
-                        <InlineBoardForm
-                            title={board.title}
-                            slug={currentBoardSlug}
-                            tags={board.tags ? board.tags : initialTags}
-                            setShowForm={setShowInlineBoardForm}
-                        />
-                    </div>
-                </Transition>
 
                 <div
                     id="carousel"

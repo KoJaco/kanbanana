@@ -6,6 +6,7 @@ import { BsChevronBarDown } from 'react-icons/bs';
 import { Transition } from '@headlessui/react';
 import { db } from '@/server/db';
 import { useRouter } from 'next/router';
+import { MdOutlineCancel } from 'react-icons/md';
 
 type InlineBoardFormProps = {
     title: string;
@@ -15,6 +16,7 @@ type InlineBoardFormProps = {
 };
 
 const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
+    // TODO: Notification service should let the user know which board was deleted... maybe save deleted boards in trash (accessible in sidebar), can then empty or re-instate these boards.
     // controlled inputs for form fields, everything we're editing
     const [boardTitle, setBoardTitle] = useState<string>(props.title);
     const [boardTags, setBoardTags] = useState<BoardTags>(props.tags);
@@ -75,7 +77,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="border-t border-b py-4 space-x-4 flex items-start justify-start">
+            <div className="border-b pb-4 space-x-4 flex items-start justify-start">
                 <div className="flex flex-col w-1/3">
                     <label
                         htmlFor="boardTitle"
@@ -139,36 +141,47 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                         )}
                     </div>
                 </div>
-                <div className="w-2/3 flex flex-col">
-                    <button
-                        type="button"
-                        className="inline-flex items-start text-sm font-medium text-slate-600"
-                        onClick={() => {
-                            setShowTagForm(!showTagForm);
-                        }}
-                    >
-                        Add some tags
-                        <BsChevronBarDown
-                            className="ml-2 h-4 w-4"
-                            aria-hidden="true"
-                        />
-                    </button>
-                    <Transition
-                        show={showTagForm}
-                        enter="transition ease-out duration-100"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
-                    >
-                        <TagForm
-                            labels={false}
-                            inLineInputs={true}
-                            tagNextToSave={true}
-                            handleAddTag={handleAddTag}
-                        />
-                    </Transition>
+                <div className="w-2/3 flex flex-row">
+                    <div className="flex flex-col w-full">
+                        <button
+                            type="button"
+                            className="inline-flex items-start text-sm font-medium text-slate-600"
+                            onClick={() => {
+                                setShowTagForm(!showTagForm);
+                            }}
+                        >
+                            Add some tags
+                            <BsChevronBarDown
+                                className="ml-2 h-4 w-4"
+                                aria-hidden="true"
+                            />
+                        </button>
+                        <Transition
+                            show={showTagForm}
+                            enter="transition ease-out duration-100"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in duration-75"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                        >
+                            <TagForm
+                                labels={false}
+                                inLineInputs={true}
+                                tagNextToSave={true}
+                                handleAddTag={handleAddTag}
+                            />
+                        </Transition>
+                    </div>
+                    <div className="flex items-start ml-8">
+                        <button
+                            type="button"
+                            className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
+                            onClick={() => setShowForm(false)}
+                        >
+                            <MdOutlineCancel className="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
             </div>
             <div className="flex flex-shrink-0 justify-end pr-2 py-4">
@@ -179,13 +192,13 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                 >
                     Delete Board
                 </button>
-                <button
+                {/* <button
                     type="button"
                     className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     onClick={() => setShowForm(false)}
                 >
                     Cancel
-                </button>
+                </button> */}
                 <button
                     type="submit"
                     className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-dark-alt focus:outline-none transition-color duration-300 disabled:cursor-not-allowed invalid:border-pink-500"
