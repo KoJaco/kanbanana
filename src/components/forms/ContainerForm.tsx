@@ -134,7 +134,7 @@ const ContainerForm = ({
                     <div className="w-full">
                         <label
                             htmlFor="Container"
-                            className="block text-sm font-medium text-slate-600"
+                            className="block text-sm font-medium text-slate-600 after:content-['*'] after:ml-0.5 after:text-red-500"
                         >
                             Title
                         </label>
@@ -144,9 +144,10 @@ const ContainerForm = ({
                                 name="title"
                                 id="title"
                                 value={title}
-                                placeholder="Add a container title."
-                                className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                placeholder="Add a column title."
+                                className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm invalid:border-pink-300"
                                 onChange={handleInputChange}
+                                required
                             />
                         </div>
                     </div>
@@ -292,7 +293,7 @@ const ContainerForm = ({
                             {({ open }) => (
                                 <>
                                     <Listbox.Label
-                                        className="block text-sm font-medium text-gray-700"
+                                        className="block text-sm font-medium text-gray-700 "
                                         style={{
                                             opacity: sortingOptionsDisabled
                                                 ? '0.50'
@@ -302,7 +303,7 @@ const ContainerForm = ({
                                         Completed Item Sorting
                                     </Listbox.Label>
                                     <div
-                                        className="relative mt-1"
+                                        className="relative mt-1 pb-10"
                                         style={{
                                             opacity: sortingOptionsDisabled
                                                 ? '0.50'
@@ -328,7 +329,7 @@ const ContainerForm = ({
                                             leaveFrom="opacity-100"
                                             leaveTo="opacity-0"
                                         >
-                                            <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                            <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm ">
                                                 {itemSortingOptions.map(
                                                     (option) => (
                                                         <Listbox.Option
@@ -390,8 +391,35 @@ const ContainerForm = ({
                             )}
                         </Listbox>
                     </div>
+                    <div className="flex flex-col mt-5">
+                        <button
+                            type="button"
+                            className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-green-500 text-gray-50 hover:border-green-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary  drop-shadow disabled:cursor-not-allowed"
+                            onClick={() => {
+                                handleAddOrUpdateContainer({
+                                    id: props.id,
+                                    title: title,
+                                    type: containerType!.key,
+                                    completedItemOrder: itemSortingType!.key,
+                                    badgeColor: badgeColor,
+                                });
+                            }}
+                            disabled={title.length === 0}
+                        >
+                            <span className="sr-only">Save column</span>
+                            <MdOutlineDone
+                                className="h-5 w-5 "
+                                aria-hidden="true"
+                            />
+                        </button>
+                        {/* {title.length === 0 && (
+                            <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                You must add a title to add a container.
+                            </span>
+                        )} */}
+                    </div>
                 </div>
-                <div className="flex space-x-3 items-end text-sm group mt-3">
+                {/* <div className="flex space-x-3 items-end text-sm group mt-3">
                     <button
                         type="button"
                         className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary  drop-shadow disabled:cursor-not-allowed"
@@ -417,7 +445,7 @@ const ContainerForm = ({
                             You must add a title to add a container.
                         </span>
                     )}
-                </div>
+                </div> */}
                 {showColorPicker && (
                     <div
                         ref={colorPickerRef}

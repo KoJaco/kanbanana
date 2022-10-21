@@ -2,11 +2,10 @@ import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 import type { Transform } from '@dnd-kit/utilities';
-import { Handle, Remove } from '../components';
+import { Handle } from '../components';
 import { TItem, UniqueIdentifier } from '@/core/types/sortableBoard';
 import ItemForm from '@/components/forms/ItemForm';
 import { FiEdit } from 'react-icons/fi';
-import ArrowIcon from '@/components/elements/ArrowIcon';
 
 import styles from './Item.module.css';
 export interface ItemProps {

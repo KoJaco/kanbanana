@@ -9,11 +9,17 @@ import {
     IoCreateOutline,
 } from 'react-icons/io5';
 import { SiKibana } from 'react-icons/si';
+import { HiOutlineTag } from 'react-icons/hi';
 
 import ThemeSettings from '@/components/menus/ThemeSettings';
 import CreateBoardForm from '@/components/forms/CreateBoardForm';
+import { useRouter } from 'next/router';
+import { useUIControlStore } from '@/stores/UIControlStore';
 
 const BoardMenu = dynamic(() => import('@/components/menus/BoardMenu'), {
+    ssr: false,
+});
+const TagMenu = dynamic(() => import('@/components/menus/TagMenu'), {
     ssr: false,
 });
 
@@ -24,6 +30,11 @@ type SidebarProps = {
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     const [showCreateBoardForm, setShowCreateBoardForm] = useState(false);
+
+    const { screenSize, currentColor } = useUIControlStore();
+
+    const router = useRouter();
+    const currentRoute = router.asPath;
 
     function handleShowCreateBoardForm() {
         setShowCreateBoardForm(true);
@@ -63,7 +74,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             leaveFrom="translate-x-0"
                             leaveTo="-translate-x-full"
                         >
-                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-gradient-to-b from-primary to-primary-dark-alt pt-5 pb-4">
+                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-gradient-to-b from-primary to-primary-dark-alt  pt-5 pb-4">
                                 <Transition.Child
                                     as={Fragment}
                                     enter="ease-in-out duration-300"
@@ -121,19 +132,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                             </button>
                                         </div>
                                         <div>
-                                            <Link href="/" passHref={true}>
-                                                <a
-                                                    className="text-indigo-100 hover:bg-primary-bg-darker
+                                            <div
+                                                className="text-indigo-100 
                                              flex items-center px-2 py-2 text-base font-medium rounded-md cursor-pointer"
-                                                >
-                                                    <span className="h-full text-gray-400 cursor-pointer">
-                                                        <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 " />
-                                                    </span>
-                                                    <p className=" text-indigo-100 font-regular uppercase cursor-pointer">
-                                                        Boards
-                                                    </p>
-                                                </a>
-                                            </Link>
+                                            >
+                                                <span className="h-full text-gray-400 cursor-pointer">
+                                                    <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 " />
+                                                </span>
+                                                <p className=" text-indigo-100 font-regular uppercase cursor-pointer">
+                                                    Boards
+                                                </p>
+                                            </div>
 
                                             <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
                                                 {/* Dynamic component, client-side only */}
@@ -143,10 +152,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                                         <div className="flex ml-2">
                                             <span className="h-full text-indigo-100 mr-4">
-                                                <IoColorPaletteOutline className="h-6 w-6 flex-shrink-0 text-indigo-300" />
+                                                <HiOutlineTag className="h-6 w-6 flex-shrink-0 text-indigo-300" />
                                             </span>
                                             <p className="text-indigo-100 mr-4 font-regular uppercase">
-                                                Theme and Settings
+                                                Tags
                                             </p>
                                         </div>
                                         <div>
@@ -185,7 +194,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </Dialog>
             </Transition.Root>
 
-            {/* Static sidebar for desktop */}
+            {/* DESKTOP: static sidebar */}
             <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className="flex flex-grow flex-col overflow-y-auto bg-gradient-to-b from-primary to-primary-dark-alt pt-5">
@@ -216,34 +225,71 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     </p>
                                 </button>
                             </div>
-                            <div>
-                                <a
-                                    className="text-indigo-100 hover:bg-primary-bg-darker
+
+                            <div className="">
+                                <div
+                                    className="text-indigo-100 
                                             group flex items-center px-2 py-2 text-base font-medium rounded-md"
                                 >
                                     <span className="h-full ">
                                         <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 " />
                                     </span>
-                                    <p className=" text-indigo-100 font-regular uppercase cursor-pointer ">
+                                    <p className=" text-indigo-100 font-regular uppercase">
                                         Boards
                                     </p>
-                                </a>
+                                </div>
+                                <div className="py-2 border-b border-indigo-500 text-indigo-200">
+                                    <Link
+                                        href={{
+                                            pathname: '/boards',
+                                        }}
+                                        passHref={true}
+                                    >
+                                        <a
+                                            style={{
+                                                backgroundColor:
+                                                    currentRoute === '/boards'
+                                                        ? currentColor
+                                                        : '',
+                                            }}
+                                            className={
+                                                currentRoute === '/boards'
+                                                    ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-indigo-200 drop-shadow-md mt-2 font-light'
+                                                    : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 font-light hover:bg-primary-bg-darker'
+                                            }
+                                            // onClick={handleCloseSidebar}
+                                        >
+                                            <div className="flex justify-between items-end">
+                                                <span className="capitalize">
+                                                    All Boards
+                                                </span>
+                                            </div>
+                                        </a>
+                                    </Link>
+                                </div>
+
                                 <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
                                     {/* Dynamic component, client-side only */}
                                     <BoardMenu />
                                 </div>
                             </div>
 
-                            <div className="flex ml-2">
-                                <span className="h-full text-indigo-100 mr-4">
-                                    <IoColorPaletteOutline className="h-6 w-6 flex-shrink-0 text-indigo-300" />
-                                </span>
-                                <p className="text-indigo-100 mr-4 font-regular uppercase">
-                                    Theme and Settings
-                                </p>
-                            </div>
                             <div>
-                                <ThemeSettings />
+                                <div
+                                    className="text-indigo-100 
+                                            group flex items-center px-2 py-2 text-base font-medium rounded-md"
+                                >
+                                    <span className="h-full text-indigo-100 mr-4">
+                                        <HiOutlineTag className="h-6 w-6 flex-shrink-0 text-indigo-300" />
+                                    </span>
+                                    <p className="text-indigo-100 font-regular uppercase">
+                                        Tags
+                                    </p>
+                                </div>
+                                <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
+                                    {/* Dynamic component, client-side only */}
+                                    <TagMenu />
+                                </div>
                             </div>
                         </nav>
                     </div>

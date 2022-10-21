@@ -13,18 +13,18 @@ export default function MainLayout({ children }: MainLayoutProps) {
     return (
         <>
             {/* Main Layout */}
-            <div className={currentMode === 'dark' ? 'dark z-3' : 'z-30'}>
+            <div className={currentMode === 'dark' ? 'dark' : ''}>
                 {/* Sidebar, static on desktop, responsive/closed on mobile */}
                 <Sidebar
                     sidebarOpen={sidebarOpen}
                     setSidebarOpen={setSidebarOpen}
                 />
 
-                <div className="flex flex-1 flex-col md:pl-64">
+                <div className="flex flex-1 flex-col md:pl-64 dark:bg-[#0a0321]">
                     {/* Navbar */}
                     <Navbar setSidebarOpen={setSidebarOpen} />
 
-                    <main className="z-10">
+                    <main className="z-10 h-screen">
                         <div className="py-6">{children}</div>
                     </main>
                 </div>
