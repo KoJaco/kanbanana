@@ -1,5 +1,4 @@
 import { useUIControlStore } from '@/stores/UIControlStore';
-import dynamic from 'next/dynamic';
 import Sidebar from '@/components/navigation/Sidebar';
 import Navbar from '@/components/navigation/Navbar';
 

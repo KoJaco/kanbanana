@@ -3,23 +3,14 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Dialog, Transition } from '@headlessui/react';
 import { MdClose } from 'react-icons/md';
-import {
-    IoList,
-    IoColorPaletteOutline,
-    IoCreateOutline,
-} from 'react-icons/io5';
+import { IoCreateOutline } from 'react-icons/io5';
 import { SiKibana } from 'react-icons/si';
-import { HiOutlineTag } from 'react-icons/hi';
 
-import ThemeSettings from '@/components/menus/ThemeSettings';
 import CreateBoardForm from '@/components/forms/CreateBoardForm';
 import { useRouter } from 'next/router';
 import { useUIControlStore } from '@/stores/UIControlStore';
 
 const BoardMenu = dynamic(() => import('@/components/menus/BoardMenu'), {
-    ssr: false,
-});
-const TagMenu = dynamic(() => import('@/components/menus/TagMenu'), {
     ssr: false,
 });
 
@@ -131,36 +122,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                 </p>
                                             </button>
                                         </div>
-                                        <div>
-                                            <div
-                                                className="text-indigo-100 
-                                             flex items-center px-2 py-2 text-base font-medium rounded-md cursor-pointer"
-                                            >
-                                                <span className="h-full text-gray-400 cursor-pointer">
-                                                    <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 " />
-                                                </span>
-                                                <p className=" text-indigo-100 font-regular uppercase cursor-pointer">
-                                                    Boards
-                                                </p>
-                                            </div>
-
-                                            <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
-                                                {/* Dynamic component, client-side only */}
-                                                <BoardMenu />
-                                            </div>
-                                        </div>
-
-                                        <div className="flex ml-2">
-                                            <span className="h-full text-indigo-100 mr-4">
-                                                <HiOutlineTag className="h-6 w-6 flex-shrink-0 text-indigo-300" />
-                                            </span>
-                                            <p className="text-indigo-100 mr-4 font-regular uppercase">
-                                                Tags
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <ThemeSettings />
-                                        </div>
+                                        <BoardMenu />
                                     </nav>
                                 </div>
                                 {/* Sidebar Footer Desktop */}
@@ -226,7 +188,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 </button>
                             </div>
 
-                            <div className="">
+                            <BoardMenu />
+
+                            {/* <div className="">
                                 <div
                                     className="text-indigo-100 
                                             group flex items-center px-2 py-2 text-base font-medium rounded-md"
@@ -269,11 +233,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 </div>
 
                                 <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
-                                    {/* Dynamic component, client-side only */}
                                     <BoardMenu />
                                 </div>
                             </div>
-
                             <div>
                                 <div
                                     className="text-indigo-100 
@@ -287,10 +249,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     </p>
                                 </div>
                                 <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
-                                    {/* Dynamic component, client-side only */}
                                     <TagMenu />
                                 </div>
-                            </div>
+                            </div> */}
                         </nav>
                     </div>
                     {/* Sidebar Footer Desktop */}
