@@ -3,8 +3,8 @@ import { Board } from '@/core/types/sortableBoard';
 export const blankBoard: Board = {
     title: '',
     slug: '',
-    createdAt: '',
-    updatedAt: '',
+    createdAt: new Date(Date.now()),
+    updatedAt: new Date(Date.now()),
     tags: [],
     containerItemMapping: {},
     containerOrder: [],

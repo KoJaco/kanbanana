@@ -110,18 +110,21 @@ const BoardMenu = () => {
                     <Link
                         href={{
                             pathname: '/boards',
+                            query: {
+                                boards: 'all',
+                            },
                         }}
                         passHref={true}
                     >
                         <a
                             style={{
                                 backgroundColor:
-                                    currentRoute === '/boards'
+                                    currentRoute === '/boards?boards=all'
                                         ? currentColor
                                         : '',
                             }}
                             className={
-                                currentRoute === '/boards'
+                                currentRoute === '/boards?boards=all'
                                     ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-indigo-200 drop-shadow-md mt-2 font-light'
                                     : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 font-light hover:bg-primary-bg-darker'
                             }
@@ -187,15 +190,21 @@ const BoardMenu = () => {
                     {/* Dynamic component, client-side only */}
                     <ol className="inline-flex px-2 items-center gap-x-2 gap-y-2 w-full max-h-96 py-4 whitespace-normal flex-wrap">
                         {allTags.map((tag, index) => (
-                            <button
+                            <Link
                                 key={index}
-                                className="hover:scale-110 transition-transform duration-300"
+                                href={{
+                                    pathname: '/boards',
+                                    query: { tagText: tag.text },
+                                }}
+                                passHref={true}
                             >
-                                <Tag
-                                    text={tag.text}
-                                    backgroundColor={tag.backgroundColor}
-                                />
-                            </button>
+                                <a className="hover:scale-110 transition-transform duration-300">
+                                    <Tag
+                                        text={tag.text}
+                                        backgroundColor={tag.backgroundColor}
+                                    />
+                                </a>
+                            </Link>
                         ))}
                     </ol>
                 </div>

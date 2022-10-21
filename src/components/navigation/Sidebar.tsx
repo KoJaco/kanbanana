@@ -261,15 +261,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 <div></div>
                                 <div className="ml-3">
                                     <p className="text-sm font-medium text-indigo-100/[0.8]">
-                                        Database Info
+                                        Database Import/Export
                                     </p>
                                     <div className="flex gap-5 text-xs font-medium text-indigo-200">
-                                        <span className="group-hover:text-gray-50">
-                                            12 boards
-                                        </span>
-                                        <span className="group-hover:text-gray-50">
-                                            1mb / 50gb used
-                                        </span>
+                                        Coming soon!
                                     </div>
                                 </div>
                             </div>
