@@ -25,7 +25,7 @@ const BoardMenu = () => {
     };
 
     const boards = useLiveQuery(
-        () => db.getAllBoards(false),
+        () => db.getAllBoards(true),
         // () => db.boards.orderBy('updatedAt').reverse().toArray(),
         [boardCount] //we should retrieve whenever board count is updated
     );

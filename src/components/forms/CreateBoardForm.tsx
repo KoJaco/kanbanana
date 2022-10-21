@@ -5,7 +5,7 @@ import { useKanbanStore } from '@/stores/KanbanStore';
 import { db } from '@/server/db';
 import { stringToRandomSlug } from '@/core/utils/misc';
 import { Dialog, Transition, Menu } from '@headlessui/react';
-import { MdClose, MdModeEdit, MdSort } from 'react-icons/md';
+import { MdClose, MdModeEdit, MdOutlineEdit, MdSort } from 'react-icons/md';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 import { BsChevronBarDown } from 'react-icons/bs';
 import { TiDelete } from 'react-icons/ti';
@@ -98,6 +98,9 @@ const CreateBoardForm = ({
     const [currentContainerId, setCurrentContainerId] =
         useState<UniqueIdentifier>('A');
 
+    const [tagFormState, setTagFormState] = useState<'add' | 'edit'>('add');
+    const [currentTagIndex, setCurrentTagIndex] = useState<number | null>(null);
+
     const router = useRouter();
 
     const { increaseBoardCount } = useKanbanStore();
@@ -107,6 +110,8 @@ const CreateBoardForm = ({
     ) {
         setBoardTitle(event.currentTarget.value);
     }
+
+    console.log(boardContainers);
 
     function handleAddContainer(container: TContainer) {
         if (boardContainers === null || boardContainerItemMapping === null) {
@@ -125,6 +130,8 @@ const CreateBoardForm = ({
             });
         }
         setShowContainerForm(false);
+        console.log('added contianer');
+        console.log(boardContainers);
     }
 
     function handleUpdateContainer(container: TContainer) {
@@ -135,16 +142,22 @@ const CreateBoardForm = ({
     }
 
     function handleRemoveContainer(containerId: UniqueIdentifier) {
-        if (boardContainers !== null || boardContainerItemMapping !== null) {
+        console.log(boardContainers);
+        console.log(boardContainerItemMapping);
+        if (boardContainers !== null && boardContainerItemMapping !== null) {
             let newContainers = omit(boardContainers, containerId);
             let newContainerBoardMapping = omit(
                 boardContainerItemMapping,
                 containerId
             );
-
             setBoardContainers(newContainers);
             setBoardContainerItemMapping(newContainerBoardMapping);
         }
+        setShowContainerForm(false);
+        setContainerFormState('add');
+        setCurrentContainerId('A');
+        console.log('boardContainers');
+        console.log(boardContainers);
     }
 
     function handleEditContainer(containerId: UniqueIdentifier) {
@@ -167,6 +180,18 @@ const CreateBoardForm = ({
             let newTags = Array.from(boardTags);
             newTags.push(tag);
             setBoardTags(newTags);
+        }
+        setShowTagForm(false);
+    }
+
+    function handleEditTag(boardTag: BoardTag, tagIndex: number | undefined) {
+        if (boardTags !== null && tagIndex !== undefined) {
+            let newTags = Array.from(boardTags);
+            newTags[tagIndex] = boardTag;
+            setBoardTags(newTags);
+            setTagFormState('add');
+        } else {
+            console.log('Could not edit tag');
         }
         setShowTagForm(false);
     }
@@ -256,14 +281,23 @@ const CreateBoardForm = ({
             setBoardContainers(null);
             setBoardContainerItemMapping(null);
             setContainerFormState('add');
+            setShowTagForm(false);
+            setShowContainerForm(false);
+            setTagFormState('add');
+            setCurrentTagIndex(null);
         }, 500);
     }
 
     function getNextContainerId() {
-        if (boardContainerItemMapping === null || boardContainers === null) {
+        if (boardContainers === null || boardContainerItemMapping === null) {
             return 'A';
         }
+
         const containerIds = Object.keys(boardContainerItemMapping);
+
+        if (containerIds.length === 0) {
+            return 'A';
+        }
         const lastContainerId = containerIds[containerIds.length - 1];
         return String.fromCharCode(lastContainerId!.charCodeAt(0) + 1);
     }
@@ -463,7 +497,43 @@ const CreateBoardForm = ({
                                                                                             <button
                                                                                                 type="button"
                                                                                                 name="delete-tag"
-                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
+                                                                                                onClick={() => {
+                                                                                                    if (
+                                                                                                        showTagForm
+                                                                                                    ) {
+                                                                                                        setCurrentTagIndex(
+                                                                                                            index
+                                                                                                        );
+                                                                                                        setTagFormState(
+                                                                                                            'edit'
+                                                                                                        );
+                                                                                                        setShowTagForm(
+                                                                                                            false
+                                                                                                        );
+                                                                                                    } else {
+                                                                                                        setCurrentTagIndex(
+                                                                                                            index
+                                                                                                        );
+                                                                                                        setTagFormState(
+                                                                                                            'edit'
+                                                                                                        );
+                                                                                                    }
+                                                                                                    setTimeout(
+                                                                                                        () =>
+                                                                                                            setShowTagForm(
+                                                                                                                true
+                                                                                                            ),
+                                                                                                        100
+                                                                                                    );
+                                                                                                }}
+                                                                                            >
+                                                                                                <MdOutlineEdit className="text-slate-600" />
+                                                                                            </button>
+                                                                                            <button
+                                                                                                type="button"
+                                                                                                name="delete-tag"
+                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
                                                                                                 onClick={() =>
                                                                                                     handleRemoveTag(
                                                                                                         index
@@ -516,19 +586,16 @@ const CreateBoardForm = ({
                                                                                                         index
                                                                                                     }
                                                                                                     className="group rounded-md border shadow my-2 text-md"
+                                                                                                    style={{
+                                                                                                        backgroundColor:
+                                                                                                            container
+                                                                                                                .badgeColor
+                                                                                                                .value,
+                                                                                                    }}
                                                                                                 >
-                                                                                                    <div
-                                                                                                        className="flex flex-col p-2 rounded-t-md"
-                                                                                                        style={{
-                                                                                                            backgroundColor:
-                                                                                                                container
-                                                                                                                    .badgeColor
-                                                                                                                    .value,
-                                                                                                        }}
-                                                                                                    >
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            className="opacity-0 group-hover:opacity-100 flex justify-end transition-opacity duration-300"
+                                                                                                    <div className="flex gap-x-12 justify-between p-4 items-center text-slate-600">
+                                                                                                        <div
+                                                                                                            className="flex flex-col"
                                                                                                             style={{
                                                                                                                 color: container
                                                                                                                     .badgeColor
@@ -536,65 +603,98 @@ const CreateBoardForm = ({
                                                                                                                     ? '#333'
                                                                                                                     : '#fff',
                                                                                                             }}
-                                                                                                            onClick={() =>
-                                                                                                                handleEditContainer(
-                                                                                                                    container.id
-                                                                                                                )
-                                                                                                            }
                                                                                                         >
-                                                                                                            <MdModeEdit className="w-5" />
-                                                                                                        </button>
-                                                                                                    </div>
-                                                                                                    <div className="flex flex-col p-2 divide-x">
-                                                                                                        <div className="flex gap-x-12 items-center text-slate-600">
-                                                                                                            <div className="flex flex-col">
-                                                                                                                <label className="text-sm font-medium">
-                                                                                                                    Title
-                                                                                                                </label>
-                                                                                                                <div>
-                                                                                                                    {
-                                                                                                                        container.title
-                                                                                                                    }
-                                                                                                                </div>
+                                                                                                            <label className="text-sm font-bold">
+                                                                                                                Title
+                                                                                                            </label>
+                                                                                                            <div>
+                                                                                                                {
+                                                                                                                    container.title
+                                                                                                                }
                                                                                                             </div>
-                                                                                                            <div className="flex flex-col">
-                                                                                                                <label className="text-sm font-medium">
-                                                                                                                    Type
-                                                                                                                </label>
-                                                                                                                <div>
-                                                                                                                    {
-                                                                                                                        container.type
-                                                                                                                    }
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                            {container.type ===
-                                                                                                                'checklist' && (
-                                                                                                                <div className="flex flex-col">
-                                                                                                                    <label className="text-sm font-medium">
-                                                                                                                        Ordering
-                                                                                                                    </label>
-                                                                                                                    <div>
-                                                                                                                        {
-                                                                                                                            container.completedItemOrder
-                                                                                                                        }
-                                                                                                                    </div>
-                                                                                                                </div>
-                                                                                                            )}
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="flex items-center justify-end mt-2">
-                                                                                                        <button
-                                                                                                            type="button"
-                                                                                                            name="delete-tag"
-                                                                                                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 mr-2"
-                                                                                                            onClick={() =>
-                                                                                                                handleRemoveContainer(
-                                                                                                                    container.id
-                                                                                                                )
-                                                                                                            }
+                                                                                                        <div
+                                                                                                            className="flex flex-col"
+                                                                                                            style={{
+                                                                                                                color: container
+                                                                                                                    .badgeColor
+                                                                                                                    .textDark
+                                                                                                                    ? '#333'
+                                                                                                                    : '#fff',
+                                                                                                            }}
                                                                                                         >
-                                                                                                            <TiDelete className="text-slate-600 w-5 h-5" />
-                                                                                                        </button>
+                                                                                                            <label className="text-sm font-bold">
+                                                                                                                Type
+                                                                                                            </label>
+                                                                                                            <div>
+                                                                                                                {
+                                                                                                                    container.type
+                                                                                                                }
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        {container.type ===
+                                                                                                            'checklist' && (
+                                                                                                            <div
+                                                                                                                className="flex flex-col"
+                                                                                                                style={{
+                                                                                                                    color: container
+                                                                                                                        .badgeColor
+                                                                                                                        .textDark
+                                                                                                                        ? '#333'
+                                                                                                                        : '#fff',
+                                                                                                                }}
+                                                                                                            >
+                                                                                                                <label className="text-sm font-bold">
+                                                                                                                    Ordering
+                                                                                                                </label>
+                                                                                                                <div>
+                                                                                                                    {
+                                                                                                                        container.completedItemOrder
+                                                                                                                    }
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        )}
+                                                                                                        <div className="flex items-center mb-auto">
+                                                                                                            <button
+                                                                                                                type="button"
+                                                                                                                className=" opacity-0 group-hover:opacity-100 flex justify-end transition-opacity duration-300 hover:scale-110"
+                                                                                                                style={{
+                                                                                                                    color: container
+                                                                                                                        .badgeColor
+                                                                                                                        .textDark
+                                                                                                                        ? '#333'
+                                                                                                                        : '#fff',
+                                                                                                                }}
+                                                                                                                onClick={() =>
+                                                                                                                    handleEditContainer(
+                                                                                                                        container.id
+                                                                                                                    )
+                                                                                                                }
+                                                                                                            >
+                                                                                                                <MdModeEdit className="w-5" />
+                                                                                                            </button>
+                                                                                                            <button
+                                                                                                                type="button"
+                                                                                                                name="delete-tag"
+                                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
+                                                                                                                onClick={() =>
+                                                                                                                    handleRemoveContainer(
+                                                                                                                        container.id
+                                                                                                                    )
+                                                                                                                }
+                                                                                                            >
+                                                                                                                <TiDelete
+                                                                                                                    className="text-slate-600 w-5 h-5"
+                                                                                                                    style={{
+                                                                                                                        color: container
+                                                                                                                            .badgeColor
+                                                                                                                            .textDark
+                                                                                                                            ? '#333'
+                                                                                                                            : '#fff',
+                                                                                                                    }}
+                                                                                                                />
+                                                                                                            </button>
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
                                                                                             );
@@ -616,9 +716,26 @@ const CreateBoardForm = ({
                                                             <button
                                                                 type="button"
                                                                 className="inline-flex w-full justify-end rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:shadow-sm hover:bg-gray-50 focus:outline-none mb-4"
-                                                                onClick={
-                                                                    handleToggleTagForm
-                                                                }
+                                                                onClick={() => {
+                                                                    if (
+                                                                        tagFormState ===
+                                                                        'edit'
+                                                                    ) {
+                                                                        setTagFormState(
+                                                                            'add'
+                                                                        );
+                                                                        setCurrentTagIndex(
+                                                                            null
+                                                                        );
+                                                                        setShowTagForm(
+                                                                            !showTagForm
+                                                                        );
+                                                                    } else {
+                                                                        setShowTagForm(
+                                                                            !showTagForm
+                                                                        );
+                                                                    }
+                                                                }}
                                                             >
                                                                 Add some tags
                                                                 <BsChevronBarDown
@@ -637,14 +754,42 @@ const CreateBoardForm = ({
                                                                 leaveFrom="transform opacity-100 scale-100"
                                                                 leaveTo="transform opacity-0 scale-95"
                                                             >
-                                                                <TagForm
-                                                                    labels={
-                                                                        true
-                                                                    }
-                                                                    handleAddTag={
-                                                                        handleAddTag
-                                                                    }
-                                                                />
+                                                                {tagFormState ===
+                                                                'add' ? (
+                                                                    <TagForm
+                                                                        labels={
+                                                                            true
+                                                                        }
+                                                                        tagIndex={
+                                                                            null
+                                                                        }
+                                                                        handleAddOrUpdateTag={
+                                                                            handleAddTag
+                                                                        }
+                                                                    />
+                                                                ) : (
+                                                                    <TagForm
+                                                                        labels={
+                                                                            true
+                                                                        }
+                                                                        tagIndex={
+                                                                            currentTagIndex
+                                                                        }
+                                                                        tag={
+                                                                            boardTags !==
+                                                                                null &&
+                                                                            currentTagIndex !==
+                                                                                null
+                                                                                ? boardTags[
+                                                                                      currentTagIndex
+                                                                                  ]
+                                                                                : undefined
+                                                                        }
+                                                                        handleAddOrUpdateTag={
+                                                                            handleEditTag
+                                                                        }
+                                                                    />
+                                                                )}
                                                             </Transition>
                                                         </div>
                                                     </div>
@@ -655,9 +800,26 @@ const CreateBoardForm = ({
                                                             <button
                                                                 type="button"
                                                                 className="inline-flex w-full justify-end rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:shadow-sm hover:bg-gray-50 focus:outline-none mb-4"
-                                                                onClick={
-                                                                    handleToggleContainerForm
-                                                                }
+                                                                onClick={() => {
+                                                                    if (
+                                                                        containerFormState ===
+                                                                        'edit'
+                                                                    ) {
+                                                                        setContainerFormState(
+                                                                            'add'
+                                                                        );
+                                                                        setCurrentContainerId(
+                                                                            'A'
+                                                                        );
+                                                                        setShowContainerForm(
+                                                                            !showContainerForm
+                                                                        );
+                                                                    } else {
+                                                                        setShowContainerForm(
+                                                                            !showContainerForm
+                                                                        );
+                                                                    }
+                                                                }}
                                                             >
                                                                 Add some
                                                                 containers
@@ -679,8 +841,7 @@ const CreateBoardForm = ({
                                                             >
                                                                 {containerFormState ===
                                                                     'edit' &&
-                                                                boardContainers !==
-                                                                    null ? (
+                                                                boardContainers ? (
                                                                     <ContainerForm
                                                                         id={
                                                                             currentContainerId

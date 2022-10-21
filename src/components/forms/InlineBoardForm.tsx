@@ -6,7 +6,7 @@ import { BsChevronBarDown } from 'react-icons/bs';
 import { Transition } from '@headlessui/react';
 import { db } from '@/server/db';
 import { useRouter } from 'next/router';
-import { MdOutlineCancel } from 'react-icons/md';
+import { MdOutlineCancel, MdOutlineEdit } from 'react-icons/md';
 
 type InlineBoardFormProps = {
     title: string;
@@ -21,6 +21,8 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
     const [boardTitle, setBoardTitle] = useState<string>(props.title);
     const [boardTags, setBoardTags] = useState<BoardTags>(props.tags);
 
+    const [tagFormState, setTagFormState] = useState<'add' | 'edit'>('add');
+    const [currentTagIndex, setCurrentTagIndex] = useState<number | null>(null);
     const [showTagForm, setShowTagForm] = useState(false);
 
     const router = useRouter();
@@ -30,6 +32,17 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
         newTags.push(boardTag);
         setBoardTags(newTags);
         setShowTagForm(false);
+    }
+
+    function handleEditTag(boardTag: BoardTag, tagIndex: number | undefined) {
+        if (tagIndex) {
+            let newTags = Array.from(boardTags);
+            newTags[tagIndex] = boardTag;
+            setBoardTags(newTags);
+            setShowTagForm(false);
+            setTagFormState('add');
+            setCurrentTagIndex(null);
+        }
     }
 
     function handleUserInput(event: React.ChangeEvent<HTMLInputElement>) {
@@ -127,8 +140,36 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                         <div className="flex">
                                             <button
                                                 type="button"
-                                                name="delete-tag"
-                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                                name="editTag"
+                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
+                                                onClick={() => {
+                                                    if (showTagForm) {
+                                                        setCurrentTagIndex(
+                                                            index
+                                                        );
+                                                        setTagFormState('edit');
+                                                        setShowTagForm(false);
+                                                    } else {
+                                                        setCurrentTagIndex(
+                                                            index
+                                                        );
+                                                        setTagFormState('edit');
+                                                    }
+                                                    setTimeout(
+                                                        () =>
+                                                            setShowTagForm(
+                                                                true
+                                                            ),
+                                                        100
+                                                    );
+                                                }}
+                                            >
+                                                <MdOutlineEdit className="text-slate-600" />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                name="deleteTag"
+                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
                                                 onClick={() =>
                                                     handleRemoveTag(tag)
                                                 }
@@ -147,7 +188,13 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                             type="button"
                             className="inline-flex items-start text-sm font-medium text-slate-600"
                             onClick={() => {
-                                setShowTagForm(!showTagForm);
+                                if (tagFormState === 'edit') {
+                                    setTagFormState('add');
+                                    setCurrentTagIndex(null);
+                                    setShowTagForm(!showTagForm);
+                                } else {
+                                    setShowTagForm(!showTagForm);
+                                }
                             }}
                         >
                             Add some tags
@@ -165,12 +212,28 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                             leaveFrom="transform opacity-100 scale-100"
                             leaveTo="transform opacity-0 scale-95"
                         >
-                            <TagForm
-                                labels={false}
-                                inLineInputs={true}
-                                tagNextToSave={true}
-                                handleAddTag={handleAddTag}
-                            />
+                            {tagFormState === 'add' ? (
+                                <TagForm
+                                    labels={false}
+                                    inLineInputs={true}
+                                    tagNextToSave={true}
+                                    tagIndex={null}
+                                    handleAddOrUpdateTag={handleAddTag}
+                                />
+                            ) : (
+                                <TagForm
+                                    labels={false}
+                                    inLineInputs={true}
+                                    tagNextToSave={true}
+                                    tagIndex={currentTagIndex}
+                                    tag={
+                                        currentTagIndex
+                                            ? boardTags[currentTagIndex]
+                                            : undefined
+                                    }
+                                    handleAddOrUpdateTag={handleEditTag}
+                                />
+                            )}
                         </Transition>
                     </div>
                     <div className="flex items-start ml-8">
