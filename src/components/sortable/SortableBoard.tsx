@@ -656,7 +656,7 @@ export default function SortableBoard({
                             <div className="flex flex-row items-start gap-8">
                                 <div
                                     id="tags"
-                                    className="inline-flex mt-auto mb-2 -ml-6 gap-x-2"
+                                    className="inline-flex mt-auto mb-2 gap-x-2"
                                 >
                                     {board?.tags?.map((tag, index) => (
                                         <div className="flex" key={index}>
