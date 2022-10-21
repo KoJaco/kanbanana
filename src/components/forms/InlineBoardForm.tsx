@@ -1,5 +1,5 @@
 import { BoardTag, BoardTags } from '@/core/types/sortableBoard';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import TagForm from './TagForm';
 import { TiDelete } from 'react-icons/ti';
 import { BsChevronBarDown } from 'react-icons/bs';
@@ -7,7 +7,7 @@ import { Transition } from '@headlessui/react';
 import { db } from '@/server/db';
 import { useRouter } from 'next/router';
 import { MdOutlineCancel, MdOutlineEdit } from 'react-icons/md';
-
+import { useOnClickOutside } from '@/core/hooks/index';
 type InlineBoardFormProps = {
     title: string;
     slug: string;
@@ -34,7 +34,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
         setShowTagForm(false);
     }
 
-    function handleEditTag(boardTag: BoardTag, tagIndex: number | undefined) {
+    function handleUpdateTag(boardTag: BoardTag, tagIndex: number | undefined) {
         if (tagIndex) {
             let newTags = Array.from(boardTags);
             newTags[tagIndex] = boardTag;
@@ -87,6 +87,9 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
             );
         }
     }
+
+    console.log(currentTagIndex);
+    console.log(boardTags);
 
     return (
         <form onSubmit={handleSubmit}>
@@ -227,11 +230,11 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                     tagNextToSave={true}
                                     tagIndex={currentTagIndex}
                                     tag={
-                                        currentTagIndex
+                                        currentTagIndex !== null
                                             ? boardTags[currentTagIndex]
                                             : undefined
                                     }
-                                    handleAddOrUpdateTag={handleEditTag}
+                                    handleAddOrUpdateTag={handleUpdateTag}
                                 />
                             )}
                         </Transition>

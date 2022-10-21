@@ -47,42 +47,7 @@ const TagForm = (props: TagFormProps) => {
         setShowColorPicker(!showColorPicker);
     }
 
-    // function renderSaveButton() {
-    //     return (
-    //         <>
-    //             <button
-    //                 type="button"
-    //                 className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed"
-    //                 onClick={() => {
-    //                     if (props.handleAddTag) {
-    //                         props.handleAddTag({
-    //                             text: tagText,
-    //                             backgroundColor: colorState,
-    //                         });
-    //                     } else if (props.handleEditTag && props.tagIndex) {
-    //                         props.handleEditTag(
-    //                             { text: tagText, backgroundColor: colorState },
-    //                             props.tagIndex
-    //                         );
-    //                     } else {
-    //                         return;
-    //                     }
-    //                 }}
-    //                 disabled={tagText.length === 0}
-    //             >
-    //                 <span className="sr-only">Add</span>
-    //                 <MdOutlineDone className="h-5 w-5" aria-hidden="true" />
-    //             </button>
-    //             {tagText.length === 0 && (
-    //                 <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-    //                     Your tag cannot be empty.
-    //                 </span>
-    //             )}
-    //         </>
-    //     );
-    // }
-
-    // not a form per-say, just keeps track of inputs
+    // not a form, just keeps track of inputs
     return (
         <>
             <div className="flex justify-between w-full gap-x-2">

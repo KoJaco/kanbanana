@@ -1,10 +1,8 @@
-import React, { forwardRef, useState } from 'react';
-import clsx from 'clsx';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 // import styles from './Container.module.css';
-import { Handle, Remove } from '../components';
+import { Handle } from '../components';
 import { MdAdd, MdOutlineEdit } from 'react-icons/md';
 import {
-    Board,
     TContainer,
     TItem,
     UniqueIdentifier,
@@ -14,6 +12,7 @@ import { ModifyError } from 'dexie';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import ContainerForm from '@/components/forms/ContainerForm';
+import { useOnClickOutside } from '@/core/hooks';
 
 export interface ContainerProps {
     children: React.ReactNode;
@@ -59,6 +58,15 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
         // global store
         const { maxItemId, increaseMaxItemId, currentBoardSlug } =
             useKanbanStore();
+
+        const containerFormRef = useRef(null);
+        const excludedRef = useRef(null);
+
+        useOnClickOutside(
+            containerFormRef,
+            () => setShowContainerForm(false),
+            excludedRef
+        );
 
         function handleAddItem() {
             // maxItemId has been set in upon loading the board in SortableBoard.
@@ -225,6 +233,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                                         ? '#333'
                                         : '#fff',
                                 }}
+                                ref={excludedRef}
                             >
                                 <MdOutlineEdit
                                     className="w-5 h-5"
@@ -241,7 +250,10 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         </div>
 
                         {showContainerForm && (
-                            <div className="bg-white -mx-2 -my-1 mt-4 px-2 pt-2 pb-4">
+                            <div
+                                className="bg-white -mx-2 -my-1 mt-4 px-2 pt-2 pb-4"
+                                ref={containerFormRef}
+                            >
                                 <ContainerForm
                                     id={container.id}
                                     container={container}

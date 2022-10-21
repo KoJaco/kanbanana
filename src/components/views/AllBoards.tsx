@@ -1,14 +1,21 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const AllBoards = () => {
     // TODO: Finish this off
     const boards = useLiveQuery(() => db.getAllBoards(true), []);
+    const router = useRouter();
+
     // make sure boards is not undefined
     if (boards === undefined) return null;
 
     return (
         <>
+            {/* <div className="text-slate-600 text-sm py-2">
+                Total boards: {boards.length}
+            </div> */}
             <ul
                 role="list"
                 className="grid xl:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6"
@@ -27,44 +34,52 @@ const AllBoards = () => {
                     } = board;
                     // single board
                     return (
-                        <li
-                            className="mt-4 w-full col-span-1 bg-gray-50 rounded-lg divide-y divide-slate-200 drop-shadow-md hover:drop-shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer"
+                        <Link
                             key={index}
+                            href={{
+                                pathname: `/boards/[slug]`,
+                                query: {
+                                    slug: encodeURIComponent(slug),
+                                },
+                            }}
+                            passHref={true}
                         >
-                            {/* Title, timestamp, and tags */}
-                            <div className="flex w-full items-end justify-between space-x-6 p-6">
-                                <div className="flex-1 truncate">
-                                    <div className="flex justify-between items-center space-x-3">
-                                        <h3 className="truncate text-md font-medium text-gray-900">
-                                            {board.title}
-                                        </h3>
-                                        <p className="mt-1 truncate text-sm text-gray-500">
-                                            {board.updatedAt.toLocaleString()}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        {tags?.map((tag, index) => (
-                                            <span
-                                                key={index}
-                                                className="inline-block rounded-full px-2 py-0.5 text-xs font-medium"
-                                                style={{
-                                                    backgroundColor:
-                                                        tag.backgroundColor
-                                                            .value,
-                                                    color: tag.backgroundColor
-                                                        .textDark
-                                                        ? '#333'
-                                                        : '#fff',
-                                                }}
-                                            >
-                                                {tag.text}
-                                            </span>
-                                        ))}
+                            <a className="mt-4 w-full col-span-1 bg-gray-50 rounded-lg divide-y divide-slate-200 drop-shadow-md hover:drop-shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
+                                {/* Title, timestamp, and tags */}
+                                <div className="flex w-full items-end justify-between space-x-6 p-6">
+                                    <div className="flex-1 truncate">
+                                        <div className="flex justify-between items-center space-x-3">
+                                            <h3 className="truncate text-md font-medium text-gray-900">
+                                                {board.title}
+                                            </h3>
+                                            <p className="mt-1 truncate text-sm text-gray-500">
+                                                {board.updatedAt.toLocaleString()}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            {tags?.map((tag, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="inline-block rounded-full px-2 py-0.5 text-xs font-medium"
+                                                    style={{
+                                                        backgroundColor:
+                                                            tag.backgroundColor
+                                                                .value,
+                                                        color: tag
+                                                            .backgroundColor
+                                                            .textDark
+                                                            ? '#333'
+                                                            : '#fff',
+                                                    }}
+                                                >
+                                                    {tag.text}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            {/* Container info */}
-                            {/* <div>
+                                {/* Container info */}
+                                {/* <div>
                                 {columnInfo.map((info, index) => (
                                     <div
                                         key={index}
@@ -104,7 +119,8 @@ const AllBoards = () => {
                                     </div>
                                 ))}
                             </div> */}
-                        </li>
+                            </a>
+                        </Link>
                     );
                 })}
             </ul>

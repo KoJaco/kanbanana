@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 import type { Transform } from '@dnd-kit/utilities';
@@ -8,6 +8,7 @@ import ItemForm from '@/components/forms/ItemForm';
 import { FiEdit } from 'react-icons/fi';
 
 import styles from './Item.module.css';
+import { useOnClickOutside } from '@/core/hooks';
 export interface ItemProps {
     item?: TItem;
     showItemForm: boolean;
@@ -84,6 +85,15 @@ export const Item = React.memo(
                     document.body.style.cursor = '';
                 };
             }, [dragOverlay]);
+
+            const itemFormRef = useRef(null);
+            const excludedRef = useRef(null);
+
+            useOnClickOutside(
+                itemFormRef,
+                () => props.setShowItemForm(false),
+                excludedRef
+            );
 
             return renderItem ? (
                 renderItem({
@@ -184,6 +194,7 @@ export const Item = React.memo(
                                             !props.showItemForm
                                         )
                                     }
+                                    ref={excludedRef}
                                 >
                                     <FiEdit />
                                 </button>
@@ -192,18 +203,20 @@ export const Item = React.memo(
                             </div>
                         </div>
                         {props.showItemForm && item ? (
-                            <ItemForm
-                                item={item}
-                                containerType="simple"
-                                containerId={containerId}
-                                showForm={props.showItemForm}
-                                setShowForm={
-                                    props.setShowItemForm
-                                        ? props.setShowItemForm
-                                        : () => {}
-                                }
-                                handleRemoveItem={() => {}}
-                            />
+                            <div ref={itemFormRef}>
+                                <ItemForm
+                                    item={item}
+                                    containerType="simple"
+                                    containerId={containerId}
+                                    showForm={props.showItemForm}
+                                    setShowForm={
+                                        props.setShowItemForm
+                                            ? props.setShowItemForm
+                                            : () => {}
+                                    }
+                                    handleRemoveItem={() => {}}
+                                />
+                            </div>
                         ) : (
                             <div className="flex flex-row">
                                 {/* content */}

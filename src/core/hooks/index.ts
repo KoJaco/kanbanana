@@ -58,6 +58,8 @@ export function useOnClickOutside(
     }, [ref, excludedRef, handler]);
 }
 
+export function useOnNavigateAway() {}
+
 export function useOnClickInsideOnly(
     ref: React.RefObject<any>,
     handler: (e: MouseEvent | TouchEvent) => void

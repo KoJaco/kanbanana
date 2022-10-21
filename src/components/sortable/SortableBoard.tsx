@@ -66,6 +66,7 @@ import {
 } from 'react-icons/hi';
 import InlineBoardForm from '@/components/forms/InlineBoardForm';
 import { Transition } from '@headlessui/react';
+import { useOnClickOutside } from '@/core/hooks';
 
 // TODO: fix up items undefined with active/overId selecting index
 
@@ -183,7 +184,6 @@ export default function SortableBoard({
     cancelDrop,
     columns,
     handle = false,
-    containerStyle,
     coordinateGetter = multipleContainersCoordinateGetter,
     getItemStyles = () => ({}),
     wrapperStyle = () => ({}),
@@ -208,15 +208,9 @@ export default function SortableBoard({
         totalItemCount,
         columnCount,
         setTotalItemCount,
-        setColumnCount,
-        increaseColumnCount,
         currentBoardSlug,
         setCurrentBoardSlug,
-        maxColumnId,
-        maxItemId,
         setMaxItemId,
-        setMaxColumnId,
-        increaseMaxItemId,
     } = useKanbanStore();
 
     // useLiveQuery() for indexDB state management, watch for changes in local board state.
@@ -238,6 +232,7 @@ export default function SortableBoard({
             setMaxItemId(
                 getMaxIdFromObjectKeyStrings(Object.keys(board.items))
             );
+            setShowInlineBoardForm(false);
         }
     }, [
         board,
@@ -246,6 +241,7 @@ export default function SortableBoard({
         setCurrentBoardSlug,
         slug,
         setMaxItemId,
+        setShowInlineBoardForm,
     ]);
 
     /**
