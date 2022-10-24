@@ -1,13 +1,16 @@
 import '../styles/globals.css';
+import { ThemeProvider } from 'next-themes';
 import type { AppProps } from 'next/app';
 import MainLayout from '@/layouts/MainLayout';
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
         // Single shared layout approach.
-        <MainLayout>
-            <Component {...pageProps} />
-        </MainLayout>
+        <ThemeProvider attribute="class">
+            <MainLayout>
+                <Component {...pageProps} />
+            </MainLayout>
+        </ThemeProvider>
     );
 }
 

@@ -65,7 +65,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             leaveFrom="translate-x-0"
                             leaveTo="-translate-x-full"
                         >
-                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-gradient-to-b from-primary to-primary-dark-alt  pt-5 pb-4">
+                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col  pt-5 pb-4">
                                 <Transition.Child
                                     as={Fragment}
                                     enter="ease-in-out duration-300"
@@ -105,7 +105,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                         <div>
                                             {/* New Board Button */}
                                             <button
-                                                className="text-indigo-100 hover:bg-primary-bg-darker
+                                                className="text-indigo-100 hover:bg-primary-bg-darker dark:hover:bg-slate-700
                                              flex items-center px-2 py-2 text-base font-medium rounded-md my-6 w-full"
                                                 onClick={
                                                     handleShowCreateBoardForm
@@ -157,9 +157,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </Transition.Root>
 
             {/* DESKTOP: static sidebar */}
-            <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
+            <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col dark:border-r dark:border-slate-700/[0.5] dark:shadow-slate-800/[0.5] dark:shadow-md">
                 {/* Sidebar component, swap this element with another sidebar if you like */}
-                <div className="flex flex-grow flex-col overflow-y-auto bg-gradient-to-b from-primary to-primary-dark-alt pt-5">
+                <div className="pt-5 flex flex-grow flex-col overflow-y-auto bg-gradient-to-b from-primary to-primary-dark-alt dark:bg-gradient-to-b dark:from-slate-800 dark:to-slate-900">
                     <div className="flex flex-shrink-0 items-center px-4">
                         <Link href="/">
                             <div className="cursor-pointer items-center gap-3 mt-4 flex text-xl font-medium tracking-tight text-gray-50">
@@ -173,7 +173,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             <div>
                                 {/* New Board Button */}
                                 <button
-                                    className="text-indigo-100 hover:bg-primary-bg-darker hover:text-slate-600 group flex items-center px-2 py-2 text-base font-medium rounded-md mt-6 w-full"
+                                    className="text-indigo-100 hover:bg-primary-bg-darker dark:hover:bg-slate-700 group flex items-center px-2 py-2 text-base font-medium rounded-md mt-6 w-full"
                                     onClick={handleShowCreateBoardForm}
                                 >
                                     <span className="h-full">
@@ -189,69 +189,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             </div>
 
                             <BoardMenu />
-
-                            {/* <div className="">
-                                <div
-                                    className="text-indigo-100 
-                                            group flex items-center px-2 py-2 text-base font-medium rounded-md"
-                                >
-                                    <span className="h-full ">
-                                        <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 " />
-                                    </span>
-                                    <p className=" text-indigo-100 font-regular uppercase">
-                                        Boards
-                                    </p>
-                                </div>
-                                <div className="py-2 border-b border-indigo-500 text-indigo-200">
-                                    <Link
-                                        href={{
-                                            pathname: '/boards',
-                                        }}
-                                        passHref={true}
-                                    >
-                                        <a
-                                            style={{
-                                                backgroundColor:
-                                                    currentRoute === '/boards'
-                                                        ? currentColor
-                                                        : '',
-                                            }}
-                                            className={
-                                                currentRoute === '/boards'
-                                                    ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-indigo-200 drop-shadow-md mt-2 font-light'
-                                                    : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 font-light hover:bg-primary-bg-darker'
-                                            }
-                                            // onClick={handleCloseSidebar}
-                                        >
-                                            <div className="flex justify-between items-end">
-                                                <span className="capitalize">
-                                                    All Boards
-                                                </span>
-                                            </div>
-                                        </a>
-                                    </Link>
-                                </div>
-
-                                <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
-                                    <BoardMenu />
-                                </div>
-                            </div>
-                            <div>
-                                <div
-                                    className="text-indigo-100 
-                                            group flex items-center px-2 py-2 text-base font-medium rounded-md"
-                                >
-                                    <span className="h-full text-indigo-100 mr-4">
-                                        <HiOutlineTag className="h-6 w-6 flex-shrink-0 text-indigo-300" />
-                                    </span>
-                                    <p className="text-indigo-100 font-regular uppercase">
-                                        Tags
-                                    </p>
-                                </div>
-                                <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
-                                    <TagMenu />
-                                </div>
-                            </div> */}
                         </nav>
                     </div>
                     {/* Sidebar Footer Desktop */}

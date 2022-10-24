@@ -184,8 +184,11 @@ const CreateBoardForm = ({
         setShowTagForm(false);
     }
 
-    function handleEditTag(boardTag: BoardTag, tagIndex: number | undefined) {
-        if (boardTags !== null && tagIndex !== undefined) {
+    function handleUpdateTag(
+        boardTag: BoardTag,
+        tagIndex: number | null | undefined
+    ) {
+        if (boardTags !== null && tagIndex !== null && tagIndex !== undefined) {
             let newTags = Array.from(boardTags);
             newTags[tagIndex] = boardTag;
             setBoardTags(newTags);
@@ -270,6 +273,7 @@ const CreateBoardForm = ({
             // push to fail page
             router.push(`/`);
         }
+        resetState();
         setShowBoardForm(false);
     }
 
@@ -342,7 +346,7 @@ const CreateBoardForm = ({
         <Transition.Root show={props.showBoardForm} as={Fragment}>
             <Dialog
                 as="div"
-                className="relative z-10"
+                className="relative z-40"
                 onClose={setShowBoardForm}
             >
                 <Transition.Child
@@ -785,8 +789,9 @@ const CreateBoardForm = ({
                                                                                   ]
                                                                                 : undefined
                                                                         }
+                                                                        addOrEdit="edit"
                                                                         handleAddOrUpdateTag={
-                                                                            handleEditTag
+                                                                            handleUpdateTag
                                                                         }
                                                                     />
                                                                 )}

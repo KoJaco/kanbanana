@@ -4,6 +4,8 @@ import { useKanbanStore } from '@/stores/KanbanStore';
 import { db } from '@/server/db';
 import { BsBrush } from 'react-icons/bs';
 import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
+import ColorPicker from '@/components/pickers/ColorPicker';
+
 import { MdOutlineDone } from 'react-icons/md';
 
 import { useOnClickOutside, useOnClickInsideOnly } from '@/core/hooks';
@@ -105,7 +107,7 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="relative z-20">
             {props.containerType === 'checklist' ? (
                 <div></div>
             ) : (
@@ -131,22 +133,31 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
                                 <AiOutlineDelete className="w-4 h-4" />
                             </button>
                         </div>
+
                         <div className="flex flex-shrink-0 gap-x-2">
-                            <button
-                                type="button"
-                                className="w-5 h-5 rounded-md cursor-pointer text-gray-500 hover:text-gray-50 hover:bg-gray-500 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                                style={{
-                                    backgroundColor: itemState.badgeColor.value,
-                                    color: itemState.badgeColor.textDark
-                                        ? '#333'
-                                        : '#fff',
-                                }}
-                                onClick={() =>
-                                    setShowColorPicker(!showColorPicker)
-                                }
+                            <ColorPicker
+                                contentDirection="right"
+                                colorPaletteOptions="full"
+                                showColorPicker={showColorPicker}
+                                handlePickColor={handlePickColor}
                             >
-                                <BsBrush className="w-4 h-4" />
-                            </button>
+                                <button
+                                    type="button"
+                                    className="w-5 h-5 rounded-md cursor-pointer text-gray-500 hover:text-gray-50 hover:bg-gray-500 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                                    style={{
+                                        backgroundColor:
+                                            itemState.badgeColor.value,
+                                        color: itemState.badgeColor.textDark
+                                            ? '#333'
+                                            : '#fff',
+                                    }}
+                                    onClick={() =>
+                                        setShowColorPicker(!showColorPicker)
+                                    }
+                                >
+                                    <BsBrush className="w-4 h-4" />
+                                </button>
+                            </ColorPicker>
 
                             <button
                                 type="submit"
@@ -155,15 +166,16 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
                                 <MdOutlineDone />
                             </button>
                         </div>
+
                         {children}
                     </div>
                 </>
             )}
-            {showColorPicker && (
+            {/* {showColorPicker && (
                 <div className="my-2">
                     <ColorPickerPalette handlePickColor={handlePickColor} />
                 </div>
-            )}
+            )} */}
         </form>
     );
 };

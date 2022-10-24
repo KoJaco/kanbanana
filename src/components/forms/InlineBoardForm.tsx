@@ -34,15 +34,19 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
         setShowTagForm(false);
     }
 
-    function handleUpdateTag(boardTag: BoardTag, tagIndex: number | undefined) {
-        if (tagIndex) {
+    function handleUpdateTag(
+        boardTag: BoardTag,
+        tagIndex: number | null | undefined
+    ) {
+        if (tagIndex !== null && tagIndex !== undefined) {
+            console.log('hitt!');
             let newTags = Array.from(boardTags);
             newTags[tagIndex] = boardTag;
             setBoardTags(newTags);
-            setShowTagForm(false);
-            setTagFormState('add');
-            setCurrentTagIndex(null);
         }
+        setShowTagForm(false);
+        setTagFormState('add');
+        setCurrentTagIndex(null);
     }
 
     function handleUserInput(event: React.ChangeEvent<HTMLInputElement>) {
@@ -56,6 +60,9 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
             if (boardTag.text === tag?.text) {
                 newTags.splice(i, 1);
             }
+        }
+        if (showTagForm) {
+            setShowTagForm(false);
         }
         setBoardTags(newTags);
     }
@@ -93,7 +100,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="border-b pb-4 space-x-4 flex items-start justify-start">
+            <div className="border-b pb-10 space-x-4 flex items-start justify-start">
                 <div className="flex flex-col w-1/3">
                     <label
                         htmlFor="boardTitle"
@@ -234,6 +241,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                             ? boardTags[currentTagIndex]
                                             : undefined
                                     }
+                                    addOrEdit="edit"
                                     handleAddOrUpdateTag={handleUpdateTag}
                                 />
                             )}

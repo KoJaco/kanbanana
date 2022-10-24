@@ -391,7 +391,7 @@ export default function SortableBoard({
     if (!items || !board) return null;
 
     return (
-        <>
+        <div className="flex flex-col h-full">
             <DndContext
                 sensors={sensors}
                 collisionDetection={collisionDetectionStrategy}
@@ -547,8 +547,8 @@ export default function SortableBoard({
                             id: newContainerId,
                             title: '',
                             badgeColor: {
-                                name: 'gray-100',
-                                value: '#f3f4f6',
+                                name: 'transparent',
+                                value: '#FFFFFF00',
                                 textDark: true,
                             },
                             type: 'simple',
@@ -621,7 +621,10 @@ export default function SortableBoard({
                             leaveFrom="transform opacity-100 scale-100"
                             leaveTo="transform opacity-0 scale-95"
                         >
-                            <div id="boardFormContainer">
+                            <div
+                                id="boardFormContainer"
+                                className="relative z-50"
+                            >
                                 <InlineBoardForm
                                     title={board.title}
                                     slug={currentBoardSlug}
@@ -633,7 +636,7 @@ export default function SortableBoard({
                     ) : (
                         <>
                             <div className="flex justify-between items-end gap-8">
-                                <h1 className="text-2xl font-semibold text-slate-600">
+                                <h1 className="text-2xl font-semibold text-slate-600 dark:text-white">
                                     {board?.title.length === 0
                                         ? 'Add a Board Title...'
                                         : board?.title}
@@ -641,7 +644,7 @@ export default function SortableBoard({
 
                                 <button
                                     type="button"
-                                    className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
+                                    className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300 dark:text-white dark:hover:text-gray-500"
                                     onClick={() =>
                                         setShowInlineBoardForm((prev) => !prev)
                                     }
@@ -667,7 +670,7 @@ export default function SortableBoard({
                                 </div>
 
                                 <div className="flex ml-auto">
-                                    <p className="text-sm font-light p-2 text-slate-600">
+                                    <p className="text-sm font-light p-2 text-slate-600 dark:text-white">
                                         {board?.updatedAt.toLocaleString()}
                                     </p>
                                 </div>
@@ -678,11 +681,11 @@ export default function SortableBoard({
 
                 <div
                     id="carousel"
-                    className="pb-10 mx-6 sm:mx-8 overflow-x-scroll scroll snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500"
+                    className="pb-10 mx-6 sm:mx-8 overflow-x-scroll scroll snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500 relative z-10"
                     // className="pb-10 mx-6 sm:mx-8 overflow-x-scroll scroll no-scrollbar sm:scrollbar-rounded-horizontal snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500"
                 >
                     <div
-                        className="inline-grid grid-auto-cols auto-cols-max h-auto relative"
+                        className="inline-grid grid-auto-cols auto-cols-max h-full relative"
                         style={{
                             gridAutoFlow: vertical ? 'row' : 'column',
                         }}
@@ -788,7 +791,7 @@ export default function SortableBoard({
                                     placeholder
                                 >
                                     <button
-                                        className="flex items-center justify-center h-full opacity-50"
+                                        className="flex items-center justify-center h-full opacity-50 z-20"
                                         onClick={() => handleAddContainer}
                                     >
                                         + Add column
@@ -815,19 +818,19 @@ export default function SortableBoard({
                         document.body
                     )}
                 </div>
-                <div className="my-8 ml-8 px-2 sm:px-6 md:px-8  max-w-7xl text-slate-600 space-x-2 w-fit bg-white rounded-full drop-shadow-lg fixed bottom-4 right-4 sm:static">
+                <div className="my-8 ml-8 px-2 sm:px-6 md:px-8  max-w-7xl text-slate-600 space-x-2 w-fit bg-white dark:bg-slate-800 rounded-full drop-shadow-lg fixed bottom-4 right-4 sm:static">
                     {scrollButtons.map((button, index) => (
                         <button
                             key={index}
                             onClick={() => scroller(button.direction)}
-                            className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed w-7 h-7 text-slate-600/[.8] hover:text-slate-600  transition-opacity duration-300"
+                            className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed w-7 h-7 text-slate-600/[.8] hover:text-slate-600 dark:text-gray-50  transition-opacity duration-300"
                         >
                             {button.icon}
                         </button>
                     ))}
                 </div>
             </DndContext>
-        </>
+        </div>
     );
 
     // render functions
@@ -873,7 +876,6 @@ export default function SortableBoard({
                 columns={columns}
                 style={{
                     height: '100%',
-                    backgroundColor: container?.badgeColor.value,
                 }}
                 shadow
                 unstyled={false}
@@ -961,8 +963,8 @@ export default function SortableBoard({
             id: newContainerId,
             title: '',
             badgeColor: {
-                name: 'gray-100',
-                value: '#f3f4f6',
+                name: 'transparent',
+                value: '#FFFFFF00',
                 textDark: true,
             },
             type: 'simple',

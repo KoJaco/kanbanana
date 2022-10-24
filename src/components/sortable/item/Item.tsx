@@ -113,7 +113,7 @@ export const Item = React.memo(
                 <li
                     key={index}
                     className={clsx(
-                        'group',
+                        'group relative z-20',
                         styles.Wrapper,
                         fadeIn && styles.fadeIn,
                         sorting && styles.sorting,
@@ -150,7 +150,7 @@ export const Item = React.memo(
                     <div
                         // className="flex flex-row justify-between w-full items-center pt-1 mb-4"
                         className={clsx(
-                            'w-full bg-white group',
+                            'w-full bg-white dark:bg-slate-900 dark:shadow-md group',
                             styles.Item,
                             dragging && styles.dragging,
                             handle && styles.withHandle,
@@ -188,7 +188,7 @@ export const Item = React.memo(
                                 {/* <Remove className="" onClick={onRemove} /> */}
                                 <button
                                     type="button"
-                                    className="w-4 h-4 rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-slate-600 focus-visible:scale-105 transition-transform duration-300"
+                                    className="w-4 h-4 rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-slate-600 focus-visible:scale-105 transition-transform duration-300 dark:text-gray-50"
                                     onClick={() =>
                                         props.setShowItemForm(
                                             !props.showItemForm
@@ -199,7 +199,11 @@ export const Item = React.memo(
                                     <FiEdit />
                                 </button>
 
-                                <Handle {...handleProps} {...listeners} />
+                                <Handle
+                                    {...handleProps}
+                                    {...listeners}
+                                    className="rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:scale-110 focus-visible:ring-offset-4 transition-transform duration-300"
+                                />
                             </div>
                         </div>
                         {props.showItemForm && item ? (

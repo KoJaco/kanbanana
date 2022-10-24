@@ -106,7 +106,7 @@ const BoardMenu = () => {
                         Boards
                     </p>
                 </div>
-                <div className="py-2 border-b border-indigo-500 text-indigo-200">
+                <div className="py-2 border-b border-indigo-500 dark:border-slate-600 text-indigo-200">
                     <Link
                         href={{
                             pathname: '/boards',
@@ -120,13 +120,13 @@ const BoardMenu = () => {
                             style={{
                                 backgroundColor:
                                     currentRoute === '/boards?boards=all'
-                                        ? currentColor
+                                        ? '#FFC414'
                                         : '',
                             }}
                             className={
                                 currentRoute === '/boards?boards=all'
-                                    ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-indigo-200 drop-shadow-md mt-2 font-light'
-                                    : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 font-light hover:bg-primary-bg-darker'
+                                    ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
+                                    : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
                             }
                             // onClick={handleCloseSidebar}
                         >
@@ -154,13 +154,13 @@ const BoardMenu = () => {
                                 style={{
                                     backgroundColor:
                                         currentRoute === `/boards/${board.slug}`
-                                            ? currentColor
+                                            ? '#FFC414'
                                             : '',
                                 }}
                                 className={
                                     currentRoute === `/boards/${board.slug}`
-                                        ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-indigo-200 drop-shadow-md mt-2 font-light'
-                                        : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 font-light hover:bg-primary-bg-darker'
+                                        ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
+                                        : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
                                 }
                                 onClick={handleCloseSidebar}
                             >

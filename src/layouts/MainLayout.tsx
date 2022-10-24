@@ -12,21 +12,20 @@ export default function MainLayout({ children }: MainLayoutProps) {
     return (
         <>
             {/* Main Layout */}
-            <div className={currentMode === 'dark' ? 'dark' : ''}>
-                {/* Sidebar, static on desktop, responsive/closed on mobile */}
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
-                    setSidebarOpen={setSidebarOpen}
-                />
 
-                <div className="flex flex-1 flex-col md:pl-64 dark:bg-[#0a0321]">
-                    {/* Navbar */}
-                    <Navbar setSidebarOpen={setSidebarOpen} />
+            {/* Sidebar, static on desktop, responsive/closed on mobile */}
+            <Sidebar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
-                    <main className="z-10 h-screen">
-                        <div className="py-6">{children}</div>
-                    </main>
-                </div>
+            <div className="flex flex-1 flex-col md:pl-64 dark:bg-slate-900 h-screen">
+                {/* Navbar */}
+                <Navbar setSidebarOpen={setSidebarOpen} />
+
+                <main>
+                    <div>{children}</div>
+                </main>
             </div>
         </>
     );

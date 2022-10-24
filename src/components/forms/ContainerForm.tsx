@@ -129,12 +129,12 @@ const ContainerForm = ({
     return (
         <>
             <div id={`${props.id}`} className="pb-4">
-                <div className="flex justify-between w-full gap-x-2 mb-3">
+                <div className="flex justify-between w-full gap-x-2 mb-3 ">
                     {/* Container Title input */}
                     <div className="w-full">
                         <label
                             htmlFor="Container"
-                            className="block text-sm font-medium text-slate-600 after:content-['*'] after:ml-0.5 after:text-red-500"
+                            className="block text-sm font-medium text-slate-600 dark:text-slate-50 after:content-['*'] after:ml-0.5 after:text-red-500"
                         >
                             Title
                         </label>
@@ -145,7 +145,7 @@ const ContainerForm = ({
                                 id="title"
                                 value={title}
                                 placeholder="Add a column title."
-                                className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm invalid:border-pink-300"
+                                className="p-2 block outline-primary border-1 border-gray-300 dark:border-slate-700 w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm invalid:border-pink-300 dark:bg-slate-900 dark:focus:bg-slate-900 dark:text-gray-50 dark:focus:ring-slate-800"
                                 onChange={handleInputChange}
                                 required
                             />
@@ -155,7 +155,7 @@ const ContainerForm = ({
                         <div className="flex items-center space-x-2 justify-start">
                             <label
                                 htmlFor="tag-color"
-                                className="block text-sm font-medium text-slate-600"
+                                className="block text-sm font-medium text-slate-600 dark:text-slate-50"
                             >
                                 Color
                             </label>
@@ -194,17 +194,17 @@ const ContainerForm = ({
                         >
                             {({ open }) => (
                                 <>
-                                    <Listbox.Label className="block text-sm font-medium text-gray-700">
+                                    <Listbox.Label className="block text-sm font-medium text-gray-700 dark:text-slate-50">
                                         Type
                                     </Listbox.Label>
                                     <div className="relative mt-1">
-                                        <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
+                                        <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-1 dark:focus:ring-slate-700 dark:focus:border-slate-800 dark:focus:outline-none sm:text-sm">
                                             <span className="block truncate">
                                                 {containerType?.name}
                                             </span>
                                             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                                 <BsChevronBarDown
-                                                    className="h-4 w-4 text-gray-400"
+                                                    className="h-4 w-4 text-gray-400 dark:text-slate-50"
                                                     aria-hidden="true"
                                                 />
                                             </span>
@@ -217,7 +217,7 @@ const ContainerForm = ({
                                             leaveFrom="opacity-100"
                                             leaveTo="opacity-0"
                                         >
-                                            <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                            <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-900 border dark:border-slate-700 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                                 {containerOptions.map(
                                                     (option) => (
                                                         <Listbox.Option
@@ -227,8 +227,8 @@ const ContainerForm = ({
                                                             }) =>
                                                                 clsx(
                                                                     active
-                                                                        ? 'text-white bg-indigo-600'
-                                                                        : 'text-gray-900',
+                                                                        ? 'text-gray-50 bg-dark-alt-bg dark:bg-offset-bg'
+                                                                        : 'text-gray-900 dark:text-gray-50',
                                                                     'relative cursor-default select-none py-2 pl-3 pr-9'
                                                                 )
                                                             }
@@ -257,7 +257,7 @@ const ContainerForm = ({
                                                                             className={clsx(
                                                                                 active
                                                                                     ? 'text-white'
-                                                                                    : 'text-indigo-600',
+                                                                                    : 'text-slate-900',
                                                                                 'absolute inset-y-0 right-0 flex items-center pr-4'
                                                                             )}
                                                                         >
@@ -293,7 +293,7 @@ const ContainerForm = ({
                             {({ open }) => (
                                 <>
                                     <Listbox.Label
-                                        className="block text-sm font-medium text-gray-700 "
+                                        className="block text-sm font-medium text-gray-700 dark:text-gray-50"
                                         style={{
                                             opacity: sortingOptionsDisabled
                                                 ? '0.50'
@@ -310,7 +310,7 @@ const ContainerForm = ({
                                                 : '1',
                                         }}
                                     >
-                                        <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
+                                        <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
                                             <span className="block truncate">
                                                 {itemSortingType?.name}
                                             </span>
@@ -329,7 +329,7 @@ const ContainerForm = ({
                                             leaveFrom="opacity-100"
                                             leaveTo="opacity-0"
                                         >
-                                            <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm ">
+                                            <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-slate-900 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm ">
                                                 {itemSortingOptions.map(
                                                     (option) => (
                                                         <Listbox.Option
@@ -339,7 +339,7 @@ const ContainerForm = ({
                                                             }) =>
                                                                 clsx(
                                                                     active
-                                                                        ? 'text-white bg-indigo-600'
+                                                                        ? 'text-gray-50 bg-dark-alt-bg'
                                                                         : 'text-gray-900',
                                                                     'relative cursor-default select-none py-2 pl-3 pr-9'
                                                                 )

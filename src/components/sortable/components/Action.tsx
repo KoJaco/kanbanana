@@ -1,5 +1,6 @@
 import React, { forwardRef, CSSProperties } from 'react';
-
+import clsx from 'clsx';
+import styles from './Action.module.css';
 export interface ActionProps extends React.HTMLAttributes<HTMLButtonElement> {
     active?: {
         fill: string;
@@ -15,7 +16,7 @@ export const Action = forwardRef<HTMLButtonElement, ActionProps>(
             <button
                 ref={ref}
                 {...props}
-                className="text-slate-600 rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-slate-600 focus-visible:scale-105 transition-transform duration-300"
+                className={clsx(styles.Action, className)}
                 tabIndex={0}
                 style={
                     {
