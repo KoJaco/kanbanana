@@ -10,6 +10,7 @@ import clsx from 'clsx';
 import { MdOutlineDone } from 'react-icons/md';
 import { useOnClickOutside } from '@/core/hooks/index';
 import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
+import ColorPicker from '@/components/pickers/ColorPicker';
 import Tooltip from '@/components/tooltip/Tooltip';
 
 type ContainerFormProps = {
@@ -145,7 +146,7 @@ const ContainerForm = ({
                                 id="title"
                                 value={title}
                                 placeholder="Add a column title."
-                                className="p-2 block outline-primary border-1 border-gray-300 dark:border-slate-700 w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm invalid:border-pink-300 dark:bg-slate-900 dark:focus:bg-slate-900 dark:text-gray-50 dark:focus:ring-slate-800"
+                                className="p-2 block outline-primary border-1 border-gray-300 dark:border-slate-700 w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm invalid:border-pink-300 dark:bg-slate-900 dark:focus:ring-1 dark:focus:ring-slate-700 dark:focus:border-slate-800 dark:focus:outline-none"
                                 onChange={handleInputChange}
                                 required
                             />
@@ -160,28 +161,37 @@ const ContainerForm = ({
                                 Color
                             </label>
                         </div>
+
                         <div className="mt-1">
-                            <button
-                                type="button"
-                                ref={excludedColorPickerRef}
-                                className="cursor-pointer rounded-full items-center p-1"
-                                style={{
-                                    backgroundColor: badgeColor.value,
-                                    color: badgeColor.textDark
-                                        ? '#333'
-                                        : '#fff',
-                                }}
-                                onClick={handleToggleColorPicker}
+                            <ColorPicker
+                                corner="topRight"
+                                popoverDirection="down"
+                                colorPaletteOptions="minimal"
+                                showColorPicker={showColorPicker}
+                                handlePickColor={handleSetBadgeColor}
                             >
-                                <BsBrush
-                                    className="w-5 h-5"
+                                <button
+                                    type="button"
+                                    ref={excludedColorPickerRef}
+                                    className="cursor-pointer rounded-full items-center p-1"
                                     style={{
+                                        backgroundColor: badgeColor.value,
                                         color: badgeColor.textDark
-                                            ? '#333'
+                                            ? '#555'
                                             : '#fff',
                                     }}
-                                />
-                            </button>
+                                    onClick={handleToggleColorPicker}
+                                >
+                                    <BsBrush
+                                        className="w-5 h-5"
+                                        style={{
+                                            color: badgeColor.textDark
+                                                ? '#555'
+                                                : '#fff',
+                                        }}
+                                    />
+                                </button>
+                            </ColorPicker>
                         </div>
                     </div>
                 </div>
@@ -227,7 +237,7 @@ const ContainerForm = ({
                                                             }) =>
                                                                 clsx(
                                                                     active
-                                                                        ? 'text-gray-50 bg-dark-alt-bg dark:bg-offset-bg'
+                                                                        ? 'text-gray-50 bg-dark-alt-bg dark:bg-offset-bg dark:text-slate-900'
                                                                         : 'text-gray-900 dark:text-gray-50',
                                                                     'relative cursor-default select-none py-2 pl-3 pr-9'
                                                                 )
@@ -257,7 +267,7 @@ const ContainerForm = ({
                                                                             className={clsx(
                                                                                 active
                                                                                     ? 'text-white'
-                                                                                    : 'text-slate-900',
+                                                                                    : 'text-slate-900 dark:text-gray-50',
                                                                                 'absolute inset-y-0 right-0 flex items-center pr-4'
                                                                             )}
                                                                         >
@@ -310,7 +320,7 @@ const ContainerForm = ({
                                                 : '1',
                                         }}
                                     >
-                                        <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
+                                        <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-1 dark:focus:ring-slate-700 dark:focus:border-slate-800 dark:focus:outline-none sm:text-sm">
                                             <span className="block truncate">
                                                 {itemSortingType?.name}
                                             </span>
@@ -339,8 +349,8 @@ const ContainerForm = ({
                                                             }) =>
                                                                 clsx(
                                                                     active
-                                                                        ? 'text-gray-50 bg-dark-alt-bg'
-                                                                        : 'text-gray-900',
+                                                                        ? 'text-gray-50 bg-dark-alt-bg dark:bg-offset-bg dark:text-slate-900'
+                                                                        : 'text-gray-900 dark:text-gray-50',
                                                                     'relative cursor-default select-none py-2 pl-3 pr-9'
                                                                 )
                                                             }
@@ -369,7 +379,7 @@ const ContainerForm = ({
                                                                             className={clsx(
                                                                                 active
                                                                                     ? 'text-white'
-                                                                                    : 'text-indigo-600',
+                                                                                    : 'text-slate-900 dark:text-gray-50',
                                                                                 'absolute inset-y-0 right-0 flex items-center pr-4'
                                                                             )}
                                                                         >
@@ -446,7 +456,7 @@ const ContainerForm = ({
                         </span>
                     )}
                 </div> */}
-                {showColorPicker && (
+                {/* {showColorPicker && (
                     <div
                         ref={colorPickerRef}
                         className="flex justify-end relative mt-4"
@@ -455,7 +465,7 @@ const ContainerForm = ({
                             handlePickColor={handleSetBadgeColor}
                         />
                     </div>
-                )}
+                )} */}
             </div>
         </>
     );

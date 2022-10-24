@@ -149,7 +149,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         '--columns': columns,
                     } as React.CSSProperties
                 }
-                className="flex flex-col relative max-content h-full w-96 sm:w-80 md:w-96 lg:w-[26rem] xl:w-[32rem] bg-gray-100 dark:bg-slate-800 rounded-md snap-start mx-2 dark:border-slate-600 z-10"
+                className="flex flex-col max-content h-full w-80 sm:w-80 md:w-96 lg:w-[26rem] xl:w-[32rem] bg-gray-100 dark:bg-slate-800 rounded-md mx-2 dark:border-slate-600 snap-normal snap-end"
                 onClick={onClick}
                 tabIndex={onClick ? 0 : undefined}
             >

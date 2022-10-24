@@ -59,12 +59,12 @@ const AllBoards = () => {
                                 }}
                                 passHref={true}
                             >
-                                <a className="mt-4 w-full col-span-1 bg-gray-50 rounded-lg divide-y divide-slate-200 drop-shadow-md hover:drop-shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
+                                <a className="mt-4 w-full col-span-1 bg-gray-50 dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 rounded-lg divide-y divide-slate-200 drop-shadow-md hover:drop-shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
                                     {/* Title, timestamp, and tags */}
                                     <div className="flex w-full items-end justify-between space-x-6 p-6">
                                         <div className="flex-1 truncate">
                                             <div className="flex justify-between items-center space-x-3">
-                                                <h3 className="truncate text-md font-medium text-gray-900">
+                                                <h3 className="truncate text-md font-medium text-slate-900 dark:text-gray-50">
                                                     {board.title}
                                                 </h3>
                                                 <p className="mt-1 truncate text-sm text-gray-500">

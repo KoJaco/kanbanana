@@ -64,7 +64,7 @@ const Tooltip = ({
             case 'up':
                 return (
                     <div
-                        className="absolute whitespace-no-wrap bg-white text-slate-600 text-sm px-2 py-1 rounded flex items-center self-center justify-center transition-all duration-150 z-10000 border-1 shadow-lg"
+                        className="absolute whitespace-no-wrap bg-white text-slate-600 text-sm px-2 py-1 rounded flex items-center self-center justify-center transition-all duration-150 z-[170] border-1 shadow-lg"
                         style={{ bottom: '100%', opacity: 0 }}
                         ref={tooltipRef}
                     >
@@ -81,7 +81,7 @@ const Tooltip = ({
             case 'right':
                 return (
                     <div
-                        className="absolute whitespace-no-wrap bg-white text-slate-600 text-sm px-2 py-1 rounded flex items-center transition-all duration-150 z-10000 border-1 shadow-lg"
+                        className="absolute whitespace-no-wrap bg-white text-slate-600 text-sm px-2 py-1 rounded flex items-center transition-all duration-150 z-[170] border-1 shadow-lg"
                         style={{ left: '100%', opacity: 0 }}
                         ref={tooltipRef}
                     >
@@ -95,7 +95,7 @@ const Tooltip = ({
             case 'down':
                 return (
                     <div
-                        className="absolute whitespace-no-wrap bg-white text-slate-600 text-sm px-2 py-1 rounded flex items-center self-center justify-center transition-all duration-150 z-10000 border-1 shadow-lg"
+                        className="absolute whitespace-no-wrap bg-white text-slate-600 text-sm px-2 py-1 rounded flex items-center self-center justify-center transition-all duration-150 z-[170] border-1 shadow-lg"
                         style={{ top: '100%', opacity: 0 }}
                         ref={tooltipRef}
                     >
@@ -112,7 +112,7 @@ const Tooltip = ({
             case 'left':
                 return (
                     <div
-                        className="absolute whitespace-no-wrap bg-white text-slate-600 text-sm px-2 py-1 rounded flex items-center justify-center transition-all duration-150 z-10000 border-1 shadow-lg"
+                        className="absolute whitespace-no-wrap bg-white text-slate-600 text-sm px-2 py-1 rounded flex items-center justify-center transition-all duration-150 z-[170] border-1 shadow-lg"
                         style={{ right: '100%', opacity: 0 }}
                         ref={tooltipRef}
                     >

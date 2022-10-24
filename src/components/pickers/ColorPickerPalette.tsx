@@ -41,7 +41,7 @@ const ColorPickerPalette = ({
         <div className="flex w-full">
             {/* <div className="flex flex-col w-1/2"></div> */}
 
-            <div className="ml-auto w-full py-1 px-1 grid grid-cols-10 justify-start items-end max-h-40 overflow-y-auto bg-transparent gap-y-1 no-scrollbar z-1000 transition-transform duration-300">
+            <div className="ml-auto w-full py-1 px-1 grid grid-cols-10 justify-start items-end max-h-40 overflow-y-auto bg-transparent gap-y-1 no-scrollbar transition-transform duration-300">
                 {minimalPalette ? (
                     <>
                         {minimalColorPalette.map((color, index) => (

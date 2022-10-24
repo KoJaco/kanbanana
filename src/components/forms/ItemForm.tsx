@@ -107,7 +107,7 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="relative z-20">
+        <form onSubmit={handleSubmit} className="">
             {props.containerType === 'checklist' ? (
                 <div></div>
             ) : (
@@ -135,29 +135,29 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
                         </div>
 
                         <div className="flex flex-shrink-0 gap-x-2">
-                            <ColorPicker
-                                contentDirection="right"
+                            {/* <ColorPicker
+                                corner="topRight"
+                                popoverDirection="down"
                                 colorPaletteOptions="full"
                                 showColorPicker={showColorPicker}
                                 handlePickColor={handlePickColor}
+                            > */}
+                            <button
+                                type="button"
+                                className="w-5 h-5 rounded-md cursor-pointer text-gray-500 hover:text-gray-50 hover:bg-gray-500 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                                style={{
+                                    backgroundColor: itemState.badgeColor.value,
+                                    color: itemState.badgeColor.textDark
+                                        ? '#333'
+                                        : '#fff',
+                                }}
+                                onClick={() =>
+                                    setShowColorPicker(!showColorPicker)
+                                }
                             >
-                                <button
-                                    type="button"
-                                    className="w-5 h-5 rounded-md cursor-pointer text-gray-500 hover:text-gray-50 hover:bg-gray-500 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                                    style={{
-                                        backgroundColor:
-                                            itemState.badgeColor.value,
-                                        color: itemState.badgeColor.textDark
-                                            ? '#333'
-                                            : '#fff',
-                                    }}
-                                    onClick={() =>
-                                        setShowColorPicker(!showColorPicker)
-                                    }
-                                >
-                                    <BsBrush className="w-4 h-4" />
-                                </button>
-                            </ColorPicker>
+                                <BsBrush className="w-4 h-4" />
+                            </button>
+                            {/* </ColorPicker> */}
 
                             <button
                                 type="submit"
@@ -171,11 +171,18 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
                     </div>
                 </>
             )}
-            {/* {showColorPicker && (
+            {showColorPicker && (
                 <div className="my-2">
-                    <ColorPickerPalette handlePickColor={handlePickColor} />
+                    <ColorPicker
+                        pickerType="inline"
+                        corner="topRight"
+                        popoverDirection="down"
+                        colorPaletteOptions="full"
+                        showColorPicker={showColorPicker}
+                        handlePickColor={handlePickColor}
+                    />
                 </div>
-            )} */}
+            )}
         </form>
     );
 };

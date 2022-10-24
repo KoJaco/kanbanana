@@ -38,11 +38,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 setShowBoardForm={setShowCreateBoardForm}
             />
             <Transition.Root show={sidebarOpen} as={Fragment}>
-                <Dialog
-                    as="div"
-                    className="relative z-40 md:hidden"
-                    onClose={setSidebarOpen}
-                >
+                <Dialog as="div" className="md:hidden" onClose={setSidebarOpen}>
                     <Transition.Child
                         as={Fragment}
                         enter="transition-opacity ease-linear duration-300"
@@ -52,10 +48,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-gray-400 bg-opacity-75" />
+                        <div className="fixed inset-0 bg-gray-400 bg-opacity-75 z-[150]" />
                     </Transition.Child>
 
-                    <div className="fixed inset-0 z-40 flex">
+                    <div className="fixed inset-0 z-[170] flex">
                         <Transition.Child
                             as={Fragment}
                             enter="transition ease-in-out duration-300 transform"
@@ -65,7 +61,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             leaveFrom="translate-x-0"
                             leaveTo="-translate-x-full"
                         >
-                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col  pt-5 pb-4">
+                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col  pt-5 pb-4 bg-gradient-to-b from-primary to-primary-dark-alt dark:bg-gradient-to-b dark:from-slate-800 dark:to-slate-900">
                                 <Transition.Child
                                     as={Fragment}
                                     enter="ease-in-out duration-300"
@@ -78,7 +74,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     <div className="absolute top-0 right-0 -mr-12 pt-2">
                                         <button
                                             type="button"
-                                            className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white text-gray-50"
+                                            className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white text-gray-50 dark:focus:ring-indigo-200"
                                             onClick={() =>
                                                 setSidebarOpen(false)
                                             }
@@ -93,7 +89,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 <div className="flex flex-shrink-0 items-center px-4">
                                     <Link href="/">
                                         <div className="cursor-pointer items-center gap-3 flex text-xl font-medium tracking-tight text-gray-100">
-                                            <SiKibana />
+                                            <SiKibana className="text-offset" />
                                             <span className="ml-1">
                                                 Kan-banana
                                             </span>

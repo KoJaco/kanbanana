@@ -346,7 +346,7 @@ const CreateBoardForm = ({
         <Transition.Root show={props.showBoardForm} as={Fragment}>
             <Dialog
                 as="div"
-                className="relative z-40"
+                className="relative z-[160]"
                 onClose={setShowBoardForm}
             >
                 <Transition.Child
@@ -735,9 +735,7 @@ const CreateBoardForm = ({
                                                                             !showTagForm
                                                                         );
                                                                     } else {
-                                                                        setShowTagForm(
-                                                                            !showTagForm
-                                                                        );
+                                                                        handleToggleTagForm();
                                                                     }
                                                                 }}
                                                             >
@@ -820,9 +818,7 @@ const CreateBoardForm = ({
                                                                             !showContainerForm
                                                                         );
                                                                     } else {
-                                                                        setShowContainerForm(
-                                                                            !showContainerForm
-                                                                        );
+                                                                        handleToggleContainerForm();
                                                                     }
                                                                 }}
                                                             >

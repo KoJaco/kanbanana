@@ -129,11 +129,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                         {boardTags?.map(
                             (tag, index) =>
                                 tag.text.length > 0 && (
-                                    <div
-                                        key={index}
-                                        className="flex group"
-                                        style={{}}
-                                    >
+                                    <div key={index} className="flex group">
                                         <span
                                             className="text-sm rounded-full px-2"
                                             style={{
@@ -151,7 +147,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                             <button
                                                 type="button"
                                                 name="editTag"
-                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
+                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110 focus-visible:opacity-100"
                                                 onClick={() => {
                                                     if (showTagForm) {
                                                         setCurrentTagIndex(
@@ -179,7 +175,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                             <button
                                                 type="button"
                                                 name="deleteTag"
-                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
+                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110 focus-visible:opacity-100"
                                                 onClick={() =>
                                                     handleRemoveTag(tag)
                                                 }

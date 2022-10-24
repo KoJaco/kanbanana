@@ -244,6 +244,13 @@ export default function SortableBoard({
         setShowInlineBoardForm,
     ]);
 
+    // useEffect(() => {
+    //     let carousel = document.getElementById('carousel');
+    //     if (carousel !== null) {
+    //         carousel.scrollLeft = carousel.clientWidth - carousel.offsetWidth;
+    //     }
+    // }, []);
+
     /**
      * Custom collision detection strategy optimized for multiple containers
      *
@@ -391,7 +398,8 @@ export default function SortableBoard({
     if (!items || !board) return null;
 
     return (
-        <div className="flex flex-col h-full">
+        // <div className="flex flex-col flex-1 h-screen">
+        <div className="h-full w-full">
             <DndContext
                 sensors={sensors}
                 collisionDetection={collisionDetectionStrategy}
@@ -610,7 +618,7 @@ export default function SortableBoard({
                 modifiers={modifiers}
             >
                 {/* TITLE */}
-                <div className="my-8 ml-2 px-4 sm:px-6 md:px-8">
+                <div className="my-8 ml-2 px-2 sm:px-6 md:px-8">
                     {showInlineBoardForm ? (
                         <Transition
                             show={showInlineBoardForm}
@@ -681,11 +689,10 @@ export default function SortableBoard({
 
                 <div
                     id="carousel"
-                    className="pb-10 mx-6 sm:mx-8 overflow-x-scroll scroll snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500 relative z-10"
-                    // className="pb-10 mx-6 sm:mx-8 overflow-x-scroll scroll no-scrollbar sm:scrollbar-rounded-horizontal snap-x whitespace-nowrap scroll-smooth touch-pan-x transition-all duration-500"
+                    className="pb-10 mt-8 mx-4 sm:mx-8 lg:mx-10 h-auto overflow-x-scroll snap-x whitespace-nowrap scroll-smooth touch-pan-auto overscroll-x-none transition-all duration-500 snap-proximity no-scrollbar"
                 >
                     <div
-                        className="inline-grid grid-auto-cols auto-cols-max h-full relative"
+                        className="inline-grid grid-auto-cols auto-cols-max relative z-40"
                         style={{
                             gridAutoFlow: vertical ? 'row' : 'column',
                         }}
@@ -703,7 +710,7 @@ export default function SortableBoard({
                                     board?.containers[containerId];
 
                                 return (
-                                    <>
+                                    <div key={containerId}>
                                         <DroppableContainer
                                             key={containerId}
                                             id={containerId}
@@ -744,11 +751,11 @@ export default function SortableBoard({
                                                                 ];
                                                             return (
                                                                 <SortableItem
+                                                                    key={itemId}
                                                                     item={item}
                                                                     disabled={
                                                                         isSortingContainer
                                                                     }
-                                                                    key={itemId}
                                                                     id={itemId}
                                                                     index={
                                                                         index
@@ -778,7 +785,7 @@ export default function SortableBoard({
                                                 </SortableContext>
                                             )}
                                         </DroppableContainer>
-                                    </>
+                                    </div>
                                 );
                             })}
                             {minimal ? undefined : (
@@ -791,7 +798,7 @@ export default function SortableBoard({
                                     placeholder
                                 >
                                     <button
-                                        className="flex items-center justify-center h-full opacity-50 z-20"
+                                        className="flex items-center justify-center h-full opacity-50"
                                         onClick={() => handleAddContainer}
                                     >
                                         + Add column
@@ -818,7 +825,7 @@ export default function SortableBoard({
                         document.body
                     )}
                 </div>
-                <div className="my-8 ml-8 px-2 sm:px-6 md:px-8  max-w-7xl text-slate-600 space-x-2 w-fit bg-white dark:bg-slate-800 rounded-full drop-shadow-lg fixed bottom-4 right-4 sm:static">
+                <div className="md:my-8 md:mr-6 px-6 md:px-8 text-slate-600 space-x-2 w-fit bg-white dark:bg-slate-800 rounded-full drop-shadow-lg fixed bottom-4 right-4 z-[120]">
                     {scrollButtons.map((button, index) => (
                         <button
                             key={index}

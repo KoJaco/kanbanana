@@ -220,10 +220,13 @@ module.exports = {
                     'scrollbar-width': 'none',
                 },
                 '.invisible-scrollbar::-webkit-scrollbar': {
-                    display: 'block',
                     width: 'auto',
-                    height: '6px',
                     opacity: '0',
+                },
+
+                '.scrollbar-visible::-webkit-scrollbar': {
+                    width: 'auto',
+                    opacity: '100',
                 },
 
                 '.transform3d': {

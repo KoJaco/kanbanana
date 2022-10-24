@@ -11,10 +11,10 @@ const Navbar = ({ setSidebarOpen }: NavbarProps) => {
     const { theme, setTheme } = useTheme();
     const { currentMode, setCurrentMode } = useUIControlStore();
     return (
-        <div className="sm:sticky top-0 z-30 flex h-16 flex-shrink-0 bg-white dark:bg-slate-900 dark:border-b dark:border-slate-700/[0.5] dark:shadow-slate-900 shadow dark:shadow-sm">
+        <div className="sticky top-0 z-[150] flex h-16 flex-shrink-0 bg-white dark:bg-slate-900 dark:border-b dark:border-slate-700/[0.5] dark:shadow-slate-900 shadow dark:shadow-sm">
             <button
                 type="button"
-                className="border-r  px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
+                className="border-r dark:border-slate-700 px-4 text-gray-500 dark:text-gray-50 focus:outline-none focus:ring-0 md:hidden"
                 onClick={() => setSidebarOpen(true)}
             >
                 <span className="sr-only">Open sidebar</span>

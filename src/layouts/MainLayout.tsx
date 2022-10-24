@@ -19,12 +19,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 setSidebarOpen={setSidebarOpen}
             />
 
-            <div className="flex flex-1 flex-col md:pl-64 dark:bg-slate-900 h-screen">
+            <div className="md:pl-64 flex flex-1 flex-col dark:bg-slate-900 h-screen">
                 {/* Navbar */}
                 <Navbar setSidebarOpen={setSidebarOpen} />
 
-                <main>
-                    <div>{children}</div>
+                <main className="dark:bg-slate-900 touch-pan-y">
+                    {children}
                 </main>
             </div>
         </>

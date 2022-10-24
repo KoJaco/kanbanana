@@ -113,7 +113,7 @@ export const Item = React.memo(
                 <li
                     key={index}
                     className={clsx(
-                        'group relative z-20',
+                        'group',
                         styles.Wrapper,
                         fadeIn && styles.fadeIn,
                         sorting && styles.sorting,
@@ -207,7 +207,7 @@ export const Item = React.memo(
                             </div>
                         </div>
                         {props.showItemForm && item ? (
-                            <div ref={itemFormRef}>
+                            <div ref={itemFormRef} className="relative z-40">
                                 <ItemForm
                                     item={item}
                                     containerType="simple"

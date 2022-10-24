@@ -100,8 +100,8 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                     </div>
                     <div className="mt-1">
                         <ColorPicker
-                            contentDirection="right"
-                            colorPaletteOptions="full"
+                            corner="topRight"
+                            colorPaletteOptions="dark"
                             showColorPicker={showColorPicker}
                             handlePickColor={handleSetColor}
                         >
