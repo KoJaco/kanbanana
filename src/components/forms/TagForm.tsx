@@ -26,8 +26,8 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
         props.tag
             ? props.tag.backgroundColor
             : {
-                  name: 'white',
-                  value: '#fff',
+                  name: 'transparent',
+                  value: '#FFFFFF00',
                   textDark: true,
               }
     );
@@ -48,9 +48,6 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
     function handleToggleColorPicker() {
         setShowColorPicker(!showColorPicker);
     }
-    console.log(props.tagIndex);
-
-    console.log(props.tag);
 
     // not a form, just keeps track of inputs
     return (
@@ -61,7 +58,7 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                         {props.labels && (
                             <label
                                 htmlFor="Tag"
-                                className="block text-sm font-medium text-slate-600"
+                                className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75]"
                             >
                                 {props.tagLabel ? props.tagLabel : 'Tag:'}
                             </label>
@@ -79,7 +76,7 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                             id="text"
                             value={tagText}
                             placeholder="Write your tag here."
-                            className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none  dark:focus:ring-1 dark:focus:ring-slate-800"
                             onChange={(event) =>
                                 setTagText(event.currentTarget.value)
                             }
@@ -92,7 +89,7 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                         {props.labels && (
                             <label
                                 htmlFor="tag-color"
-                                className="block text-sm font-medium text-slate-600"
+                                className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75]"
                             >
                                 Color
                             </label>
@@ -110,7 +107,10 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                                 ref={excludedColorPickerRef}
                                 className="cursor-pointer rounded-full items-center p-1"
                                 style={{
-                                    backgroundColor: colorState.value,
+                                    backgroundColor:
+                                        colorState.value === '#FFFFFF00'
+                                            ? '#CDCDCD'
+                                            : colorState.value,
                                     color: colorState.textDark
                                         ? '#333'
                                         : '#fff',
@@ -119,11 +119,12 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                             >
                                 <BsBrush
                                     className="w-5 h-5"
-                                    style={{
-                                        color: colorState.textDark
-                                            ? '#333'
-                                            : '#fff',
-                                    }}
+
+                                    // style={{
+                                    //     color: colorState.textDark
+                                    //         ? '#333'
+                                    //         : '#fff',
+                                    // }}
                                 />
                             </button>
                         </ColorPicker>
@@ -133,7 +134,7 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                     {props.labels && (
                         <label
                             htmlFor="tag-color"
-                            className="block text-sm font-medium text-slate-600"
+                            className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75]"
                         >
                             Save
                         </label>
@@ -210,11 +211,11 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                             <Tag text={tagText} backgroundColor={colorState} />
                         </span>
                     )}
-                    {tagText.length === 0 && (
-                        <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {/* {tagText.length === 0 && (
+                        <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 dark:text-slate-100">
                             Your tag cannot be empty.
                         </span>
-                    )}
+                    )} */}
                 </div>
             </div>
 

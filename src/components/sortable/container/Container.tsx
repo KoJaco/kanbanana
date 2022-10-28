@@ -149,7 +149,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         '--columns': columns,
                     } as React.CSSProperties
                 }
-                className="flex flex-col max-content h-full w-80 sm:w-80 md:w-96 lg:w-[26rem] xl:w-[32rem] bg-gray-100 dark:bg-slate-800 rounded-md mx-2 dark:border-slate-600 snap-normal snap-end"
+                className="flex flex-col max-content h-full w-80 sm:w-80 md:w-96 lg:w-[26rem] xl:w-[32rem] bg-gray-100 dark:bg-slate-800 rounded-md mr-2 dark:border-slate-600 snap-normal snap-end"
                 onClick={onClick}
                 tabIndex={onClick ? 0 : undefined}
             >
@@ -161,7 +161,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         // }}
                     >
                         <div
-                            className="w-6 h-6 rounded-lg mr-3 shadow-md border border-inherit dark:border-slate-600"
+                            className="w-6 h-6 rounded-md mr-3 shadow border border-inherit dark:border-slate-600"
                             style={{
                                 backgroundColor: container?.badgeColor.value,
                             }}
@@ -197,7 +197,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                 {placeholder ? (
                     children
                 ) : (
-                    <ul className="w-full grid gap-y-2 grid-cols-auto px-1">
+                    <ul className="w-full grid gap-y-1 sm:gap-y-2  grid-cols-auto px-1">
                         {children}
                     </ul>
                 )}

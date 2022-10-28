@@ -618,7 +618,7 @@ export default function SortableBoard({
                 modifiers={modifiers}
             >
                 {/* TITLE */}
-                <div className="my-8 ml-2 px-2 sm:px-6 md:px-8">
+                <div className="my-8 ml-4 mx-4 sm:mx-10 md:mx-8 lg:mx-6">
                     {showInlineBoardForm ? (
                         <Transition
                             show={showInlineBoardForm}
@@ -689,7 +689,7 @@ export default function SortableBoard({
 
                 <div
                     id="carousel"
-                    className="pb-10 mt-8 mx-4 sm:mx-8 lg:mx-10 h-auto overflow-x-scroll snap-x whitespace-nowrap scroll-smooth touch-pan-auto overscroll-x-none transition-all duration-500 snap-proximity no-scrollbar"
+                    className="pb-10 mt-8 mx-4 sm:mx-10 md:mx-8 lg:mx-6 h-auto overflow-x-scroll snap-x whitespace-nowrap scroll-smooth touch-pan-auto overscroll-x-none transition-all duration-500 snap-proximity no-scrollbar"
                 >
                     <div
                         className="inline-grid grid-auto-cols auto-cols-max relative z-40"
@@ -774,6 +774,9 @@ export default function SortableBoard({
                                                                     }
                                                                     containerId={
                                                                         containerId
+                                                                    }
+                                                                    container={
+                                                                        container
                                                                     }
                                                                     getIndex={
                                                                         getIndex
@@ -1075,6 +1078,7 @@ interface SortableItemProps {
     item?: TItem;
     setShowItemForm?: (value: boolean) => void;
     containerId: UniqueIdentifier;
+    container: TContainer | undefined;
     id: UniqueIdentifier;
     index: number;
     handle: boolean;
@@ -1106,6 +1110,7 @@ function SortableItem({
     renderItem,
     style,
     containerId,
+    container,
     getIndex,
     wrapperStyle,
 }: SortableItemProps) {
@@ -1130,6 +1135,10 @@ function SortableItem({
         <Item
             item={item}
             containerId={containerId}
+            containerType={container ? container.type : 'simple'}
+            completedItemOrder={
+                container ? container.completedItemOrder : 'noChange'
+            }
             ref={disabled ? undefined : setNodeRef}
             showItemForm={showItemForm}
             setShowItemForm={setShowItemForm}

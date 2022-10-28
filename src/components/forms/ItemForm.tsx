@@ -21,10 +21,18 @@ type ItemFormProps = {
     showForm: boolean;
     children?: JSX.Element;
     setShowForm: (value: boolean) => void;
-    handleRemoveItem: (itemId: string) => void;
+    handleRemoveItem: (
+        itemId: UniqueIdentifier,
+        containerId: UniqueIdentifier
+    ) => void;
 };
 
-const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
+const ItemForm = ({
+    handleRemoveItem,
+    setShowForm,
+    children,
+    ...props
+}: ItemFormProps) => {
     // use local state for controlled inputs, save everything to db on submit.
     const [itemState, setItemState] = useState(props.item);
     const [showColorPicker, setShowColorPicker] = useState(false);
@@ -81,31 +89,6 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
         setShowForm(false);
     }
 
-    function handleRemoveItem() {
-        db.transaction('rw', db.boards, async () => {
-            await db.boards
-                .where('slug')
-                .equals(currentBoardSlug)
-                .modify((boardItem: any) => {
-                    const newItems = omit(boardItem.items, itemState.id);
-                    const newContainerItemMap = boardItem.containerItemMapping[
-                        props.containerId
-                    ].filter(
-                        (itemId: UniqueIdentifier) => itemId !== itemState.id
-                    );
-                    const newContainerItemMapping = {
-                        ...boardItem.containerItemMapping,
-                        [props.containerId]: newContainerItemMap,
-                    };
-
-                    boardItem.items = newItems;
-                    boardItem.containerItemMapping = newContainerItemMapping;
-                    boardItem.updatedAt = new Date(Date.now());
-                });
-            // catch any errors
-        });
-    }
-
     return (
         <form onSubmit={handleSubmit} className="">
             {props.containerType === 'checklist' ? (
@@ -117,35 +100,36 @@ const ItemForm = ({ setShowForm, children, ...props }: ItemFormProps) => {
                         ref={textAreaRef}
                         name="content"
                         id="taskContent"
-                        className="border-0 w-full mb-2 resize-none no-scrollbar bg-gray-50 text-gray-500 focus:ring-0 sm:text-md focus:outline-none placeholder:italic placeholder:text-gray-500/[0.5] focus:resize-y bg-inherit group overflow-wrap"
+                        className="border-0 w-full mb-2 resize-none no-scrollbar bg-gray-50 dark:border-slate-700 text-gray-500 focus:ring-0 text-sm sm:text-md focus:outline-none placeholder:italic placeholder:text-gray-500/[0.5] focus:resize-y bg-inherit group overflow-wrap"
                         placeholder="Start writing..."
                         value={itemState.content}
                         onChange={handleUserInput}
                         onInput={handleTextAreaInput}
                     />
-                    <div className="opacity-100 py-5 max-h-0 border-t border-gray-200 flex justify-between items-center">
+                    <div className="opacity-100 py-5 max-h-0 border-t border-gray-200 dark:border-slate-700 flex justify-between items-center">
                         <div className="flex">
                             <button
                                 type="button"
                                 className="w-5 h-5 rounded-md hover:bg-red-600 cursor-pointer text-gray-500 hover:text-gray-50 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                                onClick={handleRemoveItem}
+                                onClick={() =>
+                                    handleRemoveItem(
+                                        itemState.id,
+                                        props.containerId
+                                    )
+                                }
                             >
                                 <AiOutlineDelete className="w-4 h-4" />
                             </button>
                         </div>
 
                         <div className="flex flex-shrink-0 gap-x-2">
-                            {/* <ColorPicker
-                                corner="topRight"
-                                popoverDirection="down"
-                                colorPaletteOptions="full"
-                                showColorPicker={showColorPicker}
-                                handlePickColor={handlePickColor}
-                            > */}
                             <button
                                 type="button"
-                                className="w-5 h-5 rounded-md cursor-pointer text-gray-500 hover:text-gray-50 hover:bg-gray-500 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                                className="w-5 h-5 rounded-md cursor-pointer text-gray-500 hover:text-gray-50 hover:bg-gray-500 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent border-1"
                                 style={{
+                                    borderColor: itemState.badgeColor.textDark
+                                        ? '#333'
+                                        : '#f1f1f1',
                                     backgroundColor: itemState.badgeColor.value,
                                     color: itemState.badgeColor.textDark
                                         ? '#333'

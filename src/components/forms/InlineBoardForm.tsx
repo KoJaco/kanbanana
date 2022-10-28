@@ -100,11 +100,25 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="border-b pb-10 space-x-4 flex items-start justify-start">
+            <div className="flex flex-row w-full mb-2 items-center justify-between">
+                <h1 className="text-2xl font-semibold text-slate-600 dark:text-white">
+                    {boardTitle.length === 0
+                        ? 'Add a Board Title...'
+                        : boardTitle}
+                </h1>
+                <button
+                    type="button"
+                    className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
+                    onClick={() => setShowForm(false)}
+                >
+                    <MdOutlineCancel className="w-5 h-5" />
+                </button>
+            </div>
+            <div className="border-b dark:border-slate-700 pb-10 space-x-4 flex items-start justify-start">
                 <div className="flex flex-col w-1/3">
                     <label
                         htmlFor="boardTitle"
-                        className="block text-sm font-medium text-slate-600 after:content-['*'] after:ml-0.5 after:text-red-500"
+                        className="block text-sm font-medium text-slate-600 after:content-['*'] after:ml-0.5 after:text-red-500 dark:text-slate-100/[0.75]"
                     >
                         Title
                     </label>
@@ -120,7 +134,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                     ? boardTitle
                                     : 'Give your board a title.'
                             }
-                            className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none  dark:focus:ring-1 dark:focus:ring-slate-800"
                             required
                             onChange={handleUserInput}
                         />
@@ -129,7 +143,10 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                         {boardTags?.map(
                             (tag, index) =>
                                 tag.text.length > 0 && (
-                                    <div key={index} className="flex group">
+                                    <div
+                                        key={index}
+                                        className="flex group space-x-1"
+                                    >
                                         <span
                                             className="text-sm rounded-full px-2"
                                             style={{
@@ -143,11 +160,11 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                         >
                                             {tag.text}
                                         </span>
-                                        <div className="flex">
+                                        <div className="flex scale-0 w-0 opacity-0 group-hover:opacity-100 group-hover:scale-100 group-hover:w-auto transition-transform duration-300">
                                             <button
                                                 type="button"
                                                 name="editTag"
-                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110 focus-visible:opacity-100"
+                                                className=" hover:scale-110 focus-visible:opacity-100"
                                                 onClick={() => {
                                                     if (showTagForm) {
                                                         setCurrentTagIndex(
@@ -175,7 +192,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                             <button
                                                 type="button"
                                                 name="deleteTag"
-                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110 focus-visible:opacity-100"
+                                                className="hover:scale-110 focus-visible:opacity-100"
                                                 onClick={() =>
                                                     handleRemoveTag(tag)
                                                 }
@@ -192,7 +209,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                     <div className="flex flex-col w-full">
                         <button
                             type="button"
-                            className="inline-flex items-start text-sm font-medium text-slate-600"
+                            className="inline-flex items-start text-sm font-medium text-slate-600 dark:text-slate-100/[.75]"
                             onClick={() => {
                                 if (tagFormState === 'edit') {
                                     setTagFormState('add');
@@ -243,7 +260,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                             )}
                         </Transition>
                     </div>
-                    <div className="flex items-start ml-8">
+                    {/* <div className="flex items-start ml-8">
                         <button
                             type="button"
                             className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
@@ -251,13 +268,13 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                         >
                             <MdOutlineCancel className="w-5 h-5" />
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <div className="flex flex-shrink-0 justify-end pr-2 py-4">
                 <button
                     type="button"
-                    className="rounded-md border mr-auto border-gray-300 bg-red-400 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="rounded-md border mr-auto border-gray-300 dark:border-slate-700 bg-red-400 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     onClick={handleDeleteBoard}
                 >
                     Delete Board

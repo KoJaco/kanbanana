@@ -8,7 +8,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import { Board, BoardTags } from '@/core/types/sortableBoard';
-import { IoList } from 'react-icons/io5';
+import { BsGrid } from 'react-icons/bs';
 import { HiOutlineTag } from 'react-icons/hi';
 import Tag from '@/components/elements/Tag';
 
@@ -23,9 +23,10 @@ const BoardMenu = () => {
     const currentRoute = router.asPath;
 
     const handleCloseSidebar = () => {
-        if (sidebarOpen && screenSize != undefined && screenSize <= 900) {
-            setSidebarOpen(false);
-        }
+        setSidebarOpen(false);
+        // if (sidebarOpen && screenSize !== undefined && screenSize <= 900) {
+        //     setSidebarOpen(false);
+        // }
     };
 
     const { boardCount, setBoardCount } = useKanbanStore();
@@ -94,15 +95,15 @@ const BoardMenu = () => {
 
     return (
         <>
-            <div className="">
+            <div>
                 <div
-                    className="text-indigo-100 
+                    className="
                                             group flex items-center px-2 py-2 text-base font-medium rounded-md"
                 >
                     <span className="h-full ">
-                        <IoList className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 " />
+                        <BsGrid className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 dark:text-slate-50" />
                     </span>
-                    <p className=" text-indigo-100 font-regular uppercase">
+                    <p className=" text-indigo-100 dark:text-slate-50 font-regular uppercase">
                         Boards
                     </p>
                 </div>
@@ -126,9 +127,9 @@ const BoardMenu = () => {
                             className={
                                 currentRoute === '/boards?boards=all'
                                     ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
-                                    : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
+                                    : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
                             }
-                            // onClick={handleCloseSidebar}
+                            onClick={handleCloseSidebar}
                         >
                             <div className="flex justify-between items-end">
                                 <span className="capitalize">All Boards</span>
@@ -137,7 +138,7 @@ const BoardMenu = () => {
                     </Link>
                 </div>
 
-                <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
+                <div className="flex flex-col sm:max-h-64 md:max-h-96 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
                     {boards?.map((board, index) => (
                         <Link
                             key={index}
@@ -160,7 +161,7 @@ const BoardMenu = () => {
                                 className={
                                     currentRoute === `/boards/${board.slug}`
                                         ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
-                                        : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
+                                        : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
                                 }
                                 onClick={handleCloseSidebar}
                             >
@@ -180,9 +181,9 @@ const BoardMenu = () => {
                                             group flex items-center px-2 py-2 text-base font-medium rounded-md"
                 >
                     <span className="h-full text-indigo-100 mr-4">
-                        <HiOutlineTag className="h-6 w-6 flex-shrink-0 text-indigo-300" />
+                        <HiOutlineTag className="h-6 w-6 flex-shrink-0 text-indigo-300 dark:text-slate-100" />
                     </span>
-                    <p className="text-indigo-100 font-regular uppercase">
+                    <p className="text-indigo-100 font-regular uppercase dark:text-slate-100">
                         Tags
                     </p>
                 </div>
@@ -198,7 +199,10 @@ const BoardMenu = () => {
                                 }}
                                 passHref={true}
                             >
-                                <a className="hover:scale-110 transition-transform duration-300">
+                                <a
+                                    className="hover:scale-110 transition-transform duration-300"
+                                    onClick={handleCloseSidebar}
+                                >
                                     <Tag
                                         text={tag.text}
                                         backgroundColor={tag.backgroundColor}
@@ -209,7 +213,6 @@ const BoardMenu = () => {
                     </ol>
                 </div>
             </div>
-            <ol></ol>
         </>
     );
 };

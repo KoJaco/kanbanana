@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Dialog, Transition } from '@headlessui/react';
 import { MdClose } from 'react-icons/md';
-import { IoCreateOutline } from 'react-icons/io5';
+import { AiOutlineAppstoreAdd } from 'react-icons/ai';
 import { SiKibana } from 'react-icons/si';
 
 import CreateBoardForm from '@/components/forms/CreateBoardForm';
@@ -28,6 +28,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     const currentRoute = router.asPath;
 
     function handleShowCreateBoardForm() {
+        setSidebarOpen(false);
         setShowCreateBoardForm(true);
     }
 
@@ -48,7 +49,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-gray-400 bg-opacity-75 z-[150]" />
+                        <div className="fixed inset-0 bg-gray-400 dark:bg-slate-500/50 bg-opacity-75 z-[150]" />
                     </Transition.Child>
 
                     <div className="fixed inset-0 z-[170] flex">
@@ -74,7 +75,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     <div className="absolute top-0 right-0 -mr-12 pt-2">
                                         <button
                                             type="button"
-                                            className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white text-gray-50 dark:focus:ring-indigo-200"
+                                            className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white text-gray-50 dark:text-slate-50 dark:focus:ring-slate-50"
                                             onClick={() =>
                                                 setSidebarOpen(false)
                                             }
@@ -88,7 +89,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 </Transition.Child>
                                 <div className="flex flex-shrink-0 items-center px-4">
                                     <Link href="/">
-                                        <div className="cursor-pointer items-center gap-3 flex text-xl font-medium tracking-tight text-gray-100">
+                                        <div className="cursor-pointer items-center gap-3 flex text-xl font-medium tracking-tight text-gray-100 dark:text-slate-50">
                                             <SiKibana className="text-offset" />
                                             <span className="ml-1">
                                                 Kan-banana
@@ -101,19 +102,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                         <div>
                                             {/* New Board Button */}
                                             <button
-                                                className="text-indigo-100 hover:bg-primary-bg-darker dark:hover:bg-slate-700
+                                                className="text-indigo-100 hover:bg-primary-bg-darker dark:hover:bg-slate-700 dark:text-slate-50
                                              flex items-center px-2 py-2 text-base font-medium rounded-md my-6 w-full"
                                                 onClick={
                                                     handleShowCreateBoardForm
                                                 }
                                             >
                                                 <span className="h-full text-gray-400">
-                                                    <IoCreateOutline
-                                                        className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300"
+                                                    <AiOutlineAppstoreAdd
+                                                        className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 dark:text-slate-50"
                                                         aria-hidden="true"
                                                     />
                                                 </span>
-                                                <p className="text-indigo-100 font-regular uppercase cursor-pointer">
+                                                <p className="text-indigo-100 dark:text-slate-50 font-regular uppercase cursor-pointer">
                                                     New Board
                                                 </p>
                                             </button>
@@ -173,12 +174,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     onClick={handleShowCreateBoardForm}
                                 >
                                     <span className="h-full">
-                                        <IoCreateOutline
-                                            className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300"
+                                        <AiOutlineAppstoreAdd
+                                            className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 dark:text-slate-50"
                                             aria-hidden="true"
                                         />
                                     </span>
-                                    <p className=" text-indigo-100 font-regular uppercase cursor-pointer ">
+                                    <p className=" text-indigo-100 dark:text-slate-50 font-regular uppercase cursor-pointer ">
                                         New Board
                                     </p>
                                 </button>
@@ -193,10 +194,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             <div className="flex items-center">
                                 <div></div>
                                 <div className="ml-3">
-                                    <p className="text-sm font-medium text-indigo-100/[0.8]">
+                                    <p className="text-sm font-medium text-indigo-100 dark:text-slate-50">
                                         Database Import/Export
                                     </p>
-                                    <div className="flex gap-5 text-xs font-medium text-indigo-200">
+                                    <div className="flex gap-5 text-xs font-medium text-indigo-200 dark:text-slate-50">
                                         Coming soon!
                                     </div>
                                 </div>

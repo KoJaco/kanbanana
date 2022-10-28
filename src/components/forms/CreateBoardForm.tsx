@@ -31,12 +31,15 @@ type CreateBoardFormProps = {
     setShowBoardForm: (value: boolean) => void;
 };
 
-const defaultColor = { name: 'gray-100', value: '#f3f4f6', textDark: true };
-
+const defaultColor = {
+    name: 'transparent',
+    value: '#FFFFFF00',
+    textDark: true,
+};
 // Array of tags, can map over
 const initialTags: BoardTags = [
     {
-        backgroundColor: { name: 'white', value: '#fff', textDark: true },
+        backgroundColor: defaultColor,
         text: '',
     },
 ];
@@ -358,7 +361,7 @@ const CreateBoardForm = ({
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                    <div className="fixed inset-0 bg-gray-500 dark:bg-slate-500/50 bg-opacity-75 transition-opacity" />
                 </Transition.Child>
                 <div className="fixed inset-0 overflow-hidden">
                     <div className="absolute inset-0 overflow-hidden">
@@ -374,7 +377,7 @@ const CreateBoardForm = ({
                             >
                                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                                     <form
-                                        className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
+                                        className="flex h-full flex-col divide-y divide-gray-200 dark:divide-slate-500 bg-white dark:bg-slate-800 shadow-xl"
                                         onSubmit={handleSubmit}
                                     >
                                         <div className="h-0 flex-1 overflow-y-auto no-scrollbar">
@@ -414,13 +417,13 @@ const CreateBoardForm = ({
                                                 </div>
                                             </div>
                                             <div className=" mt-4 space-y-4 sm:mt-10">
-                                                <div className="flex flex-1 flex-col justify-between border-b border-gray-100">
+                                                <div className="flex flex-1 flex-col justify-between border-b border-gray-100 dark:border-slate-500">
                                                     <div className="px-2 sm:px-4">
                                                         <div className="space-y-4 pt-6 pb-5 px-1">
                                                             <div>
                                                                 <label
                                                                     htmlFor="boardTitle"
-                                                                    className="block text-sm font-medium text-slate-600 after:content-['*'] after:ml-0.5 after:text-red-500"
+                                                                    className="block text-sm font-medium text-slate-600 after:content-['*'] after:ml-0.5 after:text-red-500 dark:text-slate-100"
                                                                 >
                                                                     Board Title
                                                                 </label>
@@ -438,7 +441,7 @@ const CreateBoardForm = ({
                                                                                 ? boardTitle
                                                                                 : 'Give your board a title.'
                                                                         }
-                                                                        className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                                        className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none   dark:focus:ring-1 dark:focus:ring-slate-800 dark:focus:border-slate-600"
                                                                         required
                                                                         onChange={
                                                                             handleBoardTitleInputChange
@@ -457,7 +460,7 @@ const CreateBoardForm = ({
                                                                 <div className="flex flex-col max-h-16 ">
                                                                     <label
                                                                         htmlFor="boardTags"
-                                                                        className="block text-sm font-medium text-slate-600"
+                                                                        className="block text-sm font-medium text-slate-600 dark:text-slate-100"
                                                                     >
                                                                         Tags:
                                                                     </label>
@@ -556,7 +559,7 @@ const CreateBoardForm = ({
                                                                 <div className="w-auto max-h-96 overflow-y-auto no-scrollbar">
                                                                     <label
                                                                         htmlFor="board-containers"
-                                                                        className="block text-sm font-medium text-slate-600 "
+                                                                        className="block text-sm font-medium text-slate-600 dark:text-slate-100"
                                                                     >
                                                                         Containers:
                                                                     </label>
@@ -713,13 +716,13 @@ const CreateBoardForm = ({
                                                     </div>
                                                 </div>
                                                 {/* Board tag/container input*/}
-                                                <div className="flex flex-1 flex-col justify-between border-b border-gray-100">
+                                                <div className="flex flex-1 flex-col justify-between border-b border-gray-100 dark:border-slate-500">
                                                     <div className="px-2 sm:px-4">
                                                         <div className="space-y-2 px-1">
                                                             <div className="relative inline-block w-full"></div>
                                                             <button
                                                                 type="button"
-                                                                className="inline-flex w-full justify-end rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:shadow-sm hover:bg-gray-50 focus:outline-none mb-4"
+                                                                className="inline-flex w-full justify-end rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:shadow-sm hover:bg-gray-50 focus:outline-none mb-4 dark:text-slate-100 dark:hover:bg-slate-700"
                                                                 onClick={() => {
                                                                     if (
                                                                         tagFormState ===
@@ -802,7 +805,7 @@ const CreateBoardForm = ({
 
                                                             <button
                                                                 type="button"
-                                                                className="inline-flex w-full justify-end rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:shadow-sm hover:bg-gray-50 focus:outline-none mb-4"
+                                                                className="inline-flex w-full justify-end rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:shadow-sm hover:bg-gray-50 focus:outline-none mb-4 dark:text-slate-100 dark:hover:bg-slate-700"
                                                                 onClick={() => {
                                                                     if (
                                                                         containerFormState ===
@@ -873,7 +876,7 @@ const CreateBoardForm = ({
                                         <div className="flex flex-shrink-0 justify-end px-4 py-4">
                                             <button
                                                 type="button"
-                                                className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                                className="rounded-md border border-gray-300 dark:border-slate-500 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                                 onClick={handleCancelEdit}
                                             >
                                                 Cancel

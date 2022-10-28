@@ -9,10 +9,18 @@ import { FiEdit } from 'react-icons/fi';
 
 import styles from './Item.module.css';
 import { useOnClickOutside } from '@/core/hooks';
+import { db } from '@/server/db';
+import { useKanbanStore } from '@/stores/KanbanStore';
+
+var omit = require('object.omit');
+
 export interface ItemProps {
     item?: TItem;
     showItemForm: boolean;
     containerId: UniqueIdentifier;
+    containerType?: 'simple' | 'checklist';
+    completedItemOrder?: 'start' | 'end' | 'noChange' | 'remove';
+
     setShowItemForm: (value: boolean) => void;
     dragOverlay?: boolean;
     color?: string;
@@ -89,11 +97,192 @@ export const Item = React.memo(
             const itemFormRef = useRef(null);
             const excludedRef = useRef(null);
 
+            const { currentBoardSlug } = useKanbanStore();
+
             useOnClickOutside(
                 itemFormRef,
                 () => props.setShowItemForm(false),
                 excludedRef
             );
+
+            function handleToggleChecklistItem(
+                itemId: UniqueIdentifier | undefined,
+                containerId: UniqueIdentifier
+            ) {
+                // const item = document.getElementById(`item-${itemId}`);
+                if (itemId) {
+                    db.transaction('rw', db.boards, async () => {
+                        await db.boards
+                            .where('slug')
+                            .equals(currentBoardSlug)
+                            .modify((boardItem: any) => {
+                                // init variables to use
+                                let completedItemState: boolean =
+                                    boardItem.items[itemId].completed;
+                                let containerItems: UniqueIdentifier[] =
+                                    Array.from(
+                                        boardItem.containerItemMapping[
+                                            containerId
+                                        ]
+                                    );
+
+                                let itemIndex = containerItems.indexOf(itemId);
+
+                                switch (props.completedItemOrder) {
+                                    case 'noChange':
+                                        // break and simply set item's completed property to !property
+                                        break;
+                                    case 'start':
+                                        if (
+                                            itemIndex < containerItems.length &&
+                                            !completedItemState
+                                        ) {
+                                            // if item is not marked as completed, shift item to front and update completed.
+                                            // asserted is not undefined, if itemIndex < length
+                                            containerItems.unshift(
+                                                containerItems!.splice(
+                                                    itemIndex,
+                                                    1
+                                                )[0]!
+                                            );
+                                            boardItem.containerItemMapping[
+                                                containerId
+                                            ] = containerItems;
+                                        } else if (
+                                            itemIndex < containerItems.length &&
+                                            completedItemState
+                                        ) {
+                                            // if item is completed and we want to 'uncheck' it, the item is spliced to just before the other 'checked' items.
+                                            let lastCompletedIndex: number = 0;
+                                            for (
+                                                let i =
+                                                    containerItems.length - 1;
+                                                i >= 0;
+                                                i--
+                                            ) {
+                                                let iId = containerItems[i]!;
+                                                if (
+                                                    boardItem.items[iId]
+                                                        .completed
+                                                ) {
+                                                    lastCompletedIndex = i;
+                                                    break;
+                                                }
+                                            }
+                                            containerItems.splice(itemIndex, 1);
+                                            containerItems.splice(
+                                                lastCompletedIndex,
+                                                0,
+                                                itemId
+                                            );
+
+                                            boardItem.containerItemMapping[
+                                                containerId
+                                            ] = containerItems;
+                                        }
+                                        break;
+                                    case 'end':
+                                        if (
+                                            itemIndex < containerItems.length &&
+                                            !completedItemState
+                                        ) {
+                                            // if item is not marked as completed, shift item to front and update completed.
+                                            // asserted is not undefined, if itemIndex < length
+                                            containerItems.push(
+                                                containerItems!.splice(
+                                                    itemIndex,
+                                                    1
+                                                )[0]!
+                                            );
+                                            boardItem.containerItemMapping[
+                                                containerId
+                                            ] = containerItems;
+                                        } else if (
+                                            itemIndex < containerItems.length &&
+                                            completedItemState
+                                        ) {
+                                            // if item is completed and we want to 'uncheck' it, the item is spliced to just before the other 'checked' items.
+                                            let lastCompletedIndex: number = 0;
+                                            for (
+                                                let i = 0;
+                                                i < containerItems.length;
+                                                i++
+                                            ) {
+                                                let iId = containerItems[i]!;
+                                                if (
+                                                    boardItem.items[iId]
+                                                        .completed
+                                                ) {
+                                                    lastCompletedIndex = i;
+                                                    break;
+                                                }
+                                            }
+                                            containerItems.splice(itemIndex, 1);
+                                            containerItems.splice(
+                                                lastCompletedIndex,
+                                                0,
+                                                itemId
+                                            );
+
+                                            boardItem.containerItemMapping[
+                                                containerId
+                                            ] = containerItems;
+                                        }
+                                        break;
+                                    default:
+                                        throw new Error(
+                                            'Something went wrong!'
+                                        );
+                                }
+
+                                // toggle completed item state, happens for all cases
+                                boardItem.items[itemId].completed =
+                                    !completedItemState;
+                            });
+                    });
+                }
+            }
+
+            function handleRemoveItem(
+                itemId: UniqueIdentifier | undefined,
+                containerId: UniqueIdentifier
+            ) {
+                let item = document.getElementById(`item-${itemId}`);
+                if (itemId) {
+                    if (item) item.style.opacity = '0.5';
+
+                    setTimeout(() => {
+                        db.transaction('rw', db.boards, async () => {
+                            await db.boards
+                                .where('slug')
+                                .equals(currentBoardSlug)
+                                .modify((boardItem: any) => {
+                                    const newItems = omit(
+                                        boardItem.items,
+                                        itemId
+                                    );
+                                    const newContainerItemMap =
+                                        boardItem.containerItemMapping[
+                                            containerId
+                                        ].filter(
+                                            (id: UniqueIdentifier) =>
+                                                id !== itemId
+                                        );
+                                    const newContainerItemMapping = {
+                                        ...boardItem.containerItemMapping,
+                                        [containerId]: newContainerItemMap,
+                                    };
+
+                                    boardItem.items = newItems;
+                                    boardItem.containerItemMapping =
+                                        newContainerItemMapping;
+                                    boardItem.updatedAt = new Date(Date.now());
+                                });
+                            // catch any errors
+                        });
+                    }, 300);
+                }
+            }
 
             return renderItem ? (
                 renderItem({
@@ -111,9 +300,13 @@ export const Item = React.memo(
                 })
             ) : (
                 <li
+                    id={`item-${item?.id}`}
                     key={index}
                     className={clsx(
-                        'group',
+                        'group opacity-100 transition-opacity duration-300',
+                        props.containerType === 'checklist' &&
+                            item?.completed &&
+                            'opacity-50',
                         styles.Wrapper,
                         fadeIn && styles.fadeIn,
                         sorting && styles.sorting,
@@ -164,28 +357,15 @@ export const Item = React.memo(
                         tabIndex={!handle ? 0 : undefined}
                     >
                         <div
-                            // className={clsx(
-                            //     'flex flex-row w-full group',
-                            //     styles.actionBar
-                            // )}
                             className={clsx(
                                 'flex flex-row w-full transition-opacity duration-300 focus-visible:opacity-75 group-focus:opacity-75',
-                                styles.actionBar
+                                styles.actionBar,
+                                props.containerType === 'checklist' &&
+                                    item?.completed &&
+                                    'opacity-0'
                             )}
                         >
-                            {/* <button
-                                className="flex rounded-md border-1 border-gray-300 p-1 w-4 h-4"
-                                // style={{
-                                //     backgroundColor: parseColorToString(props.color),
-                                // }}
-                                // onClick={() => setShowColorPicker(true)}
-                                // disable when selecting color, let useOnClickOutside handle close
-                                // disabled={showColorPicker ? true : false}
-                            >
-                            </button> */}
-
                             <div className="flex ml-auto gap-x-2">
-                                {/* <Remove className="" onClick={onRemove} /> */}
                                 <button
                                     type="button"
                                     className="w-4 h-4 rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-slate-600 focus-visible:scale-105 transition-transform duration-300 dark:text-gray-50"
@@ -206,6 +386,7 @@ export const Item = React.memo(
                                 />
                             </div>
                         </div>
+
                         {props.showItemForm && item ? (
                             <div ref={itemFormRef} className="relative z-40">
                                 <ItemForm
@@ -218,15 +399,34 @@ export const Item = React.memo(
                                             ? props.setShowItemForm
                                             : () => {}
                                     }
-                                    handleRemoveItem={() => {}}
+                                    handleRemoveItem={handleRemoveItem}
                                 />
                             </div>
                         ) : (
                             <div className="flex flex-row">
-                                {/* content */}
+                                {props?.containerType === 'checklist' &&
+                                    props.completedItemOrder && (
+                                        <button
+                                            type="button"
+                                            className="w-8 h-8 rounded-full border-1 border-gray-300 dark:border-slate-500 place-self-center self-center -translate-y-2 mr-2 hover:shadow"
+                                            onClick={() =>
+                                                props.completedItemOrder ===
+                                                'remove'
+                                                    ? handleRemoveItem(
+                                                          item?.id,
+                                                          containerId
+                                                      )
+                                                    : handleToggleChecklistItem(
+                                                          item?.id,
+                                                          containerId
+                                                      )
+                                            }
+                                        ></button>
+                                    )}
+
                                 <div
                                     id={`${value}`}
-                                    className="whitespace-normal pb-2 text-slate-600 break-all"
+                                    className="whitespace-normal pb-2 text-slate-600 dark:text-slate-100 break-all text-sm sm:text-md"
                                 >
                                     {value}
                                 </div>

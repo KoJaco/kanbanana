@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { fullColorPalette, minimalColorPalette } from '@/core/consts/branding';
+import { useMemo } from 'react';
+import { fullColorPalette } from '@/core/consts/branding';
 import { Color } from '@/core/types/sortableBoard';
 
 import clsx from 'clsx';
@@ -53,7 +53,7 @@ const ColorPicker = ({
     }
 
     const absoluteDivStyling = clsx(
-        'absolute whitespace-no-wrap bg-white dark:bg-slate-900 dark:border-slate-700 text-slate-600 text-sm px-2 py-1 rounded flex items-center justify-center transition-transform duration-200 bg-white border-1 rounded-lg drop-shadow-sm hover:drop-shadow-lg z-[150]',
+        'absolute whitespace-no-wrap bg-white dark:bg-slate-700 dark:border-slate-800 text-slate-600 text-sm px-2 py-1 rounded flex items-center justify-center transition-transform duration-200 bg-white border-1 rounded-lg drop-shadow-sm hover:drop-shadow-lg z-[150]',
         popoverDirection === 'up' && 'bottom-0 mb-10',
         popoverDirection === 'right' && 'left-0 ml-10',
         popoverDirection === 'down' && 'top-0 mt-10',
@@ -61,7 +61,7 @@ const ColorPicker = ({
     );
 
     const tagDivStyling = clsx(
-        'bg-white h-3 w-3 absolute rotate-45 dark:bg-slate-900 dark:border-slate-700',
+        'bg-white h-3 w-3 absolute rotate-45 dark:bg-slate-700 dark:border-slate-800',
         corner === 'bottomLeft' ? 'left-1' : 'right-1',
         popoverDirection === 'up' &&
             'inline-flex border-b border-r -bottom-[7px]',
