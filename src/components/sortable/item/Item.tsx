@@ -403,30 +403,32 @@ export const Item = React.memo(
                                 />
                             </div>
                         ) : (
-                            <div className="flex flex-row">
-                                {props?.containerType === 'checklist' &&
-                                    props.completedItemOrder && (
-                                        <button
-                                            type="button"
-                                            className="w-8 h-8 rounded-full border-1 border-gray-300 dark:border-slate-500 place-self-center self-center -translate-y-2 mr-2 hover:shadow"
-                                            onClick={() =>
-                                                props.completedItemOrder ===
-                                                'remove'
-                                                    ? handleRemoveItem(
-                                                          item?.id,
-                                                          containerId
-                                                      )
-                                                    : handleToggleChecklistItem(
-                                                          item?.id,
-                                                          containerId
-                                                      )
-                                            }
-                                        ></button>
-                                    )}
+                            <div className="flex flex-row items-center">
+                                <div>
+                                    {props?.containerType === 'checklist' &&
+                                        props.completedItemOrder && (
+                                            <button
+                                                type="button"
+                                                className="w-7 h-7 rounded-full border-1 border-gray-300 dark:border-slate-500 place-self-center self-center -translate-y-2 mr-4 hover:shadow"
+                                                onClick={() =>
+                                                    props.completedItemOrder ===
+                                                    'remove'
+                                                        ? handleRemoveItem(
+                                                              item?.id,
+                                                              containerId
+                                                          )
+                                                        : handleToggleChecklistItem(
+                                                              item?.id,
+                                                              containerId
+                                                          )
+                                                }
+                                            ></button>
+                                        )}
+                                </div>
 
                                 <div
                                     id={`${value}`}
-                                    className="whitespace-normal pb-2 text-slate-600 dark:text-slate-100 break-all text-sm sm:text-md"
+                                    className="self-start whitespace-normal pb-2 text-slate-600 dark:text-slate-100 break-all text-sm sm:text-md"
                                 >
                                     {value}
                                 </div>

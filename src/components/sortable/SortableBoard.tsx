@@ -1,10 +1,4 @@
-import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
     CancelDrop,
@@ -644,7 +638,7 @@ export default function SortableBoard({
                     ) : (
                         <>
                             <div className="flex justify-between items-end gap-8">
-                                <h1 className="text-2xl font-semibold text-slate-600 dark:text-white">
+                                <h1 className="sm:text-xl lg:text-2xl font-semibold text-slate-600 dark:text-white">
                                     {board?.title.length === 0
                                         ? 'Add a Board Title...'
                                         : board?.title}
@@ -652,12 +646,12 @@ export default function SortableBoard({
 
                                 <button
                                     type="button"
-                                    className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300 dark:text-white dark:hover:text-gray-500"
+                                    className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray dark:hover:bg-slate-500 cursor-pointer transition-color duration-300 dark:text-white"
                                     onClick={() =>
                                         setShowInlineBoardForm((prev) => !prev)
                                     }
                                 >
-                                    <MdOutlineEdit className="w-5 h-5" />
+                                    <MdOutlineEdit className="w-4 h-4 lg:w-5 lg:h-5" />
                                 </button>
                             </div>
                             <div className="flex flex-row items-start gap-8">

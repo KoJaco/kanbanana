@@ -64,8 +64,8 @@ const ContainerForm = ({
     const [badgeColor, setBadgeColor] = useState<Color>(
         props.container === undefined
             ? {
-                  name: 'gray-100',
-                  value: '#f3f4f6',
+                  name: 'transparent',
+                  value: '#FFFFFF00',
                   textDark: true,
               }
             : props.container.badgeColor

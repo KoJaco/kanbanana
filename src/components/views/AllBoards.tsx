@@ -5,31 +5,6 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Board, BoardTags, UniqueIdentifier } from '@/core/types/sortableBoard';
 import clsx from 'clsx';
-{
-    /* <span className="isolate inline-flex rounded-md shadow-sm">
-<button
-    type="button"
-    name="months"
-    className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
->
-    Months
-</button>
-<button
-    type="button"
-    name="months"
-    className="relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
->
-    Weeks
-</button>
-<button
-    type="button"
-    name="months"
-    className="relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
->
-    Days
-</button>
-</span> */
-}
 
 const tabs = ['months', 'weeks', 'days'];
 
@@ -304,7 +279,7 @@ const AllBoards = () => {
                                                                             }
                                                                         </h3>
                                                                     </div>
-                                                                    <p className="mt-1 truncate text-sm text-gray-500 whitespace-normal">
+                                                                    <p className="mt-1 truncate text-sm text-gray-500 dark:text-slate-200 whitespace-normal">
                                                                         {board.updatedAt.toLocaleString(
                                                                             'en-uk',
                                                                             {

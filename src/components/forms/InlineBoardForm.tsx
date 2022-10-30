@@ -8,6 +8,7 @@ import { db } from '@/server/db';
 import { useRouter } from 'next/router';
 import { MdOutlineCancel, MdOutlineEdit } from 'react-icons/md';
 import { useOnClickOutside } from '@/core/hooks/index';
+import Tag from '../elements/Tag';
 type InlineBoardFormProps = {
     title: string;
     slug: string;
@@ -147,7 +148,13 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                         key={index}
                                         className="flex group space-x-1"
                                     >
-                                        <span
+                                        <Tag
+                                            text={tag.text}
+                                            backgroundColor={
+                                                tag.backgroundColor
+                                            }
+                                        />
+                                        {/* <span
                                             className="text-sm rounded-full px-2"
                                             style={{
                                                 color: tag.backgroundColor
@@ -159,7 +166,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                             }}
                                         >
                                             {tag.text}
-                                        </span>
+                                        </span> */}
                                         <div className="flex scale-0 w-0 opacity-0 group-hover:opacity-100 group-hover:scale-100 group-hover:w-auto transition-transform duration-300">
                                             <button
                                                 type="button"

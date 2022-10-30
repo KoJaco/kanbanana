@@ -25,6 +25,7 @@ import ContainerForm from './ContainerForm';
 import TagForm from './TagForm';
 import Tag from '@/components/elements/Tag';
 import clsx from 'clsx';
+import { useTheme } from 'next-themes';
 
 type CreateBoardFormProps = {
     showBoardForm: boolean;
@@ -104,6 +105,8 @@ const CreateBoardForm = ({
     const [tagFormState, setTagFormState] = useState<'add' | 'edit'>('add');
     const [currentTagIndex, setCurrentTagIndex] = useState<number | null>(null);
 
+    const { theme } = useTheme();
+
     const router = useRouter();
 
     const { increaseBoardCount } = useKanbanStore();
@@ -113,8 +116,6 @@ const CreateBoardForm = ({
     ) {
         setBoardTitle(event.currentTarget.value);
     }
-
-    console.log(boardContainers);
 
     function handleAddContainer(container: TContainer) {
         if (boardContainers === null || boardContainerItemMapping === null) {
@@ -345,6 +346,19 @@ const CreateBoardForm = ({
         }
     };
 
+    const transparentTextColor = (colorName: string, textDark: boolean) => {
+        if (colorName === 'transparent' && theme === 'light') {
+            return 'rgba(0,0,0,1)';
+        } else if (colorName === 'transparent' && theme === 'dark') {
+            return 'rgba(255,255,255,1)';
+        }
+        if (textDark) {
+            return '#333';
+        } else {
+            return '#fff';
+        }
+    };
+
     return (
         <Transition.Root show={props.showBoardForm} as={Fragment}>
             <Dialog
@@ -375,7 +389,7 @@ const CreateBoardForm = ({
                                 leaveFrom="translate-x-0"
                                 leaveTo="translate-x-full"
                             >
-                                <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+                                <Dialog.Panel className="pointer-events-auto w-screen max-w-sm sm:max-w-md">
                                     <form
                                         className="flex h-full flex-col divide-y divide-gray-200 dark:divide-slate-500 bg-white dark:bg-slate-800 shadow-xl"
                                         onSubmit={handleSubmit}
@@ -482,7 +496,15 @@ const CreateBoardForm = ({
                                                                                         className="flex group"
                                                                                         style={{}}
                                                                                     >
-                                                                                        <span
+                                                                                        <Tag
+                                                                                            text={
+                                                                                                tag.text
+                                                                                            }
+                                                                                            backgroundColor={
+                                                                                                tag.backgroundColor
+                                                                                            }
+                                                                                        />
+                                                                                        {/* <span
                                                                                             className="text-sm rounded-full px-2"
                                                                                             style={{
                                                                                                 color: tag
@@ -499,7 +521,7 @@ const CreateBoardForm = ({
                                                                                             {
                                                                                                 tag.text
                                                                                             }
-                                                                                        </span>
+                                                                                        </span> */}
                                                                                         <div className="flex">
                                                                                             <button
                                                                                                 type="button"
@@ -592,115 +614,132 @@ const CreateBoardForm = ({
                                                                                                     key={
                                                                                                         index
                                                                                                     }
-                                                                                                    className="group rounded-md border shadow my-2 text-md"
-                                                                                                    style={{
-                                                                                                        backgroundColor:
-                                                                                                            container
-                                                                                                                .badgeColor
-                                                                                                                .value,
-                                                                                                    }}
+                                                                                                    className="group rounded-md shadow my-2 text-md relative bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-800"
                                                                                                 >
-                                                                                                    <div className="flex gap-x-12 justify-between p-4 items-center text-slate-600">
-                                                                                                        <div
-                                                                                                            className="flex flex-col"
-                                                                                                            style={{
-                                                                                                                color: container
-                                                                                                                    .badgeColor
-                                                                                                                    .textDark
-                                                                                                                    ? '#333'
-                                                                                                                    : '#fff',
-                                                                                                            }}
-                                                                                                        >
-                                                                                                            <label className="text-sm font-bold">
-                                                                                                                Title
-                                                                                                            </label>
-                                                                                                            <div>
-                                                                                                                {
-                                                                                                                    container.title
-                                                                                                                }
+                                                                                                    <div className="flex flex-col gap-x-12 px-2 py-2 text-slate-600 ">
+                                                                                                        <div className="flex justify-between items-center mb-1">
+                                                                                                            <div
+                                                                                                                className={`flex mr-auto w-5 h-5 rounded-lg ${
+                                                                                                                    container
+                                                                                                                        .badgeColor
+                                                                                                                        .name ===
+                                                                                                                        'transparent' &&
+                                                                                                                    'border-1 border-slate-500/75'
+                                                                                                                }`}
+                                                                                                                style={{
+                                                                                                                    backgroundColor:
+                                                                                                                        container
+                                                                                                                            .badgeColor
+                                                                                                                            .value,
+                                                                                                                }}
+                                                                                                            />
+                                                                                                            <div className="flex items-center ml-auto mb-auto">
+                                                                                                                <button
+                                                                                                                    type="button"
+                                                                                                                    className="opacity-0 group-hover:opacity-100 flex justify-end transition-opacity duration-300 hover:scale-110"
+                                                                                                                    style={{
+                                                                                                                        color: transparentTextColor(
+                                                                                                                            container
+                                                                                                                                .badgeColor
+                                                                                                                                .name,
+                                                                                                                            container
+                                                                                                                                .badgeColor
+                                                                                                                                .textDark
+                                                                                                                        ),
+                                                                                                                    }}
+                                                                                                                    onClick={() =>
+                                                                                                                        handleEditContainer(
+                                                                                                                            container.id
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                >
+                                                                                                                    <MdModeEdit className="text-slate-600 w-4 dark:text-slate-200" />
+                                                                                                                </button>
+                                                                                                                <button
+                                                                                                                    type="button"
+                                                                                                                    name="delete-tag"
+                                                                                                                    className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
+                                                                                                                    onClick={() =>
+                                                                                                                        handleRemoveContainer(
+                                                                                                                            container.id
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                >
+                                                                                                                    <TiDelete className="text-slate-600 w-5 h-5 dark:text-slate-200" />
+                                                                                                                </button>
                                                                                                             </div>
                                                                                                         </div>
-                                                                                                        <div
-                                                                                                            className="flex flex-col"
-                                                                                                            style={{
-                                                                                                                color: container
-                                                                                                                    .badgeColor
-                                                                                                                    .textDark
-                                                                                                                    ? '#333'
-                                                                                                                    : '#fff',
-                                                                                                            }}
-                                                                                                        >
-                                                                                                            <label className="text-sm font-bold">
-                                                                                                                Type
-                                                                                                            </label>
-                                                                                                            <div>
-                                                                                                                {
-                                                                                                                    container.type
-                                                                                                                }
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        {container.type ===
-                                                                                                            'checklist' && (
+
+                                                                                                        <div className="flex flex-row items-center justify-start ml-1 gap-x-10">
                                                                                                             <div
                                                                                                                 className="flex flex-col"
                                                                                                                 style={{
-                                                                                                                    color: container
-                                                                                                                        .badgeColor
-                                                                                                                        .textDark
-                                                                                                                        ? '#333'
-                                                                                                                        : '#fff',
+                                                                                                                    color: transparentTextColor(
+                                                                                                                        container
+                                                                                                                            .badgeColor
+                                                                                                                            .name,
+                                                                                                                        container
+                                                                                                                            .badgeColor
+                                                                                                                            .textDark
+                                                                                                                    ),
                                                                                                                 }}
                                                                                                             >
-                                                                                                                <label className="text-sm font-bold">
-                                                                                                                    Ordering
+                                                                                                                <label className="text-sm font-bold text-slate-600 dark:text-slate-200/75">
+                                                                                                                    Title
                                                                                                                 </label>
-                                                                                                                <div>
+                                                                                                                <div className="text-light text-slate-500 dark:text-slate-200/50">
                                                                                                                     {
-                                                                                                                        container.completedItemOrder
+                                                                                                                        container.title
                                                                                                                     }
                                                                                                                 </div>
                                                                                                             </div>
-                                                                                                        )}
-                                                                                                        <div className="flex items-center mb-auto">
-                                                                                                            <button
-                                                                                                                type="button"
-                                                                                                                className=" opacity-0 group-hover:opacity-100 flex justify-end transition-opacity duration-300 hover:scale-110"
+                                                                                                            <div
+                                                                                                                className="flex flex-col"
                                                                                                                 style={{
-                                                                                                                    color: container
-                                                                                                                        .badgeColor
-                                                                                                                        .textDark
-                                                                                                                        ? '#333'
-                                                                                                                        : '#fff',
-                                                                                                                }}
-                                                                                                                onClick={() =>
-                                                                                                                    handleEditContainer(
-                                                                                                                        container.id
-                                                                                                                    )
-                                                                                                                }
-                                                                                                            >
-                                                                                                                <MdModeEdit className="w-5" />
-                                                                                                            </button>
-                                                                                                            <button
-                                                                                                                type="button"
-                                                                                                                name="delete-tag"
-                                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
-                                                                                                                onClick={() =>
-                                                                                                                    handleRemoveContainer(
-                                                                                                                        container.id
-                                                                                                                    )
-                                                                                                                }
-                                                                                                            >
-                                                                                                                <TiDelete
-                                                                                                                    className="text-slate-600 w-5 h-5"
-                                                                                                                    style={{
-                                                                                                                        color: container
+                                                                                                                    color: transparentTextColor(
+                                                                                                                        container
+                                                                                                                            .badgeColor
+                                                                                                                            .name,
+                                                                                                                        container
                                                                                                                             .badgeColor
                                                                                                                             .textDark
-                                                                                                                            ? '#333'
-                                                                                                                            : '#fff',
+                                                                                                                    ),
+                                                                                                                }}
+                                                                                                            >
+                                                                                                                <label className="text-sm font-bold text-slate-600 dark:text-slate-200/75">
+                                                                                                                    Type
+                                                                                                                </label>
+                                                                                                                <div className="text-light text-slate-500 dark:text-slate-200/50">
+                                                                                                                    {
+                                                                                                                        container.type
+                                                                                                                    }
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            {container.type ===
+                                                                                                                'checklist' && (
+                                                                                                                <div
+                                                                                                                    className="flex flex-col"
+                                                                                                                    style={{
+                                                                                                                        color: transparentTextColor(
+                                                                                                                            container
+                                                                                                                                .badgeColor
+                                                                                                                                .name,
+                                                                                                                            container
+                                                                                                                                .badgeColor
+                                                                                                                                .textDark
+                                                                                                                        ),
                                                                                                                     }}
-                                                                                                                />
-                                                                                                            </button>
+                                                                                                                >
+                                                                                                                    <label className="text-sm font-bold text-slate-600 dark:text-slate-200/75">
+                                                                                                                        Ordering
+                                                                                                                    </label>
+                                                                                                                    <div className="text-light text-slate-500 dark:text-slate-200/50">
+                                                                                                                        {
+                                                                                                                            container.completedItemOrder
+                                                                                                                        }
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            )}
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </div>
