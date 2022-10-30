@@ -134,7 +134,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                     ? boardTitle
                                     : 'Give your board a title.'
                             }
-                            className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none  dark:focus:ring-1 dark:focus:ring-slate-800"
+                            className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none  dark:focus:ring-1 dark:focus:ring-slate-800 text-sm sm:text-md"
                             required
                             onChange={handleUserInput}
                         />

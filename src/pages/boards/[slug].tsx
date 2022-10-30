@@ -25,9 +25,9 @@ const BoardDetail: NextPage = () => {
     const { slug } = router.query;
 
     return (
-        <>
+        <div className="h-auto ">
             <SortableBoard slug={parseSlug(slug)} />
-        </>
+        </div>
     );
 };
 

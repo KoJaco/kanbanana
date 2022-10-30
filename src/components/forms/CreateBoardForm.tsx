@@ -236,7 +236,7 @@ const CreateBoardForm = ({
         event.preventDefault();
         // insert an initial task in the first container, this is necessary so that auto creation of IDS works in our indexDB
         let slug = stringToRandomSlug(boardTitle);
-        let tags = boardTags === null ? initialTags : boardTags;
+        let tags = boardTags === null ? [] : boardTags;
         let containers =
             boardContainers === null ? initialContainers : boardContainers;
         let containerOrder =
@@ -441,7 +441,7 @@ const CreateBoardForm = ({
                                                                                 ? boardTitle
                                                                                 : 'Give your board a title.'
                                                                         }
-                                                                        className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none   dark:focus:ring-1 dark:focus:ring-slate-800 dark:focus:border-slate-600"
+                                                                        className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-slate-800 dark:focus:border-slate-600 text-sm sm:text-md"
                                                                         required
                                                                         onChange={
                                                                             handleBoardTitleInputChange

@@ -146,7 +146,7 @@ const ContainerForm = ({
                                 id="title"
                                 value={title}
                                 placeholder="Add a column title."
-                                className="p-2 block outline-primary border-1 border-gray-300 dark:border-slate-700 w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm invalid:border-pink-300 dark:bg-slate-900 dark:focus:ring-1 dark:focus:ring-slate-700 dark:focus:border-slate-800 dark:focus:outline-none"
+                                className="p-2 block outline-primary border-1 border-gray-300 dark:border-slate-700 w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm invalid:border-pink-300 dark:bg-slate-900 dark:focus:ring-1 dark:focus:ring-slate-700 dark:focus:border-slate-800 dark:focus:outline-none text-sm sm:text-md"
                                 onChange={handleInputChange}
                                 required
                             />
@@ -209,7 +209,7 @@ const ContainerForm = ({
                                     </Listbox.Label>
                                     <div className="relative mt-1">
                                         <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-1 dark:focus:ring-slate-700 dark:focus:border-slate-800 dark:focus:outline-none sm:text-sm">
-                                            <span className="block truncate">
+                                            <span className="block truncate text-sm sm:text-md">
                                                 {containerType?.name}
                                             </span>
                                             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -237,9 +237,9 @@ const ContainerForm = ({
                                                             }) =>
                                                                 clsx(
                                                                     active
-                                                                        ? 'text-gray-50 bg-dark-alt-bg dark:bg-offset-bg dark:text-slate-900'
+                                                                        ? 'text-gray-50 bg-dark-alt-bg dark:bg-offset-bg dark:text-slate-900 text-sm sm:text-md'
                                                                         : 'text-gray-900 dark:text-gray-50',
-                                                                    'relative cursor-default select-none py-2 pl-3 pr-9'
+                                                                    'relative cursor-default select-none py-2 pl-3 pr-9 text-sm sm:text-md'
                                                                 )
                                                             }
                                                             value={option}
@@ -303,7 +303,7 @@ const ContainerForm = ({
                             {({ open }) => (
                                 <>
                                     <Listbox.Label
-                                        className="block text-sm font-medium text-gray-700 dark:text-gray-50"
+                                        className="block font-medium text-gray-700 dark:text-gray-50 text-sm sm:text-md"
                                         style={{
                                             opacity: sortingOptionsDisabled
                                                 ? '0.50'
@@ -313,7 +313,7 @@ const ContainerForm = ({
                                         Completed Item Sorting
                                     </Listbox.Label>
                                     <div
-                                        className="relative mt-1 pb-10"
+                                        className="relative mt-1 pb-10 text-sm sm:text-md"
                                         style={{
                                             opacity: sortingOptionsDisabled
                                                 ? '0.50'
@@ -349,9 +349,9 @@ const ContainerForm = ({
                                                             }) =>
                                                                 clsx(
                                                                     active
-                                                                        ? 'text-gray-50 bg-dark-alt-bg dark:bg-offset-bg dark:text-slate-900'
+                                                                        ? 'text-gray-50 bg-dark-alt-bg dark:bg-offset-bg dark:text-slate-900 text-sm sm:text-md'
                                                                         : 'text-gray-900 dark:text-gray-50',
-                                                                    'relative cursor-default select-none py-2 pl-3 pr-9'
+                                                                    'relative cursor-default select-none py-2 pl-3 pr-9 text-sm sm:text-md'
                                                                 )
                                                             }
                                                             value={option}

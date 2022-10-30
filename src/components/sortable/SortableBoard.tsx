@@ -399,7 +399,7 @@ export default function SortableBoard({
 
     return (
         // <div className="flex flex-col flex-1 h-screen">
-        <div className="h-full w-full">
+        <div className="h-full w-full overflow-y-auto">
             <DndContext
                 sensors={sensors}
                 collisionDetection={collisionDetectionStrategy}
@@ -679,7 +679,15 @@ export default function SortableBoard({
 
                                 <div className="flex ml-auto">
                                     <p className="text-sm font-light p-2 text-slate-600 dark:text-white">
-                                        {board?.updatedAt.toLocaleString()}
+                                        {board?.updatedAt.toLocaleString(
+                                            'en-uk',
+                                            {
+                                                weekday: 'long',
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric',
+                                            }
+                                        )}
                                     </p>
                                 </div>
                             </div>
@@ -828,12 +836,12 @@ export default function SortableBoard({
                         document.body
                     )}
                 </div>
-                <div className="md:my-8 md:mr-6 px-6 md:px-8 text-slate-600 space-x-2 w-fit bg-white dark:bg-slate-800 rounded-full drop-shadow-lg fixed bottom-4 right-4 z-[120]">
+                <div className="md:my-8 md:mr-6 px-6 md:px-8 text-slate-600 space-x-2 w-fit bg-white dark:bg-slate-800 rounded-full drop-shadow-lg dark:border dark:border-slate-600 fixed bottom-4 right-4 z-[120]">
                     {scrollButtons.map((button, index) => (
                         <button
                             key={index}
                             onClick={() => scroller(button.direction)}
-                            className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed w-7 h-7 text-slate-600/[.8] hover:text-slate-600 dark:text-gray-50  transition-opacity duration-300"
+                            className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed w-7 h-7 text-slate-600/[.8] hover:text-slate-600 dark:text-gray-50  transition-opacity duration-300 "
                         >
                             {button.icon}
                         </button>
