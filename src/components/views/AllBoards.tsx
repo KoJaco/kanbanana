@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Board, BoardTags, UniqueIdentifier } from '@/core/types/sortableBoard';
 import clsx from 'clsx';
+import { useTheme } from 'next-themes';
 
 const tabs = ['months', 'weeks', 'days'];
 
@@ -80,6 +81,8 @@ interface Months {
 
 const AllBoards = () => {
     const [currentTime, setCurrentTime] = useState<string>('months');
+
+    const { theme } = useTheme();
 
     const boards = useLiveQuery(() => db.getAllBoards(true), []);
 
@@ -164,6 +167,19 @@ const AllBoards = () => {
     const router = useRouter();
 
     const data = router.query;
+
+    const textColorStyle = (colorName: string, textDark: boolean) => {
+        if (colorName === 'transparent' && theme === 'light') {
+            return 'rgba(0,0,0,1)';
+        } else if (colorName === 'transparent' && theme === 'dark') {
+            return 'rgba(255,255,255,1)';
+        }
+        if (textDark) {
+            return '#333';
+        } else {
+            return '#fff';
+        }
+    };
 
     // make sure boards is not undefined
     if (boards === undefined) return null;
@@ -303,17 +319,26 @@ const AllBoards = () => {
                                                                                     key={
                                                                                         index
                                                                                     }
-                                                                                    className="inline-block rounded-full px-2 py-0.5 text-xs font-medium"
+                                                                                    className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                                                                                        tag
+                                                                                            .backgroundColor
+                                                                                            .name ===
+                                                                                            'transparent' &&
+                                                                                        'border-1 border-slate-500'
+                                                                                    }`}
                                                                                     style={{
                                                                                         backgroundColor:
                                                                                             tag
                                                                                                 .backgroundColor
                                                                                                 .value,
-                                                                                        color: tag
-                                                                                            .backgroundColor
-                                                                                            .textDark
-                                                                                            ? '#333'
-                                                                                            : '#fff',
+                                                                                        color: textColorStyle(
+                                                                                            tag
+                                                                                                .backgroundColor
+                                                                                                .name,
+                                                                                            tag
+                                                                                                .backgroundColor
+                                                                                                .textDark
+                                                                                        ),
                                                                                     }}
                                                                                 >
                                                                                     {

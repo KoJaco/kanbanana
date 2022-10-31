@@ -1,11 +1,12 @@
 import { useState, useRef, Fragment } from 'react';
+import { useTheme } from 'next-themes';
 import { Menu, Transition } from '@headlessui/react';
 import Tag from '@/components/elements/Tag';
 import { BsBrush } from 'react-icons/bs';
 import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
 import ColorPicker from '@/components/pickers/ColorPicker';
 import { useOnClickOutside } from '@/core/hooks/index';
-import { MdOutlineDone } from 'react-icons/md';
+import { IoMdAdd } from 'react-icons/io';
 import { BoardTag, Color } from '@/core/types/sortableBoard';
 
 type TagFormProps = {
@@ -34,6 +35,8 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
 
     const [showColorPicker, setShowColorPicker] = useState(false);
 
+    const { theme } = useTheme();
+
     const colorPickerRef = useRef(null);
     const excludedColorPickerRef = useRef(null);
     useOnClickOutside(
@@ -48,6 +51,19 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
     function handleToggleColorPicker() {
         setShowColorPicker(!showColorPicker);
     }
+
+    const transparentTextColor = (colorName: string, textDark: boolean) => {
+        if (colorName === 'transparent' && theme === 'light') {
+            return 'rgba(0,0,0,1)';
+        } else if (colorName === 'transparent' && theme === 'dark') {
+            return 'rgba(255,255,255,1)';
+        }
+        if (textDark) {
+            return '#333';
+        } else {
+            return '#fff';
+        }
+    };
 
     // not a form, just keeps track of inputs
     return (
@@ -78,7 +94,9 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                             placeholder="Write your tag here."
                             className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none  dark:focus:ring-1 dark:focus:ring-slate-800 text-sm sm:text-md"
                             onChange={(event) =>
-                                setTagText(event.currentTarget.value)
+                                setTagText(
+                                    event.currentTarget.value.toLowerCase()
+                                )
                             }
                         />
                     </div>
@@ -105,15 +123,16 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                             <button
                                 type="button"
                                 ref={excludedColorPickerRef}
-                                className="cursor-pointer rounded-full items-center p-1"
+                                className={`cursor-pointer rounded-full items-center p-1 ${
+                                    colorState.name === 'transparent' &&
+                                    'border-1 border-slate-500'
+                                }`}
                                 style={{
-                                    backgroundColor:
-                                        colorState.value === '#FFFFFF00'
-                                            ? '#CDCDCD'
-                                            : colorState.value,
-                                    color: colorState.textDark
-                                        ? '#333'
-                                        : '#fff',
+                                    backgroundColor: colorState.value,
+                                    color: transparentTextColor(
+                                        colorState.name,
+                                        colorState.textDark
+                                    ),
                                 }}
                                 onClick={handleToggleColorPicker}
                             >
@@ -143,12 +162,9 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                     <div className="mt-1">
                         <button
                             type="button"
-                            className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-green-500 text-gray-50 hover:border-green-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500  drop-shadow disabled:cursor-not-allowed"
+                            className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border-1  border-gray-200 bg-emerald-500 text-gray-50 hover:border-green-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 drop-shadow disabled:cursor-not-allowed"
                             onClick={() => {
-                                console.log('saved');
-                                console.log(props.tagIndex);
                                 if (addOrEdit === 'edit') {
-                                    console.log('update hit');
                                     // if update, i.e. given an index
                                     props.handleAddOrUpdateTag(
                                         {
@@ -158,8 +174,6 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                                         props.tagIndex
                                     );
                                 } else {
-                                    console.log('add hit');
-
                                     props.handleAddOrUpdateTag({
                                         text: tagText,
                                         backgroundColor: colorState,
@@ -169,10 +183,7 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                             disabled={tagText.length === 0}
                         >
                             <span className="sr-only">Save column</span>
-                            <MdOutlineDone
-                                className="h-5 w-5 "
-                                aria-hidden="true"
-                            />
+                            <IoMdAdd className="h-5 w-5 " aria-hidden="true" />
                         </button>
                     </div>
                 </div>

@@ -3,14 +3,12 @@ import { AiOutlineDelete } from 'react-icons/ai';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import { db } from '@/server/db';
 import { BsBrush } from 'react-icons/bs';
-import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
 import ColorPicker from '@/components/pickers/ColorPicker';
 
 import { MdOutlineDone } from 'react-icons/md';
 
 import { useOnClickOutside, useOnClickInsideOnly } from '@/core/hooks';
 import { TItem, Color, UniqueIdentifier } from '@/core/types/sortableBoard';
-import { Disclosure, Transition } from '@headlessui/react';
 
 var omit = require('object.omit');
 

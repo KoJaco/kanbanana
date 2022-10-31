@@ -207,14 +207,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                             className="bg-transparent hover:scale-110 text-gray-500 transition-transform duration-300"
                             onClick={handleAddItem}
                         >
-                            <MdAdd
-                                className="w-5 h-5 text-gray-500"
-                                // style={{
-                                //     color: container?.badgeColor.textDark
-                                //         ? '#333'
-                                //         : '#fff',
-                                // }}
-                            />
+                            <MdAdd className="w-5 h-5 text-gray-500" />
                         </button>
                     )}
                 </div>
@@ -222,7 +215,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                 {container && (
                     <>
                         <div className="flex items-center justify-between mt-auto inset-y-0 border-t dark:border-slate-600 transition-opacity duration-300 py-2 px-1">
-                            <button
+                            {/* <button
                                 type="button"
                                 className="w-5 h-5 rounded-md hover:bg-red-600 cursor-pointer text-gray-500 hover:text-gray-50 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
                                 // button is disabled if we only have one column, OR if we will be deleting all our tasks.
@@ -234,18 +227,11 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                                 // }
                                 onClick={onRemove}
                             >
-                                <AiOutlineDelete
-                                    className="w-4 h-4"
-                                    // style={{
-                                    //     color: container?.badgeColor.textDark
-                                    //         ? '#333'
-                                    //         : '#fff',
-                                    // }}
-                                />
-                            </button>
+                                <AiOutlineDelete className="w-4 h-4" />
+                            </button> */}
 
                             <button
-                                className="items-center justify-end text-slate-500 py-2 rounded-full hover:text-red-500 cursor-pointer transition-color duration-300"
+                                className="ml-auto items-center justify-end text-slate-500 py-2 rounded-full hover:text-red-500 cursor-pointer transition-color duration-300"
                                 // style={{
                                 //     color: container?.badgeColor.textDark
                                 //         ? '#333'
@@ -278,6 +264,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                                     handleAddOrUpdateContainer={
                                         handleUpdateContainer
                                     }
+                                    handleRemoveContainer={onRemove}
                                 />
                             </div>
                         )}

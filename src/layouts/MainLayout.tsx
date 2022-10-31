@@ -19,7 +19,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 setSidebarOpen={setSidebarOpen}
             />
 
-            <div className="md:pl-64 flex flex-1 flex-col dark:bg-slate-900 h-screen">
+            <div className="lg:pl-64 flex flex-1 flex-col dark:bg-slate-900 h-screen">
                 {/* Navbar */}
                 <Navbar setSidebarOpen={setSidebarOpen} />
 

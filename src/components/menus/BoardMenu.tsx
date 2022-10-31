@@ -16,8 +16,7 @@ const BoardMenu = () => {
     // TODO: Add showTags and showTimestamp options, add styling for each if they're selected... maybe show tags on hover, or beneath.
     // const { boardCount, setBoardCount } = useKanbanStore();
 
-    const { sidebarOpen, setSidebarOpen, screenSize, currentColor } =
-        useUIControlStore();
+    const { setSidebarOpen } = useUIControlStore();
 
     const router = useRouter();
     const currentRoute = router.asPath;
@@ -189,7 +188,7 @@ const BoardMenu = () => {
                 </div>
                 <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
                     {/* Dynamic component, client-side only */}
-                    <ol className="inline-flex px-2 items-center gap-y-2 space-x-1 w-full max-h-96 py-4 whitespace-normal flex-wrap">
+                    <ol className="inline-flex px-2 items-center gap-y-2  gap-x-1 w-full max-h-96 py-4 whitespace-normal flex-wrap">
                         {allTags.map((tag, index) => (
                             <Link
                                 key={index}

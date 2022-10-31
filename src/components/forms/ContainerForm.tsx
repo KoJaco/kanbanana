@@ -12,12 +12,14 @@ import { useOnClickOutside } from '@/core/hooks/index';
 import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
 import ColorPicker from '@/components/pickers/ColorPicker';
 import Tooltip from '@/components/tooltip/Tooltip';
+import { AiOutlineDelete } from 'react-icons/ai';
 
 type ContainerFormProps = {
     id: UniqueIdentifier;
     // can optionally be given a container to edit.
     container?: TContainer;
     handleAddOrUpdateContainer: (container: TContainer) => void;
+    handleRemoveContainer?: () => void;
 };
 
 const containerOptions: {
@@ -401,7 +403,7 @@ const ContainerForm = ({
                             )}
                         </Listbox>
                     </div>
-                    <div className="flex flex-col mt-5">
+                    {/* <div className="flex flex-col mt-5">
                         <button
                             type="button"
                             className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-green-500 text-gray-50 hover:border-green-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary  drop-shadow disabled:cursor-not-allowed"
@@ -422,17 +424,28 @@ const ContainerForm = ({
                                 aria-hidden="true"
                             />
                         </button>
-                        {/* {title.length === 0 && (
-                            <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                You must add a title to add a container.
-                            </span>
-                        )} */}
-                    </div>
+                    </div> */}
                 </div>
-                {/* <div className="flex space-x-3 items-end text-sm group mt-3">
+                <div className="flex flex-shrink-0 justify-end pr-2">
+                    {props.handleRemoveContainer && (
+                        <button
+                            type="button"
+                            className="rounded-md border mr-auto border-gray-300 dark:border-slate-700 bg-red-400 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            onClick={props.handleRemoveContainer}
+                        >
+                            Delete Column
+                        </button>
+                    )}
+                    {/* <button
+                    type="button"
+                    className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onClick={() => setShowForm(false)}
+                >
+                    Cancel
+                </button> */}
                     <button
-                        type="button"
-                        className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary  drop-shadow disabled:cursor-not-allowed"
+                        type="submit"
+                        className="ml-auto inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-dark-alt focus:outline-none transition-color duration-300 disabled:cursor-not-allowed invalid:border-pink-500"
                         onClick={() => {
                             handleAddOrUpdateContainer({
                                 id: props.id,
@@ -444,28 +457,46 @@ const ContainerForm = ({
                         }}
                         disabled={title.length === 0}
                     >
-                        <span className="sr-only">Add</span>
-                        <MdOutlineDone
-                            className="h-5 w-5 "
-                            aria-hidden="true"
-                        />
+                        Save
                     </button>
-                    {title.length === 0 && (
-                        <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            You must add a title to add a container.
-                        </span>
+                </div>
+                {/* <div className="w-full flex flex-row">
+                    {props.handleRemoveContainer && (
+                        <button
+                            type="button"
+                            className="inline-flex px-2 py-1 flex-shrink-0 items-center justify-center rounded-md border-1  border-gray-200 bg-red-500 text-gray-50 hover:border-red-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed text-sm"
+                            // button is disabled if we only have one column, OR if we will be deleting all our tasks.
+                            // disabled={
+                            //     columns === 1 ? true : false
+                            //     // ||
+                            //     //   totalItemCount ===
+                            //     //       columnTasks!.length
+                            // }
+                            onClick={props.handleRemoveContainer}
+                        >
+                            Delete
+                        </button>
                     )}
-                </div> */}
-                {/* {showColorPicker && (
-                    <div
-                        ref={colorPickerRef}
-                        className="flex justify-end relative mt-4"
+
+                    <button
+                        type="button"
+                        className="ml-auto inline-flex px-2 py-1 flex-shrink-0 items-center justify-center rounded-md border-1  border-gray-200 bg-green-500 text-gray-50 hover:border-green-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed text-sm"
+                        onClick={() => {
+                            handleAddOrUpdateContainer({
+                                id: props.id,
+                                title: title,
+                                type: containerType!.key,
+                                completedItemOrder: itemSortingType!.key,
+                                badgeColor: badgeColor,
+                            });
+                        }}
+                        disabled={title.length === 0}
                     >
-                        <ColorPickerPalette
-                            handlePickColor={handleSetBadgeColor}
-                        />
-                    </div>
-                )} */}
+                        Save
+                        <span className="sr-only">Save column</span>
+
+                    </button>
+                </div> */}
             </div>
         </>
     );

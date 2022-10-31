@@ -2,6 +2,7 @@ import { useTheme } from 'next-themes';
 import { useUIControlStore } from '@/stores/UIControlStore';
 import React from 'react';
 import { MdMenuOpen } from 'react-icons/md';
+import Link from 'next/link';
 
 type NavbarProps = {
     setSidebarOpen: (value: boolean) => void;
@@ -9,12 +10,12 @@ type NavbarProps = {
 
 const Navbar = ({ setSidebarOpen }: NavbarProps) => {
     const { theme, setTheme } = useTheme();
-    const { currentMode, setCurrentMode } = useUIControlStore();
+    const { currentMode } = useUIControlStore();
     return (
         <div className="sticky top-0 z-[150] flex h-16 flex-shrink-0 bg-white dark:bg-slate-900 dark:border-b dark:border-slate-700/[0.5] dark:shadow-slate-900 shadow dark:shadow-sm">
             <button
                 type="button"
-                className="border-r dark:border-slate-700 px-4 text-gray-500 dark:text-gray-50 focus:outline-none focus:ring-0 md:hidden"
+                className="border-r dark:border-slate-700 px-4 text-gray-500 dark:text-gray-50 focus:outline-none focus:ring-0 lg:hidden"
                 onClick={() => setSidebarOpen(true)}
             >
                 <span className="sr-only">Open sidebar</span>
@@ -22,13 +23,12 @@ const Navbar = ({ setSidebarOpen }: NavbarProps) => {
             </button>
             <div className="flex flex-1 justify-between px-4">
                 <div className="flex flex-1"></div>
-                <div className="ml-4 flex items-center md:ml-6 gap-x-6">
-                    <button
-                        type="button"
-                        className="rounded-full bg-transparent p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:drop-shadow-sm transition-shadow duration-300"
-                    >
-                        <span className="px-1">Why the bananas?</span>
-                    </button>
+                <div className="ml-4 flex items-center lg:ml-6 gap-x-6">
+                    <Link type="button" href="/" passHref={true}>
+                        <a className="rounded-full bg-transparent p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-slate-500 focus:drop-shadow-sm transition-shadow duration-300 cursor-pointer px-1">
+                            Why the bananas?
+                        </a>
+                    </Link>
                     <div className="ml-4 mt-1">
                         <label className="appearance-none">
                             <input

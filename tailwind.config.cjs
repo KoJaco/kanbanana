@@ -175,7 +175,7 @@ module.exports = {
                 '.scrollbar-rounded::-webkit-scrollbar': {
                     display: 'block',
                     width: '6px',
-                    height: '18px',
+                    height: '10px',
                 },
                 '.scrollbar-rounded-horizontal::-webkit-scrollbar': {
                     display: 'block',
@@ -196,7 +196,7 @@ module.exports = {
                 '.scrollbar-rounded::-webkit-scrollbar-thumb': {
                     background: '#FFFFFF00',
                     borderRadius: '100vh',
-                    border: '3px solid #FFFFFF00',
+                    border: '3px solid #0f172a',
                 },
                 '.scrollbar-rounded-horizontal::-webkit-scrollbar-thumb': {
                     background: '#666',
@@ -205,7 +205,7 @@ module.exports = {
                 },
 
                 '.scrollbar-rounded::-webkit-scrollbar-thumb:hover': {
-                    background: '#00176D',
+                    background: '#0f172a',
                 },
 
                 '.scrollbar-rounded-horizontal::-webkit-scrollbar-thumb:hover':

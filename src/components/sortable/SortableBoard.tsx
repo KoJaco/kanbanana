@@ -654,7 +654,7 @@ export default function SortableBoard({
                                     <MdOutlineEdit className="w-4 h-4 lg:w-5 lg:h-5" />
                                 </button>
                             </div>
-                            <div className="flex flex-row items-start gap-8">
+                            <div className="flex flex-row items-end gap-8">
                                 <div
                                     id="tags"
                                     className="inline-flex mt-auto mb-2 gap-x-2"

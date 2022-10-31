@@ -1,14 +1,19 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Dialog, Transition } from '@headlessui/react';
 import { MdClose } from 'react-icons/md';
 import { AiOutlineAppstoreAdd } from 'react-icons/ai';
 import { SiKibana } from 'react-icons/si';
-
+import { TbDatabaseExport } from 'react-icons/tb';
+import { VscExport } from 'react-icons/vsc';
+import { useOnClickOutside } from '@/core/hooks/index';
 import CreateBoardForm from '@/components/forms/CreateBoardForm';
-import { useRouter } from 'next/router';
-import { useUIControlStore } from '@/stores/UIControlStore';
+import BaseModal from '@/components/modals/BaseModal';
+
+const Dropzone = dynamic(() => import('@/components/files/Dropzone'), {
+    ssr: false,
+});
 
 const BoardMenu = dynamic(() => import('@/components/menus/BoardMenu'), {
     ssr: false,
@@ -21,11 +26,10 @@ type SidebarProps = {
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     const [showCreateBoardForm, setShowCreateBoardForm] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
-    const { screenSize, currentColor } = useUIControlStore();
-
-    const router = useRouter();
-    const currentRoute = router.asPath;
+    const modalContentRef = useRef(null);
+    useOnClickOutside(modalContentRef, () => setShowModal(false));
 
     function handleShowCreateBoardForm() {
         setSidebarOpen(false);
@@ -34,12 +38,25 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
     return (
         <>
+            <BaseModal open={showModal} setOpen={setShowModal}>
+                <div
+                    id="modalWrapper"
+                    className="flex w-full h-full items-center justify-center"
+                >
+                    <div
+                        ref={modalContentRef}
+                        className="flex max-w-3/4 max-h-1/2 bg-white dark:bg-slate-900 p-10 rounded-md gap-x-6 shadow-lg"
+                    >
+                        <Dropzone />
+                    </div>
+                </div>
+            </BaseModal>
             <CreateBoardForm
                 showBoardForm={showCreateBoardForm}
                 setShowBoardForm={setShowCreateBoardForm}
             />
             <Transition.Root show={sidebarOpen} as={Fragment}>
-                <Dialog as="div" className="md:hidden" onClose={setSidebarOpen}>
+                <Dialog as="div" className="lg:hidden" onClose={setSidebarOpen}>
                     <Transition.Child
                         as={Fragment}
                         enter="transition-opacity ease-linear duration-300"
@@ -154,7 +171,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </Transition.Root>
 
             {/* DESKTOP: static sidebar */}
-            <div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col dark:border-r dark:border-slate-700/[0.5] dark:shadow-slate-800/[0.5] dark:shadow-md">
+            <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col dark:border-r dark:border-slate-700/[0.5] dark:shadow-slate-800/[0.5] dark:shadow-md">
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className="pt-5 flex flex-grow flex-col overflow-y-auto bg-gradient-to-b from-primary to-primary-dark-alt dark:bg-gradient-to-b dark:from-slate-800 dark:to-slate-900">
                     <div className="flex flex-shrink-0 items-center px-4">
@@ -189,18 +206,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         </nav>
                     </div>
                     {/* Sidebar Footer Desktop */}
-                    <div className="flex flex-shrink-0 bg-transparent py-4 px-2">
+                    <div className="flex flex-shrink-0 bg-transparent py-4 px-2 group hover:bg-offset-bg transition-color duration-300">
                         <div className="group block w-full flex-shrink-0">
-                            <div className="flex items-center">
-                                <div></div>
-                                <div className="ml-3">
-                                    <p className="text-sm font-medium text-indigo-100 dark:text-slate-50">
+                            <div className="flex items-center py-2">
+                                <button
+                                    className="mx-3 flex w-full justify-between"
+                                    onClick={() => {
+                                        setShowModal(!showModal);
+                                    }}
+                                >
+                                    <p className="text-sm font-medium text-indigo-100 dark:text-slate-50 group-hover:text-slate-900 transition-color duration-300">
                                         Database Import/Export
                                     </p>
-                                    <div className="flex gap-5 text-xs font-medium text-indigo-200 dark:text-slate-50">
-                                        Coming soon!
-                                    </div>
-                                </div>
+
+                                    <TbDatabaseExport className="w-5 h-5 flex gap-5 text-xs font-medium text-indigo-200 dark:text-slate-50 group-hover:text-slate-900 transition-color duration-300" />
+                                </button>
                             </div>
                         </div>
                     </div>

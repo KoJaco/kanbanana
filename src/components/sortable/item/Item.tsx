@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, Fragment } from 'react';
 import clsx from 'clsx';
 import type { DraggableSyntheticListeners } from '@dnd-kit/core';
 import type { Transform } from '@dnd-kit/utilities';
@@ -6,7 +6,9 @@ import { Handle } from '../components';
 import { TItem, UniqueIdentifier } from '@/core/types/sortableBoard';
 import ItemForm from '@/components/forms/ItemForm';
 import { FiEdit } from 'react-icons/fi';
+import { BiCheck } from 'react-icons/bi';
 
+import { Transition } from '@headlessui/react';
 import styles from './Item.module.css';
 import { useOnClickOutside } from '@/core/hooks';
 import { db } from '@/server/db';
@@ -111,6 +113,14 @@ export const Item = React.memo(
             ) {
                 // const item = document.getElementById(`item-${itemId}`);
                 if (itemId) {
+                    // if (item && item.classList.contains('checked')) {
+                    //     item.style.opacity = '1';
+                    //     item.classList.remove('checked');
+                    // } else if (item) {
+                    //     item.style.opacity = '0.5';
+                    //     item.classList.add('checked');
+                    // }
+
                     db.transaction('rw', db.boards, async () => {
                         await db.boards
                             .where('slug')
@@ -234,7 +244,6 @@ export const Item = React.memo(
                                             'Something went wrong!'
                                         );
                                 }
-
                                 // toggle completed item state, happens for all cases
                                 boardItem.items[itemId].completed =
                                     !completedItemState;
@@ -280,7 +289,7 @@ export const Item = React.memo(
                                 });
                             // catch any errors
                         });
-                    }, 300);
+                    }, 500);
                 }
             }
 
@@ -303,10 +312,10 @@ export const Item = React.memo(
                     id={`item-${item?.id}`}
                     key={index}
                     className={clsx(
-                        'group opacity-100 transition-opacity duration-300',
-                        props.containerType === 'checklist' &&
-                            item?.completed &&
-                            'opacity-50',
+                        'group transition-opacity duration-300',
+                        props.containerType === 'checklist' && item?.completed
+                            ? 'opacity-50'
+                            : 'opacity-100',
                         styles.Wrapper,
                         fadeIn && styles.fadeIn,
                         sorting && styles.sorting,
@@ -407,22 +416,30 @@ export const Item = React.memo(
                                 <div>
                                     {props?.containerType === 'checklist' &&
                                         props.completedItemOrder && (
-                                            <button
-                                                type="button"
-                                                className="w-7 h-7 rounded-full border-1 border-gray-300 dark:border-slate-500 place-self-center self-center -translate-y-2 mr-4 hover:shadow"
-                                                onClick={() =>
-                                                    props.completedItemOrder ===
-                                                    'remove'
-                                                        ? handleRemoveItem(
-                                                              item?.id,
-                                                              containerId
-                                                          )
-                                                        : handleToggleChecklistItem(
-                                                              item?.id,
-                                                              containerId
-                                                          )
-                                                }
-                                            ></button>
+                                            <label
+                                                htmlFor="itemCheckbox"
+                                                className="cursor-pointer"
+                                            >
+                                                <input
+                                                    // id="checkItem"
+                                                    type="button"
+                                                    className="appearance-none w-7 h-7 rounded-full border-1 border-gray-300 dark:border-slate-500 place-self-center self-center -translate-y-2 mr-4 hover:shadow cursor-pointer"
+                                                    onClick={() =>
+                                                        props.completedItemOrder ===
+                                                        'remove'
+                                                            ? handleRemoveItem(
+                                                                  item?.id,
+                                                                  containerId
+                                                              )
+                                                            : handleToggleChecklistItem(
+                                                                  item?.id,
+                                                                  containerId
+                                                              )
+                                                    }
+                                                />
+
+                                                {/* <BiCheck className="w-6 h-6 text-slate-500 checkItem transition" /> */}
+                                            </label>
                                         )}
                                 </div>
 

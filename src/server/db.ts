@@ -40,6 +40,21 @@ export class KanbanBoardDexie extends Dexie {
             : this.boards.orderBy('updatedAt').toArray();
     }
 
+    // getCurrentDatabaseMetaData() {
+    //     const metaDataObject = {
+    //         databaseName: '',
+    //         databaseVersion: 0,
+    //         tables: [
+    //             {
+    //                 name: '',
+    //                 rowCount: 0,
+    //                 schema: 'slug, tag, updatedAt',
+    //             },
+    //         ],
+    //     };
+    //     return;
+    // }
+
     addBoard(
         title: string,
         slug: string,

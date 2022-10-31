@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* 
+
 html,
 body {
     padding: 0;
@@ -10,4 +10,18 @@ body {
 
 * {
     box-sizing: border-box;
+}
+
+/* #itemCheckbox:checked ~ .checkItem {
+    animation: animateCheckbox 0.5s 1;
+}
+
+@keyframes animateCheckbox {
+    0%,
+    100% {
+        @apply transform scale-100 text-opacity-100;
+    }
+    50% {
+        @apply transform scale-150 text-opacity-0;
+    }
 } */
