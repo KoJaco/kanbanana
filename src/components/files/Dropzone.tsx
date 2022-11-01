@@ -1,14 +1,45 @@
 import React, { useCallback, useState } from 'react';
 import { FileWithPath, useDropzone } from 'react-dropzone';
-import { exportDB, importDB, peakImportFile } from 'dexie-export-import';
-import { db } from '@/server/db';
+import {
+    exportDB,
+    importDB,
+    importInto,
+    peakImportFile,
+} from 'dexie-export-import';
+import { db, KanbanBoardDexie } from '@/server/db';
 import download from 'downloadjs';
 
 import { ExportProgress } from 'dexie-export-import/dist/export';
-import { VscExport } from 'react-icons/vsc';
+import { BsDownload, BsUpload } from 'react-icons/bs';
+import { MdOutlineDone } from 'react-icons/md';
 import { stringToSlug } from '@/core/utils/misc';
 
-const Dropzone = () => {
+import clsx from 'clsx';
+import assert from 'assert';
+import { IndexableType, Table } from 'dexie';
+import { UniqueIdentifier } from '@/core/types/sortableBoard';
+
+type DbSchemaMatch = {
+    tableName: string;
+    match: boolean;
+    currentRowCount: number | Promise<number>;
+};
+
+interface DbSchemaMatches {
+    [key: UniqueIdentifier]: DbSchemaMatch;
+}
+interface ImportState {
+    importInto: boolean;
+    dbSchemaMatches: DbSchemaMatches | null;
+}
+
+type LoadingType = 'Importing' | 'Exporting';
+
+type DropZoneProps = {
+    handleCloseModal: (value: boolean) => void;
+};
+
+const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
     const onDrop = useCallback(async (acceptedFiles: FileWithPath[]) => {
         // do something
         acceptedFiles.forEach(async (file) => {
@@ -19,8 +50,7 @@ const Dropzone = () => {
             reader.onload = () => {
                 // do whatever with the file content
                 // const binaryStr = reader.result;
-
-                handleSetMetaDataObject(file);
+                handleSetData(file);
             };
             reader.readAsArrayBuffer(file);
         });
@@ -53,32 +83,119 @@ const Dropzone = () => {
     // });
 
     const [metaDataObject, setMetaDataObject] = useState({
+        formatName: '',
+        formatVersion: 0,
         databaseName: '',
         databaseVersion: 0,
         tables: [
             {
                 name: '',
-                rowCount: 9,
+                rowCount: 0,
                 schema: '',
             },
         ],
     });
 
+    const [currentDbObject, setCurrentDbObject] = useState<{
+        databaseName: string;
+        tables: {
+            name: string;
+            rowCount: number;
+            schema: string;
+        }[];
+    }>({
+        databaseName: db.name,
+        tables: [
+            {
+                name: '',
+                rowCount: 0,
+                schema: '',
+            },
+        ],
+    });
+
+    const [loadingStatus, setLoadingStatus] = useState({
+        inProgress: false,
+        done: true,
+        totalRows: 0,
+        completedRows: 0,
+    });
+
+    const [importBlob, setImportBlob] = useState<FileWithPath | null>(null);
+
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         setFilename(event.currentTarget.value);
     }
 
-    async function handleSetMetaDataObject(file: FileWithPath) {
+    function handleDone() {
+        handleCloseModal(false);
+        setLoadingStatus({
+            ...loadingStatus,
+            done: true,
+        });
+        setImportBlob(null);
+    }
+
+    async function handleSetData(file: FileWithPath) {
+        setImportBlob(file);
         const importMeta = await peakImportFile(file);
-        setMetaDataObject(importMeta.data);
-        // console.log(importMeta.data);
-        // console.log(importMeta);
-        // console.log(
-        //     'Tables ',
-        //     importMeta.data.tables.map(
-        //         (t) => `${t.name} (${t.rowCount} rows) + schema: ${t.schema}`
-        //     )
-        // );
+        setMetaDataObject({
+            formatName: importMeta.formatName,
+            formatVersion: importMeta.formatVersion,
+            ...importMeta.data,
+        });
+
+        let i = 0;
+        db.tables.forEach((table) => {
+            assert(table === db[table.name]);
+            const tableName = table.name;
+
+            const tableRowCount = async (table: Table<any, IndexableType>) => {
+                return await table.toCollection().count();
+            };
+
+            const primKeyObj = table.schema.primKey;
+            assert(primKeyObj.name === primKeyObj.keyPath);
+            let tableSchema = primKeyObj.name;
+            const indexObjs = table.schema.indexes;
+            for (let j = 0; j < indexObjs.length; j++) {
+                let iObj = indexObjs[j];
+                if (iObj) {
+                    assert(iObj.name === iObj.keyPath);
+                    tableSchema = tableSchema + ',' + iObj.name;
+                }
+            }
+            let tableObject = {
+                name: tableName,
+                rowCount: 0,
+                schema: tableSchema,
+            };
+
+            let rowCount = tableRowCount(table)
+                .then((result) => result)
+                .then((result) => {
+                    tableObject.rowCount = result;
+                })
+                .catch((error) => console.error(error));
+
+            if (i === 0) {
+                let newTables = Array.from(currentDbObject.tables);
+                newTables.push(tableObject);
+                newTables.splice(0, 1);
+                setCurrentDbObject({
+                    ...currentDbObject,
+                    tables: newTables,
+                });
+            } else {
+                let newTables = Array.from(currentDbObject.tables);
+                newTables.push(tableObject);
+                setCurrentDbObject({
+                    ...currentDbObject,
+                    tables: newTables,
+                });
+            }
+            i + 1;
+        });
     }
 
     async function handleExportDB() {
@@ -97,18 +214,75 @@ const Dropzone = () => {
         }
     }
 
-    async function handleImportDB() {}
+    async function handleImportDB() {
+        if (importBlob !== null) {
+            const dbNamesEqual =
+                currentDbObject.databaseName === metaDataObject.databaseName;
+            let schemaEqual = false;
+            for (let i = 0; i < currentDbObject.tables.length; i++) {
+                let currentDbTable = currentDbObject.tables[i];
+                let currentMetaDataTable = metaDataObject.tables[i];
+                if (currentDbTable && currentMetaDataTable) {
+                    schemaEqual =
+                        currentDbTable.schema === currentMetaDataTable.schema;
+                }
+            }
+            if (dbNamesEqual && schemaEqual) {
+                // importInto
+
+                await importInto(db, importBlob, {
+                    overwriteValues: true,
+                    progressCallback: progressCallback,
+                });
+            } else {
+                // import as a separate database
+                const db = await importDB(importBlob, {
+                    progressCallback: progressCallback,
+                });
+            }
+        } else {
+            throw new Error(
+                'Something went wrong, there is no file to import!'
+            );
+        }
+    }
 
     function progressCallback({ totalRows, completedRows }: ExportProgress) {
+        let newImportStatus = { ...loadingStatus, done: false };
+        if (totalRows) {
+            newImportStatus = {
+                inProgress: true,
+                done: false,
+                totalRows: totalRows,
+                completedRows: completedRows,
+            };
+        } else {
+            newImportStatus = {
+                inProgress: true,
+                done: false,
+                totalRows: 0,
+                completedRows: completedRows,
+            };
+        }
         console.log(
             `progress: ${completedRows} of ${totalRows} rows completed`
         );
-        return true;
+        if (completedRows === totalRows) {
+            setLoadingStatus({
+                inProgress: false,
+                done: false,
+                totalRows: totalRows,
+                completedRows: completedRows,
+            });
+            return true;
+        }
+        setLoadingStatus(newImportStatus);
+        return false;
     }
 
     const acceptedFileItems = acceptedFiles.map((file: FileWithPath) => {
         return (
-            <li key={file.path}>
+            <li className="" key={file.path}>
                 {file.path} - {file.size} bytes
             </li>
         );
@@ -116,123 +290,247 @@ const Dropzone = () => {
 
     return (
         <>
-            <div className="flex flex-col gap-y-8">
-                <div className="flex flex-row">
-                    <p className="text-sm dark:text-slate-200/50 whitespace-normal">
-                        Import a database that you have exported on another
-                        device, or export your existing database to share with
-                        yourself or others!
-                    </p>
-                </div>
-                <div className="flex flex-row w-full gap-x-10">
-                    <div className="flex flex-col w-full">
-                        <h1 className="text-xl dark:text-slate-200/75 self-start mb-4 w-full border-b pb-2 dark:border-slate-700">
-                            Import
-                        </h1>
+            <div className="flex flex-col gap-y-8 w-full h-full">
+                {!loadingStatus.inProgress && loadingStatus.done ? (
+                    <>
+                        <div className="flex flex-row">
+                            <p className="text-sm dark:text-slate-200/50 whitespace-normal">
+                                Import a database from another device, or export
+                                your existing database to share with yourself or
+                                others!
+                            </p>
+                        </div>
+                        <div className="flex flex-row w-full gap-x-10">
+                            <div className="flex flex-col w-full">
+                                <h1 className="text-xl dark:text-slate-200/75 self-start mb-4 w-full border-b pb-2 dark:border-slate-700">
+                                    Import
+                                </h1>
 
-                        <div>
-                            <div
-                                id="dropzone"
-                                className="flex items-center justify-center border-1 border-dashed border-black dark:border-white w-full h-32 rounded-lg text-md opacity-50 hover:border-solid dark:hover:border-indigo-500 cursor-pointer transition-color duration-100"
-                                {...getRootProps()}
-                            >
-                                <input {...getInputProps()} />
-                                {/* <input /> */}
-                                {isDragAccept && (
-                                    <p className="text-indigo-500 w-2/3">
-                                        File type accepted
-                                    </p>
-                                )}
-                                {isDragReject && (
-                                    <p className="text-red-500 w-2/3">
-                                        File must be in JSON format
-                                    </p>
-                                )}
-                                {!isDragActive && (
-                                    <p className="w-2/3">
-                                        Drop database JSON file here or click to
-                                        open dialog
-                                    </p>
-                                )}
-                            </div>
-                            {acceptedFileItems.length > 0 && (
-                                <>
-                                    <div className="grid grid-cols-2 gap-x-2 items-start mt-4 w-full">
-                                        <div className="">
-                                            <p className="text-sm mt-2 dark:text-slate-200/75">
-                                                File accepted
+                                <div>
+                                    <div
+                                        id="dropzone"
+                                        className={clsx(
+                                            'flex items-center justify-center border-1 border-dashed border-black dark:border-white w-full h-32 rounded-lg text-md opacity-50 hover:border-solid  cursor-pointer transition-color duration-100',
+                                            acceptedFiles.length > 0 &&
+                                                'dark:border-emerald-500',
+                                            isDragAccept &&
+                                                'dark:border-emerald-500',
+                                            isDragReject &&
+                                                'dark:border-red-500'
+                                        )}
+                                        {...getRootProps()}
+                                    >
+                                        <input {...getInputProps()} />
+                                        {/* <input /> */}
+                                        {isDragAccept && (
+                                            <p className="text-emerald-500 w-2/3">
+                                                File type accepted
                                             </p>
-                                            <ul className="text-sm dark:text-slate-200/50 whitespace-normal">
-                                                {acceptedFileItems}
-                                            </ul>
-                                        </div>
-                                        <div className="flex flex-col mt-2 ml-2 w-full gap-x-4 text-sm">
-                                            <p className="dark:text-slate-200/75">
-                                                Importing database:
+                                        )}
+                                        {isDragReject && (
+                                            <p className="text-red-500 w-2/3">
+                                                File must be in JSON format
                                             </p>
-                                            <div className="flex gap-x-4">
-                                                <p className="dark:text-slate-200/50">
-                                                    {
-                                                        metaDataObject.databaseName
-                                                    }
-                                                </p>
-
-                                                {metaDataObject.tables.map(
-                                                    (table, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className=""
-                                                        >
-                                                            <p className="dark:text-slate-200/50">
-                                                                {table.name}{' '}
-                                                                <span>
-                                                                    (
-                                                                    {
-                                                                        table.rowCount
-                                                                    }
-                                                                    )
-                                                                </span>
-                                                            </p>
-                                                        </div>
-                                                    )
-                                                )}
-                                            </div>
-                                        </div>
+                                        )}
+                                        {!isDragActive && (
+                                            <p className="w-2/3">
+                                                Drop database JSON file here or
+                                                click to open dialog
+                                            </p>
+                                        )}
                                     </div>
-                                    <button className="flex mt-6 items-center justify-center w-full ml-auto  rounded-md text-md dark:text-slate-200 ">
+                                    {acceptedFileItems.length > 0 && (
+                                        <>
+                                            <div className="grid grid-rows-2 gap-x-2 items-start mt-4 w-full">
+                                                <div className="grid-rows-1">
+                                                    <p className="text-sm mt-2 dark:text-slate-200/75">
+                                                        File accepted
+                                                    </p>
+                                                    <ul className="text-sm dark:text-slate-200/50 whitespace-normal">
+                                                        {acceptedFileItems}
+                                                    </ul>
+                                                </div>
+
+                                                <div className="flex flex-row grid-rows-1 mt-2">
+                                                    {/* Import DB */}
+                                                    <div className="flex flex-col gap-x-4 text-sm">
+                                                        <p className="dark:text-slate-200/75">
+                                                            Importing database:
+                                                        </p>
+                                                        <div className="flex gap-x-4">
+                                                            <p className="dark:text-slate-200/50">
+                                                                {
+                                                                    metaDataObject.databaseName
+                                                                }
+                                                            </p>
+
+                                                            {metaDataObject.tables.map(
+                                                                (
+                                                                    table,
+                                                                    index
+                                                                ) => (
+                                                                    <div
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        className=""
+                                                                    >
+                                                                        <p className="dark:text-slate-200/50">
+                                                                            {
+                                                                                table.name
+                                                                            }
+                                                                            <span>
+                                                                                (
+                                                                                {
+                                                                                    table.rowCount
+                                                                                }
+
+                                                                                )
+                                                                            </span>
+                                                                        </p>
+                                                                    </div>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    {/* Current DB */}
+                                                    <div className="flex flex-col ml-auto text-sm">
+                                                        <p className="dark:text-slate-200/75">
+                                                            Current Database:
+                                                        </p>
+                                                        <div className="flex gap-x-4">
+                                                            <p className="dark:text-slate-200/50">
+                                                                {
+                                                                    currentDbObject.databaseName
+                                                                }
+                                                            </p>
+
+                                                            {currentDbObject.tables.map(
+                                                                (
+                                                                    table,
+                                                                    index
+                                                                ) => (
+                                                                    <div
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        className=""
+                                                                    >
+                                                                        <p className="dark:text-slate-200/50">
+                                                                            {
+                                                                                table.name
+                                                                            }
+                                                                            <span>
+                                                                                (
+                                                                                {
+                                                                                    table.rowCount
+                                                                                }
+
+                                                                                )
+                                                                            </span>
+                                                                        </p>
+                                                                    </div>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <button
+                                                id="importButton"
+                                                className="mt-5 flex items-center justify-center h-10 w-full rounded-lg border-1 border-emerald-500 text-emerald-500 hover:hue-rotate-15 transition-color duration-300 disabled:border-red-500 disabled:text-red-500 disabled:cursor-not-allowed"
+                                                onClick={() => {
+                                                    handleImportDB();
+                                                }}
+                                            >
+                                                <BsDownload className="w-7 h-7" />
+                                            </button>
+                                            {/* <button className="flex mt-6 items-center justify-center w-full ml-auto  rounded-md text-md dark:text-slate-200 ">
                                         <span className="border-b rounded-sm w-1/2 mr-4 dark:border-slate-200/50 "></span>
                                         Import
                                         <span className="border-b rounded-sm w-1/2 ml-4 dark:border-slate-200/50"></span>
-                                    </button>
-                                </>
-                            )}
+                                    </button> */}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex flex-col">
+                                <h1 className="text-xl dark:text-slate-200/75 self-start mb-4 w-full border-b pb-2 dark:border-slate-700">
+                                    Export
+                                </h1>
+                                <div className="mb-4 flex flex-col h-32 items-start justify-center">
+                                    <label className="text-sm dark:text-slate-200/75 self-start mb-2 after:content-['*'] after:ml-0.5 after:text-red-500">
+                                        Filename:
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="appearance-none bg-slate-800 rounded-md border-1 dark:border-emerald-500/50 outline-none text-sm py-1 px-2 self-center dark:invalid:border-red-500/50"
+                                        value={filename}
+                                        onChange={handleInputChange}
+                                        autoFocus
+                                        required
+                                    />
+                                    <p className="text-sm dark:text-slate-200/50 mt-2 whitespace-normal">
+                                        {stringToSlug(filename)}.json
+                                    </p>
+                                </div>
+
+                                <button
+                                    id="exportButton"
+                                    className="group mt-auto flex items-center justify-center h-10 w-full rounded-lg border-1 border-emerald-500 text-emerald-500 hover:hue-rotate-15 transition-color duration-300 disabled:border-red-500 disabled:text-red-500 disabled:cursor-not-allowed"
+                                    onClick={handleExportDB}
+                                    disabled={filename.length === 0}
+                                >
+                                    <BsUpload className="w-7 h-7" />
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex flex-col">
-                        <h1 className="text-xl dark:text-slate-200/75 self-start mb-4 w-full border-b pb-2 dark:border-slate-700">
-                            Export
-                        </h1>
-                        <p className="text-sm dark:text-slate-200/75 self-start mb-2">
-                            Filename:
-                        </p>
-                        <input
-                            type="text"
-                            className="appearance-none bg-slate-800 rounded-md border-none outline-none text-sm py-1 px-2"
-                            value={filename}
-                            onChange={handleInputChange}
-                        ></input>
-                        <span className="text-sm dark:text-slate-200/50 mt-2">
-                            {stringToSlug(filename)}.json
-                        </span>
-                        <button
-                            id="exportLink"
-                            className=" mt-2 flex items-center justify-center h-3/4 w-full rounded-lg hover:border-1 transition-all duration-300 dark:border-slate-500 "
-                            onClick={handleExportDB}
-                        >
-                            <VscExport className="w-10 h-10" />
-                        </button>
-                    </div>
-                </div>
+                        {/* <div className="flex flex-row border-t dark:border-slate-700 mt-4">
+                            <div className="py-2">
+                                <button
+                                    type="button"
+                                    className="bg-red-500 p-2 rounded-md"
+                                >
+                                    Reset Database
+                                </button>
+                            </div>
+                        </div> */}
+                    </>
+                ) : (
+                    <>
+                        <div className="flex flex-col gap-y-10 items-center justify-center w-full">
+                            {/* loading spinner */}
+                            {loadingStatus.inProgress && (
+                                <div className="grid gap-2">
+                                    <div className="flex items-center justify-center ">
+                                        <div className="w-40 h-40 border-t-4 border-b-4 dark:border-white rounded-full motion-safe:animate-spin-slow duration-[1500]"></div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {!loadingStatus.done && (
+                                <button
+                                    className="flex items-center justify-center w-32 h-32 border-1 border-emerald-500 rounded-lg hover:scale-105 hover:hue-rotate-15 hover:border-2 transition-transform duration-300"
+                                    onClick={() => handleDone()}
+                                >
+                                    <MdOutlineDone className="w-16 h-16 text-emerald-500" />
+                                </button>
+                            )}
+
+                            {/* progress status text */}
+                            <div className="inline-flex">
+                                <p className="dark:text-slate-200/75 mr-4">
+                                    Rows Completed:
+                                </p>
+                                <span className="dark:text-slate-200/75">
+                                    {loadingStatus.completedRows}/
+                                    {loadingStatus.totalRows}
+                                </span>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </>
     );

@@ -40,21 +40,6 @@ export class KanbanBoardDexie extends Dexie {
             : this.boards.orderBy('updatedAt').toArray();
     }
 
-    // getCurrentDatabaseMetaData() {
-    //     const metaDataObject = {
-    //         databaseName: '',
-    //         databaseVersion: 0,
-    //         tables: [
-    //             {
-    //                 name: '',
-    //                 rowCount: 0,
-    //                 schema: 'slug, tag, updatedAt',
-    //             },
-    //         ],
-    //     };
-    //     return;
-    // }
-
     addBoard(
         title: string,
         slug: string,
@@ -68,7 +53,7 @@ export class KanbanBoardDexie extends Dexie {
             title: title,
             tags: tags,
             slug: slug,
-            // is this guaranteed to be unique? no, practically impossible but still no... need to fix.
+            // is this guaranteed to be unique? no, need to fix.
             createdAt: new Date(Date.now()),
             updatedAt: new Date(Date.now()),
             items: items,

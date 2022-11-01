@@ -26,6 +26,9 @@ module.exports = {
             '7xl': '5rem',
         },
         extend: {
+            animation: {
+                'spin-slow': 'spin 2s linear infinite',
+            },
             fontSize: {
                 14: '14px',
             },

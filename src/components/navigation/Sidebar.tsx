@@ -45,9 +45,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 >
                     <div
                         ref={modalContentRef}
-                        className="flex max-w-3/4 max-h-1/2 bg-white dark:bg-slate-900 p-10 rounded-md gap-x-6 shadow-lg"
+                        className="flex w-3/5 max-w-3/4 max-h-1/2 bg-white dark:bg-slate-900 p-10 rounded-md gap-x-6 shadow-lg"
                     >
-                        <Dropzone />
+                        <Dropzone handleCloseModal={setShowModal} />
                     </div>
                 </div>
             </BaseModal>
