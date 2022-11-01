@@ -113,37 +113,56 @@ const AllBoards = () => {
                         // identifier = `${date.getDate()}/${monthIndex}/${year}`;
                         break;
                     case 'weeks':
-                        // start of week is: the day index -the day of the week
+                        // start of week is: the day index - the day of the week
                         difference = 7 - dayOfTheWeek;
                         startOfWeek = `${dayIndex - dayOfTheWeek} ${
                             months[monthIndex]
                         } ${year}`;
-                        // logic for adding 1 to month index depending on date rules.
+
+                        if (dayIndex - dayOfTheWeek <= 1) {
+                            startOfWeek = `${
+                                daysPerMonths[monthIndex - 1]! -
+                                dayOfTheWeek +
+                                1
+                            } ${months[monthIndex - 1]} ${year}`;
+                        }
+
                         if (
                             dayIndex - dayOfTheWeek + 7 >
                             daysPerMonths[monthIndex]!
                         ) {
+                            // if the week will bridge into the next month.
                             endOfWeek = `${
                                 dayIndex -
-                                dayOfTheWeek -
-                                daysPerMonths[monthIndex]! +
-                                7
+                                dayOfTheWeek +
+                                7 -
+                                daysPerMonths[monthIndex]!
                             } ${months[monthIndex + 1]} ${year}`;
                         } else if (monthIndex === 1 && year % 4 === 0) {
-                            if (dayIndex + 6 > daysPerMonths[monthIndex]!) {
-                                endOfWeek = `${dayIndex + difference} ${
-                                    months[monthIndex + 1]
-                                } ${year}`;
+                            // if it is a leap year
+                            if (
+                                dayIndex - dayOfTheWeek + 7 >
+                                daysPerMonths[monthIndex]! + 1
+                            ) {
+                                startOfWeek = `${
+                                    daysPerMonths[monthIndex - 1]! -
+                                    dayOfTheWeek +
+                                    1
+                                } ${months[monthIndex - 1]} ${year}`;
+                                endOfWeek = `${
+                                    dayIndex -
+                                    dayOfTheWeek +
+                                    7 -
+                                    daysPerMonths[monthIndex]!
+                                } ${months[monthIndex + 1]} ${year}`;
                             }
-                            // add leap year condition for february
                         } else {
-                            endOfWeek = `${dayIndex + difference} ${
+                            endOfWeek = `${dayIndex - dayOfTheWeek + 7} ${
                                 months[monthIndex]
                             } ${year}`;
                         }
 
                         identifier = `${startOfWeek} - ${endOfWeek}`;
-                        console.log(monthIndex);
                         break;
                     case 'months':
                         identifier = `${months[monthIndex]}, ${year}`;
@@ -164,6 +183,7 @@ const AllBoards = () => {
         return filteredBoardsObject;
     }, [boards, currentTime]);
 
+    console.log(filteredBoards);
     const router = useRouter();
 
     const data = router.query;
