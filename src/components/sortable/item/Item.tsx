@@ -125,21 +125,7 @@ export const Item = React.memo(
             ) {
                 setEnableAnimation(true);
 
-                // const itemWrapper = document.getElementById(`item-${itemId}`);
                 if (itemId) {
-                    // if (
-                    //     itemWrapper &&
-                    //     itemWrapper.classList.contains('checked')
-                    // ) {
-                    //     itemWrapper.style.opacity = '1';
-                    //     itemWrapper.classList.remove('checked');
-                    // } else if (itemWrapper) {
-                    //     itemWrapper.style.opacity = '0.5';
-                    //     itemWrapper.classList.add('checked');
-                    // }
-
-                    //https://medium.com/ft-product-technology/animating-list-reordering-with-react-hooks-1aa0d78a24dc
-
                     // setTimeout(() => {
                     db.transaction('rw', db.boards, async () => {
                         await db.boards

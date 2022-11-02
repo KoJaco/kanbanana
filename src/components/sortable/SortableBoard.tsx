@@ -66,7 +66,6 @@ import {
     HiChevronRight,
 } from 'react-icons/hi';
 import InlineBoardForm from '@/components/forms/InlineBoardForm';
-import { Transition } from '@headlessui/react';
 import { useOnClickOutside } from '@/core/hooks';
 import AnimateItemReorder from './AnimateItemReorder';
 import ItemAnimationWrapper from '@/components/sortable/item/ItemAnimationWrapper';
@@ -621,15 +620,7 @@ export default function SortableBoard({
             >
                 {/* TITLE */}
                 <div className="my-8 ml-4 mx-4 sm:mx-10 md:mx-8 lg:mx-6">
-                    <Transition
-                        show={showInlineBoardForm}
-                        enter="transition ease-in-out duration-500"
-                        enterFrom="transform -translate-y-150 opacity-0"
-                        enterTo="transform opacity-100 translate-y-0"
-                        leave="transition ease-out duration-300"
-                        leaveFrom="transform opacity-100 translate-y-0"
-                        leaveTo="transform -translate-y-100 opacity-50"
-                    >
+                    {showInlineBoardForm ? (
                         <div id="boardFormContainer" className="relative z-50">
                             <InlineBoardForm
                                 title={board.title}
@@ -638,9 +629,7 @@ export default function SortableBoard({
                                 setShowForm={setShowInlineBoardForm}
                             />
                         </div>
-                    </Transition>
-
-                    {!showInlineBoardForm && (
+                    ) : (
                         <>
                             <div className="flex justify-between items-end gap-8">
                                 <h1 className="sm:text-xl lg:text-2xl font-semibold text-slate-600 dark:text-white">

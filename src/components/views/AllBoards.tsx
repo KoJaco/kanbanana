@@ -120,10 +120,10 @@ const AllBoards = () => {
                         } ${year}`;
 
                         if (dayIndex - dayOfTheWeek <= 1) {
+                            // if we're in day 3 and it's Nov 2, start of the week is 31 (oct) - difference (3-2)
                             startOfWeek = `${
                                 daysPerMonths[monthIndex - 1]! -
-                                dayOfTheWeek +
-                                1
+                                (dayOfTheWeek - dayIndex)
                             } ${months[monthIndex - 1]} ${year}`;
                         }
 
@@ -131,7 +131,7 @@ const AllBoards = () => {
                             dayIndex - dayOfTheWeek + 7 >
                             daysPerMonths[monthIndex]!
                         ) {
-                            // if the week will bridge into the next month.
+                            // if the week will bridge into the next month, need to add 1 to month index
                             endOfWeek = `${
                                 dayIndex -
                                 dayOfTheWeek +

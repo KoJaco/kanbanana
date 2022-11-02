@@ -6,7 +6,7 @@ import {
     importInto,
     peakImportFile,
 } from 'dexie-export-import';
-import { db, KanbanBoardDexie } from '@/server/db';
+import { db } from '@/server/db';
 import download from 'downloadjs';
 
 import { ExportProgress } from 'dexie-export-import/dist/export';
@@ -19,69 +19,11 @@ import assert from 'assert';
 import { IndexableType, Table } from 'dexie';
 import { UniqueIdentifier } from '@/core/types/sortableBoard';
 
-type DbSchemaMatch = {
-    tableName: string;
-    match: boolean;
-    currentRowCount: number | Promise<number>;
-};
-
-interface DbSchemaMatches {
-    [key: UniqueIdentifier]: DbSchemaMatch;
-}
-interface ImportState {
-    importInto: boolean;
-    dbSchemaMatches: DbSchemaMatches | null;
-}
-
-type LoadingType = 'Importing' | 'Exporting';
-
 type DropZoneProps = {
     handleCloseModal: (value: boolean) => void;
 };
 
 const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
-    const onDrop = useCallback(async (acceptedFiles: FileWithPath[]) => {
-        // do something
-        acceptedFiles.forEach(async (file) => {
-            const reader = new FileReader();
-
-            reader.onabort = () => console.log('File reading was aborted');
-            reader.onerror = () => console.log('file reading has failed');
-            reader.onload = () => {
-                // do whatever with the file content
-                // const binaryStr = reader.result;
-                handleSetData(file);
-            };
-            reader.readAsArrayBuffer(file);
-        });
-    }, []);
-
-    const {
-        acceptedFiles,
-        isDragActive,
-        isDragAccept,
-        isDragReject,
-        getRootProps,
-        getInputProps,
-    } = useDropzone({
-        accept: { 'application/json': ['.json'] },
-        maxFiles: 1,
-        onDrop,
-    });
-
-    const [filename, setFilename] = useState('');
-
-    // const [metaComparison, setMetaComparison] = useState({
-    //     databaseName: { name: 'checklistitDB', equals: false },
-    //     databaseVersion: { version: '1', equals: false },
-    //     tables: {
-    //         tableCount: { count: 1, equals: false },
-    //         tableName: { name: 'boards', equals: false },
-    //         tableSchema: { schema: 'slug,tag,updatedAt', equals: false },
-    //         tableRowCount: { rowCount: 9, equals: false },
-    //     },
-    // });
-
     const [metaDataObject, setMetaDataObject] = useState({
         formatName: '',
         formatVersion: 0,
@@ -114,6 +56,116 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
         ],
     });
 
+    const onDrop = useCallback(
+        async (acceptedFiles: FileWithPath[]) => {
+            // do something
+            acceptedFiles.forEach(async (file) => {
+                const reader = new FileReader();
+
+                reader.onabort = () => console.log('File reading was aborted');
+                reader.onerror = () => console.log('file reading has failed');
+                reader.onload = () => {
+                    async function handleSetData(file: FileWithPath) {
+                        setImportBlob(file);
+                        const importMeta = await peakImportFile(file);
+                        setMetaDataObject({
+                            formatName: importMeta.formatName,
+                            formatVersion: importMeta.formatVersion,
+                            ...importMeta.data,
+                        });
+
+                        let i = 0;
+                        db.tables.forEach((table) => {
+                            assert(table === db[table.name]);
+                            const tableName = table.name;
+
+                            const tableRowCount = async (
+                                table: Table<any, IndexableType>
+                            ) => {
+                                return await table.toCollection().count();
+                            };
+
+                            const primKeyObj = table.schema.primKey;
+                            assert(primKeyObj.name === primKeyObj.keyPath);
+                            let tableSchema = primKeyObj.name;
+                            const indexObjs = table.schema.indexes;
+                            for (let j = 0; j < indexObjs.length; j++) {
+                                let iObj = indexObjs[j];
+                                if (iObj) {
+                                    assert(iObj.name === iObj.keyPath);
+                                    tableSchema = tableSchema + ',' + iObj.name;
+                                }
+                            }
+                            let tableObject = {
+                                name: tableName,
+                                rowCount: 0,
+                                schema: tableSchema,
+                            };
+
+                            let rowCount = tableRowCount(table)
+                                .then((result) => result)
+                                .then((result) => {
+                                    tableObject.rowCount = result;
+                                })
+                                .catch((error) => console.error(error));
+
+                            if (i === 0) {
+                                let newTables = Array.from(
+                                    currentDbObject.tables
+                                );
+                                newTables.push(tableObject);
+                                newTables.splice(0, 1);
+                                setCurrentDbObject({
+                                    ...currentDbObject,
+                                    tables: newTables,
+                                });
+                            } else {
+                                let newTables = Array.from(
+                                    currentDbObject.tables
+                                );
+                                newTables.push(tableObject);
+                                setCurrentDbObject({
+                                    ...currentDbObject,
+                                    tables: newTables,
+                                });
+                            }
+                            i + 1;
+                        });
+                    }
+                    handleSetData(file);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        },
+        [currentDbObject]
+    );
+
+    const {
+        acceptedFiles,
+        isDragActive,
+        isDragAccept,
+        isDragReject,
+        getRootProps,
+        getInputProps,
+    } = useDropzone({
+        accept: { 'application/json': ['.json'] },
+        maxFiles: 1,
+        onDrop,
+    });
+
+    const [filename, setFilename] = useState('');
+
+    // const [metaComparison, setMetaComparison] = useState({
+    //     databaseName: { name: 'checklistitDB', equals: false },
+    //     databaseVersion: { version: '1', equals: false },
+    //     tables: {
+    //         tableCount: { count: 1, equals: false },
+    //         tableName: { name: 'boards', equals: false },
+    //         tableSchema: { schema: 'slug,tag,updatedAt', equals: false },
+    //         tableRowCount: { rowCount: 9, equals: false },
+    //     },
+    // });
+
     const [loadingStatus, setLoadingStatus] = useState({
         inProgress: false,
         done: true,
@@ -134,68 +186,6 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
             done: true,
         });
         setImportBlob(null);
-    }
-
-    async function handleSetData(file: FileWithPath) {
-        setImportBlob(file);
-        const importMeta = await peakImportFile(file);
-        setMetaDataObject({
-            formatName: importMeta.formatName,
-            formatVersion: importMeta.formatVersion,
-            ...importMeta.data,
-        });
-
-        let i = 0;
-        db.tables.forEach((table) => {
-            assert(table === db[table.name]);
-            const tableName = table.name;
-
-            const tableRowCount = async (table: Table<any, IndexableType>) => {
-                return await table.toCollection().count();
-            };
-
-            const primKeyObj = table.schema.primKey;
-            assert(primKeyObj.name === primKeyObj.keyPath);
-            let tableSchema = primKeyObj.name;
-            const indexObjs = table.schema.indexes;
-            for (let j = 0; j < indexObjs.length; j++) {
-                let iObj = indexObjs[j];
-                if (iObj) {
-                    assert(iObj.name === iObj.keyPath);
-                    tableSchema = tableSchema + ',' + iObj.name;
-                }
-            }
-            let tableObject = {
-                name: tableName,
-                rowCount: 0,
-                schema: tableSchema,
-            };
-
-            let rowCount = tableRowCount(table)
-                .then((result) => result)
-                .then((result) => {
-                    tableObject.rowCount = result;
-                })
-                .catch((error) => console.error(error));
-
-            if (i === 0) {
-                let newTables = Array.from(currentDbObject.tables);
-                newTables.push(tableObject);
-                newTables.splice(0, 1);
-                setCurrentDbObject({
-                    ...currentDbObject,
-                    tables: newTables,
-                });
-            } else {
-                let newTables = Array.from(currentDbObject.tables);
-                newTables.push(tableObject);
-                setCurrentDbObject({
-                    ...currentDbObject,
-                    tables: newTables,
-                });
-            }
-            i + 1;
-        });
     }
 
     async function handleExportDB() {
@@ -302,7 +292,7 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
                         </div>
                         <div className="flex flex-row w-full gap-x-10">
                             <div className="flex flex-col w-full">
-                                <h1 className="text-xl dark:text-slate-200/75 self-start mb-4 w-full border-b pb-2 dark:border-slate-700">
+                                <h1 className="text-xl dark:text-slate-200/75 text-slate-600 self-start mb-4 w-full border-b pb-2  dark:border-slate-700">
                                     Import
                                 </h1>
 
@@ -310,13 +300,13 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
                                     <div
                                         id="dropzone"
                                         className={clsx(
-                                            'flex items-center justify-center border-1 border-dashed border-black dark:border-white w-full h-32 rounded-lg text-md opacity-50 hover:border-solid  cursor-pointer transition-color duration-100',
+                                            'flex items-center justify-center border-2 border-dashed border-black dark:border-white w-full h-32 rounded-lg text-md opacity-50 hover:border-solid  cursor-pointer transition-color duration-100',
                                             acceptedFiles.length > 0 &&
-                                                'dark:border-emerald-500',
+                                                'border-emerald-600 dark:border-emerald-500',
                                             isDragAccept &&
-                                                'dark:border-emerald-500',
+                                                'border-emerald-600 dark:border-emerald-500',
                                             isDragReject &&
-                                                'dark:border-red-500'
+                                                'border-red-600 dark:border-red-500'
                                         )}
                                         {...getRootProps()}
                                     >
@@ -343,10 +333,10 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
                                         <>
                                             <div className="grid grid-rows-2 gap-x-2 items-start mt-4 w-full">
                                                 <div className="grid-rows-1">
-                                                    <p className="text-sm mt-2 dark:text-slate-200/75">
+                                                    <p className="text-slate-600 font-medium text-sm mt-2 dark:text-slate-200/75">
                                                         File accepted
                                                     </p>
-                                                    <ul className="text-sm dark:text-slate-200/50 whitespace-normal">
+                                                    <ul className="text-sm text-slate-600 dark:text-slate-200/50  whitespace-normal">
                                                         {acceptedFileItems}
                                                     </ul>
                                                 </div>
@@ -354,11 +344,11 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
                                                 <div className="flex flex-row grid-rows-1 mt-2">
                                                     {/* Import DB */}
                                                     <div className="flex flex-col gap-x-4 text-sm">
-                                                        <p className="dark:text-slate-200/75">
+                                                        <p className="dark:text-slate-200/75 text-slate-600 font-medium">
                                                             Importing database:
                                                         </p>
                                                         <div className="flex gap-x-4">
-                                                            <p className="dark:text-slate-200/50">
+                                                            <p className="dark:text-slate-200/50 text-slate-600">
                                                                 {
                                                                     metaDataObject.databaseName
                                                                 }
@@ -375,10 +365,10 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
                                                                         }
                                                                         className=""
                                                                     >
-                                                                        <p className="dark:text-slate-200/50">
+                                                                        <p className="text-slate-600 dark:text-slate-200/50">
                                                                             {
                                                                                 table.name
-                                                                            }
+                                                                            }{' '}
                                                                             <span>
                                                                                 (
                                                                                 {
@@ -395,11 +385,11 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
                                                     </div>
                                                     {/* Current DB */}
                                                     <div className="flex flex-col ml-auto text-sm">
-                                                        <p className="dark:text-slate-200/75">
+                                                        <p className="text-slate-600 font-medium dark:text-slate-200/75">
                                                             Current Database:
                                                         </p>
                                                         <div className="flex gap-x-4">
-                                                            <p className="dark:text-slate-200/50">
+                                                            <p className="text-slate-600 dark:text-slate-200/50">
                                                                 {
                                                                     currentDbObject.databaseName
                                                                 }
@@ -416,10 +406,10 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
                                                                         }
                                                                         className=""
                                                                     >
-                                                                        <p className="dark:text-slate-200/50">
+                                                                        <p className="text-slate-600 dark:text-slate-200/50">
                                                                             {
                                                                                 table.name
-                                                                            }
+                                                                            }{' '}
                                                                             <span>
                                                                                 (
                                                                                 {
@@ -460,18 +450,18 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
                                     Export
                                 </h1>
                                 <div className="mb-4 flex flex-col h-32 items-start justify-center">
-                                    <label className="text-sm dark:text-slate-200/75 self-start mb-2 after:content-['*'] after:ml-0.5 after:text-red-500">
+                                    <label className="text-sm text-slate-600 font-medium dark:text-slate-200/75 self-start mb-2 after:content-['*'] after:ml-0.5 after:text-red-500">
                                         Filename:
                                     </label>
                                     <input
                                         type="text"
-                                        className="appearance-none bg-slate-800 rounded-md border-1 dark:border-emerald-500/50 outline-none text-sm py-1 px-2 self-center dark:invalid:border-red-500/50"
+                                        className="appearance-none bg-gray-100 dark:bg-slate-800 rounded-md border-1 border-emerald-500/50 outline-none text-sm py-1 px-2 self-center invalid:border-red-500/50"
                                         value={filename}
                                         onChange={handleInputChange}
                                         autoFocus
                                         required
                                     />
-                                    <p className="text-sm dark:text-slate-200/50 mt-2 whitespace-normal">
+                                    <p className="text-sm text-slate-600 dark:text-slate-200/50 mt-2 whitespace-normal">
                                         {stringToSlug(filename)}.json
                                     </p>
                                 </div>
