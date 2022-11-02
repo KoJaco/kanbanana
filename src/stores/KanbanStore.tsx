@@ -6,6 +6,7 @@ export type State = {
     // global notification state, use in base layout.
     showNotification: boolean;
     notification: { status: string; message: string };
+    enableAnimation: boolean;
 
     // global board count, used in sidebar for displaying board list info.
     boardCount: number | undefined;
@@ -29,6 +30,8 @@ export type State = {
     toggleShowNotification: () => void;
 
     setNotification: (status: string, message: string) => void;
+
+    setEnableAnimation: (value: boolean) => void;
 
     setBoardCount: (count: number) => void;
 
@@ -59,6 +62,7 @@ export const useKanbanStore = create<State>((set) => ({
     // init notification state, show.false notification.empty
     showNotification: false,
     notification: { status: '', message: '' },
+    enableAnimation: false,
     // on board creation there should always be 1 column and 1 task
     // deleting this last task/column is not allowed, however, a user can delete their last board.
     boardCount: undefined,
@@ -82,6 +86,10 @@ export const useKanbanStore = create<State>((set) => ({
 
     setNotification: (status: string, message: string) => {
         set(() => ({ notification: { status: status, message: message } }));
+    },
+
+    setEnableAnimation: (value: boolean) => {
+        set(() => ({ enableAnimation: value }));
     },
 
     setBoardCount: (count: number) => {

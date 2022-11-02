@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 
 import { Action, ActionProps } from './Action';
+import clsx from 'clsx';
 
 export const Handle = forwardRef<HTMLButtonElement, ActionProps>(
     (props, ref) => {

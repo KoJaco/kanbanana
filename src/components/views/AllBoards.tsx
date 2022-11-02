@@ -183,7 +183,6 @@ const AllBoards = () => {
         return filteredBoardsObject;
     }, [boards, currentTime]);
 
-    console.log(filteredBoards);
     const router = useRouter();
 
     const data = router.query;

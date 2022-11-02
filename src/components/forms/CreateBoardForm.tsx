@@ -134,8 +134,6 @@ const CreateBoardForm = ({
             });
         }
         setShowContainerForm(false);
-        console.log('added contianer');
-        console.log(boardContainers);
     }
 
     function handleUpdateContainer(container: TContainer) {
@@ -146,8 +144,6 @@ const CreateBoardForm = ({
     }
 
     function handleRemoveContainer(containerId: UniqueIdentifier) {
-        console.log(boardContainers);
-        console.log(boardContainerItemMapping);
         if (boardContainers !== null && boardContainerItemMapping !== null) {
             let newContainers = omit(boardContainers, containerId);
             let newContainerBoardMapping = omit(
@@ -160,8 +156,6 @@ const CreateBoardForm = ({
         setShowContainerForm(false);
         setContainerFormState('add');
         setCurrentContainerId('A');
-        console.log('boardContainers');
-        console.log(boardContainers);
     }
 
     function handleEditContainer(containerId: UniqueIdentifier) {

@@ -1,3 +1,5 @@
+import React from 'react';
+
 const now = new Date(Date.now()).toLocaleString();
 
 export function getMaxIdFromString<T extends Object>(obj: T) {
@@ -36,3 +38,15 @@ export function getMaxIdFromString<T extends Object>(obj: T) {
     // return the max
     return Math.max(...idArray);
 }
+
+export const calculateBoundingBoxes = (children: any) => {
+    const boundingBoxes = {};
+
+    React.Children.forEach(children, (child) => {
+        const domNode = child.ref.current;
+        const nodeBoundingBox = domNode?.getBoundingClientRect();
+
+        boundingBoxes[child.key] = nodeBoundingBox;
+    });
+    return boundingBoxes;
+};

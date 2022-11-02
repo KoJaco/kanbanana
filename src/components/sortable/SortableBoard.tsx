@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+    createRef,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import {
     CancelDrop,
@@ -61,6 +68,8 @@ import {
 import InlineBoardForm from '@/components/forms/InlineBoardForm';
 import { Transition } from '@headlessui/react';
 import { useOnClickOutside } from '@/core/hooks';
+import AnimateItemReorder from './AnimateItemReorder';
+import ItemAnimationWrapper from '@/components/sortable/item/ItemAnimationWrapper';
 
 // TODO: fix up items undefined with active/overId selecting index
 
@@ -205,6 +214,7 @@ export default function SortableBoard({
         currentBoardSlug,
         setCurrentBoardSlug,
         setMaxItemId,
+        enableAnimation,
     } = useKanbanStore();
 
     // useLiveQuery() for indexDB state management, watch for changes in local board state.
@@ -218,6 +228,8 @@ export default function SortableBoard({
     const recentlyMovedToNewContainer = useRef(false);
     const isSortingContainer = activeId ? containers.includes(activeId) : false;
 
+    // const [enableAnimation, setEnableAnimation] = useState(false);
+
     useEffect(() => {
         if (board !== undefined) {
             setItems(board.containerItemMapping);
@@ -227,6 +239,7 @@ export default function SortableBoard({
                 getMaxIdFromObjectKeyStrings(Object.keys(board.items))
             );
             setShowInlineBoardForm(false);
+            // setEnableAnimation(true);
         }
     }, [
         board,
@@ -237,13 +250,6 @@ export default function SortableBoard({
         setMaxItemId,
         setShowInlineBoardForm,
     ]);
-
-    // useEffect(() => {
-    //     let carousel = document.getElementById('carousel');
-    //     if (carousel !== null) {
-    //         carousel.scrollLeft = carousel.clientWidth - carousel.offsetWidth;
-    //     }
-    // }, []);
 
     /**
      * Custom collision detection strategy optimized for multiple containers
@@ -390,6 +396,8 @@ export default function SortableBoard({
     }, [items]);
 
     if (!items || !board) return null;
+
+    console.log(enableAnimation);
 
     return (
         // <div className="flex flex-col flex-1 h-screen">
@@ -613,29 +621,26 @@ export default function SortableBoard({
             >
                 {/* TITLE */}
                 <div className="my-8 ml-4 mx-4 sm:mx-10 md:mx-8 lg:mx-6">
-                    {showInlineBoardForm ? (
-                        <Transition
-                            show={showInlineBoardForm}
-                            enter="transition ease-out duration-200"
-                            enterFrom="transform opacity-0 scale-95"
-                            enterTo="transform opacity-100 scale-100"
-                            leave="transition ease-in duration-75"
-                            leaveFrom="transform opacity-100 scale-100"
-                            leaveTo="transform opacity-0 scale-95"
-                        >
-                            <div
-                                id="boardFormContainer"
-                                className="relative z-50"
-                            >
-                                <InlineBoardForm
-                                    title={board.title}
-                                    slug={currentBoardSlug}
-                                    tags={board.tags ? board.tags : initialTags}
-                                    setShowForm={setShowInlineBoardForm}
-                                />
-                            </div>
-                        </Transition>
-                    ) : (
+                    <Transition
+                        show={showInlineBoardForm}
+                        enter="transition ease-in-out duration-500"
+                        enterFrom="transform -translate-y-150 opacity-0"
+                        enterTo="transform opacity-100 translate-y-0"
+                        leave="transition ease-out duration-300"
+                        leaveFrom="transform opacity-100 translate-y-0"
+                        leaveTo="transform -translate-y-100 opacity-50"
+                    >
+                        <div id="boardFormContainer" className="relative z-50">
+                            <InlineBoardForm
+                                title={board.title}
+                                slug={currentBoardSlug}
+                                tags={board.tags ? board.tags : initialTags}
+                                setShowForm={setShowInlineBoardForm}
+                            />
+                        </div>
+                    </Transition>
+
+                    {!showInlineBoardForm && (
                         <>
                             <div className="flex justify-between items-end gap-8">
                                 <h1 className="sm:text-xl lg:text-2xl font-semibold text-slate-600 dark:text-white">
@@ -647,9 +652,7 @@ export default function SortableBoard({
                                 <button
                                     type="button"
                                     className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray dark:hover:bg-slate-500 cursor-pointer transition-color duration-300 dark:text-white"
-                                    onClick={() =>
-                                        setShowInlineBoardForm((prev) => !prev)
-                                    }
+                                    onClick={() => setShowInlineBoardForm(true)}
                                 >
                                     <MdOutlineEdit className="w-4 h-4 lg:w-5 lg:h-5" />
                                 </button>
@@ -745,48 +748,73 @@ export default function SortableBoard({
                                                     items={items[containerId]!}
                                                     strategy={strategy}
                                                 >
-                                                    {items[containerId]!.map(
-                                                        (itemId, index) => {
-                                                            const item =
-                                                                board?.items[
-                                                                    itemId
-                                                                ];
-                                                            return (
-                                                                <SortableItem
-                                                                    key={itemId}
-                                                                    item={item}
-                                                                    disabled={
-                                                                        isSortingContainer
-                                                                    }
-                                                                    id={itemId}
-                                                                    index={
-                                                                        index
-                                                                    }
-                                                                    handle={
-                                                                        handle
-                                                                    }
-                                                                    style={
-                                                                        getItemStyles
-                                                                    }
-                                                                    wrapperStyle={
-                                                                        wrapperStyle
-                                                                    }
-                                                                    renderItem={
-                                                                        renderItem
-                                                                    }
-                                                                    containerId={
-                                                                        containerId
-                                                                    }
-                                                                    container={
-                                                                        container
-                                                                    }
-                                                                    getIndex={
-                                                                        getIndex
-                                                                    }
-                                                                />
-                                                            );
+                                                    <AnimateItemReorder
+                                                        animationEnabled={
+                                                            enableAnimation
                                                         }
-                                                    )}
+                                                    >
+                                                        {items[
+                                                            containerId
+                                                        ]!.map(
+                                                            (itemId, index) => {
+                                                                const item =
+                                                                    board
+                                                                        ?.items[
+                                                                        itemId
+                                                                    ];
+                                                                return (
+                                                                    <ItemAnimationWrapper
+                                                                        key={
+                                                                            itemId
+                                                                        }
+                                                                        id={
+                                                                            itemId
+                                                                        }
+                                                                        ref={createRef()}
+                                                                    >
+                                                                        <SortableItem
+                                                                            key={
+                                                                                itemId
+                                                                            }
+                                                                            item={
+                                                                                item
+                                                                            }
+                                                                            disabled={
+                                                                                isSortingContainer
+                                                                            }
+                                                                            id={
+                                                                                itemId
+                                                                            }
+                                                                            index={
+                                                                                index
+                                                                            }
+                                                                            handle={
+                                                                                handle
+                                                                            }
+                                                                            style={
+                                                                                getItemStyles
+                                                                            }
+                                                                            wrapperStyle={
+                                                                                wrapperStyle
+                                                                            }
+                                                                            renderItem={
+                                                                                renderItem
+                                                                            }
+                                                                            containerId={
+                                                                                containerId
+                                                                            }
+                                                                            container={
+                                                                                container
+                                                                            }
+                                                                            getIndex={
+                                                                                getIndex
+                                                                            }
+                                                                        />
+                                                                    </ItemAnimationWrapper>
+                                                                );
+                                                            }
+                                                        )}
+                                                    </AnimateItemReorder>
                                                 </SortableContext>
                                             )}
                                         </DroppableContainer>
@@ -815,7 +843,6 @@ export default function SortableBoard({
                     {createPortal(
                         <DragOverlay
                             adjustScale={adjustScale}
-                            // dropAnimation={null}
                             dropAnimation={dropAnimation}
                         >
                             {activeId
@@ -1078,6 +1105,7 @@ function DroppableContainer({
 
 interface SortableItemProps {
     item?: TItem;
+    // ref: HTMLElement | null;
     setShowItemForm?: (value: boolean) => void;
     containerId: UniqueIdentifier;
     container: TContainer | undefined;

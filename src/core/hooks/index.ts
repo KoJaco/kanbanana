@@ -95,6 +95,18 @@ export function useOnClickInsideOnly(
     }, [ref, handler]);
 }
 
+export function usePrevious<T>(value: T): T {
+    // generic container whose current property is mutable and can hold any value, similar to instance property on a class.
+    const ref = useRef<T>();
+
+    useEffect(() => {
+        ref.current = value;
+    }, [value]);
+
+    // return previous value (happens before update in useEffect)
+    return ref.current ? ref.current : value;
+}
+
 // export const useImportExport = () => {
 //     const dropZoneDiv = document.getElementById('dropZone');
 //     const exportLink = document.getElementById('exportLink');

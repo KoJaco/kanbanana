@@ -40,7 +40,6 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
         tagIndex: number | null | undefined
     ) {
         if (tagIndex !== null && tagIndex !== undefined) {
-            console.log('hitt!');
             let newTags = Array.from(boardTags);
             newTags[tagIndex] = boardTag;
             setBoardTags(newTags);
@@ -95,9 +94,6 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
             );
         }
     }
-
-    console.log(currentTagIndex);
-    console.log(boardTags);
 
     return (
         <form onSubmit={handleSubmit}>

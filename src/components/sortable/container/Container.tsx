@@ -1,5 +1,11 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
-// import styles from './Container.module.css';
+import React, {
+    forwardRef,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    createRef,
+    useState,
+} from 'react';
 import { Handle } from '../components';
 import { MdAdd, MdOutlineEdit } from 'react-icons/md';
 import {
@@ -12,7 +18,8 @@ import { ModifyError } from 'dexie';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import ContainerForm from '@/components/forms/ContainerForm';
-import { useOnClickOutside } from '@/core/hooks';
+import { useOnClickOutside, usePrevious } from '@/core/hooks';
+import { calculateBoundingBoxes } from '@/core/utils/kanbanBoard';
 
 export interface ContainerProps {
     children: React.ReactNode;
@@ -197,6 +204,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                 {placeholder ? (
                     children
                 ) : (
+                    // all items
                     <ul className="w-full grid gap-y-1 sm:gap-y-2  grid-cols-auto px-1">
                         {children}
                     </ul>

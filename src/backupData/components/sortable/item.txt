@@ -21,14 +21,14 @@ export interface ItemProps {
     containerId: UniqueIdentifier;
     containerType?: 'simple' | 'checklist';
     completedItemOrder?: 'start' | 'end' | 'noChange' | 'remove';
-    // handleToggleCheckListItem?: (
-    //     itemId: UniqueIdentifier | undefined,
-    //     containerId: UniqueIdentifier
-    // ) => void;
-    // handleRemoveItem?: (
-    //     itemId: UniqueIdentifier | undefined,
-    //     containerId: UniqueIdentifier
-    // ) => void;
+    handleToggleCheckListItem?: (
+        itemId: UniqueIdentifier | undefined,
+        containerId: UniqueIdentifier
+    ) => void;
+    handleRemoveItem?: (
+        itemId: UniqueIdentifier | undefined,
+        containerId: UniqueIdentifier
+    ) => void;
 
     setShowItemForm: (value: boolean) => void;
     children?: JSX.Element;
@@ -70,6 +70,8 @@ export const Item = React.memo(
             {
                 item,
                 containerId,
+                handleToggleCheckListItem,
+                handleRemoveItem,
                 setShowItemForm,
                 children,
                 color,
@@ -106,12 +108,10 @@ export const Item = React.memo(
                 };
             }, [dragOverlay]);
 
-            // Zustand store state
-
             const itemFormRef = useRef(null);
             const excludedRef = useRef(null);
 
-            const { setEnableAnimation, currentBoardSlug } = useKanbanStore();
+            const { currentBoardSlug } = useKanbanStore();
 
             useOnClickOutside(
                 itemFormRef,
@@ -123,8 +123,6 @@ export const Item = React.memo(
                 itemId: UniqueIdentifier | undefined,
                 containerId: UniqueIdentifier
             ) {
-                setEnableAnimation(true);
-
                 // const itemWrapper = document.getElementById(`item-${itemId}`);
                 if (itemId) {
                     // if (
@@ -140,7 +138,6 @@ export const Item = React.memo(
 
                     //https://medium.com/ft-product-technology/animating-list-reordering-with-react-hooks-1aa0d78a24dc
 
-                    // setTimeout(() => {
                     db.transaction('rw', db.boards, async () => {
                         await db.boards
                             .where('slug')
@@ -269,9 +266,6 @@ export const Item = React.memo(
                                     !completedItemState;
                             });
                     });
-                    setTimeout(() => {
-                        setEnableAnimation(false);
-                    }, 700);
                 }
             }
 
@@ -279,48 +273,40 @@ export const Item = React.memo(
                 itemId: UniqueIdentifier | undefined,
                 containerId: UniqueIdentifier
             ) {
-                let item = document.getElementById(`item-${itemId}`);
+                // let item = document.getElementById(`item-${itemId}`);
                 if (itemId) {
-                    setEnableAnimation(true);
+                    // if (item) item.style.opacity = '0.5';
 
-                    if (item) item.style.opacity = '0';
-
-                    setTimeout(() => {
-                        db.transaction('rw', db.boards, async () => {
-                            await db.boards
-                                .where('slug')
-                                .equals(currentBoardSlug)
-                                .modify((boardItem: any) => {
-                                    const newItems = omit(
-                                        boardItem.items,
-                                        itemId
+                    // setTimeout(() => {
+                    db.transaction('rw', db.boards, async () => {
+                        await db.boards
+                            .where('slug')
+                            .equals(currentBoardSlug)
+                            .modify((boardItem: any) => {
+                                const newItems = omit(boardItem.items, itemId);
+                                const newContainerItemMap =
+                                    boardItem.containerItemMapping[
+                                        containerId
+                                    ].filter(
+                                        (id: UniqueIdentifier) => id !== itemId
                                     );
-                                    const newContainerItemMap =
-                                        boardItem.containerItemMapping[
-                                            containerId
-                                        ].filter(
-                                            (id: UniqueIdentifier) =>
-                                                id !== itemId
-                                        );
-                                    const newContainerItemMapping = {
-                                        ...boardItem.containerItemMapping,
-                                        [containerId]: newContainerItemMap,
-                                    };
+                                const newContainerItemMapping = {
+                                    ...boardItem.containerItemMapping,
+                                    [containerId]: newContainerItemMap,
+                                };
 
-                                    boardItem.items = newItems;
-                                    boardItem.containerItemMapping =
-                                        newContainerItemMapping;
-                                    boardItem.updatedAt = new Date(Date.now());
-                                });
-                            // catch any errors
-                        });
-                    }, 500);
-
-                    setTimeout(() => {
-                        setEnableAnimation(false);
-                    }, 700);
+                                boardItem.items = newItems;
+                                boardItem.containerItemMapping =
+                                    newContainerItemMapping;
+                                boardItem.updatedAt = new Date(Date.now());
+                            });
+                        // catch any errors
+                    });
+                    // }, 500);
                 }
             }
+
+
 
             return renderItem ? (
                 renderItem({
@@ -406,16 +392,13 @@ export const Item = React.memo(
                             <div className="flex ml-auto gap-x-2">
                                 <button
                                     type="button"
-                                    className={clsx(
-                                        item?.completed
-                                            ? 'w-4 h-4 rounded-md opacity-0'
-                                            : 'w-4 h-4 rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-slate-600 focus-visible:scale-105 transition-transform duration-300 dark:text-gray-50'
-                                    )}
+                                    className="w-4 h-4 rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-slate-600 focus-visible:scale-105 transition-transform duration-300 dark:text-gray-50"
                                     onClick={() =>
-                                        setShowItemForm(!props.showItemForm)
+                                        props.setShowItemForm(
+                                            !props.showItemForm
+                                        )
                                     }
                                     ref={excludedRef}
-                                    disabled={item?.completed}
                                 >
                                     <FiEdit />
                                 </button>
@@ -424,7 +407,6 @@ export const Item = React.memo(
                                     {...handleProps}
                                     {...listeners}
                                     className="rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:scale-110 focus-visible:ring-offset-4 transition-transform duration-300"
-                                    disabled={item?.completed}
                                 />
                             </div>
                         </div>
@@ -436,7 +418,11 @@ export const Item = React.memo(
                                     containerType="simple"
                                     containerId={containerId}
                                     showForm={props.showItemForm}
-                                    setShowForm={setShowItemForm}
+                                    setShowForm={
+                                        props.setShowItemForm
+                                            ? props.setShowItemForm
+                                            : () => {}
+                                    }
                                     handleRemoveItem={handleRemoveItem}
                                 />
                             </div>
@@ -445,42 +431,36 @@ export const Item = React.memo(
                                 <div>
                                     {props?.containerType === 'checklist' &&
                                         props.completedItemOrder && (
-                                            <button
-                                                // id="checkItem"
-                                                type="button"
-                                                className="flex items-center justify-center appearance-none w-7 h-7 rounded-full border-1 border-gray-300 dark:border-slate-500 place-self-center self-center -translate-y-2 mr-4 hover:shadow transition-transform cursor-pointer"
-                                                onClick={() =>
-                                                    props.completedItemOrder ===
-                                                    'remove'
-                                                        ? handleRemoveItem(
-                                                              item?.id,
-                                                              containerId
-                                                          )
-                                                        : handleToggleChecklistItem(
-                                                              item?.id,
-                                                              containerId
-                                                          )
-                                                }
+                                            <label
+                                                htmlFor="itemCheckbox"
+                                                className="cursor-pointer"
                                             >
-                                                <BiCheck
-                                                    className="opacity-0 w-6 h-6 text-slate-500 checkItem transition-opacity duration-500"
-                                                    style={{
-                                                        opacity: item?.completed
-                                                            ? '0.75'
-                                                            : '0',
-                                                    }}
+                                                <input
+                                                    // id="checkItem"
+                                                    type="button"
+                                                    className="appearance-none w-7 h-7 rounded-full border-1 border-gray-300 dark:border-slate-500 place-self-center self-center -translate-y-2 mr-4 hover:shadow cursor-pointer"
+                                                    onClick={() =>
+                                                        props.completedItemOrder ===
+                                                        'remove'
+                                                            ? handleRemoveItem(
+                                                                  item?.id,
+                                                                  containerId
+                                                              )
+                                                            : handleToggleChecklistItem(
+                                                                  item?.id,
+                                                                  containerId
+                                                              )
+                                                    }
                                                 />
-                                            </button>
+
+                                                {/* <BiCheck className="w-6 h-6 text-slate-500 checkItem transition" /> */}
+                                            </label>
                                         )}
                                 </div>
 
                                 <div
                                     id={`${value}`}
                                     className="self-start whitespace-normal pb-2 text-slate-600 dark:text-slate-100 break-all text-sm sm:text-md"
-                                    // className={clsx(
-                                    //     'self-start whitespace-normal pb-2 text-slate-600 dark:text-slate-100 break-all text-sm sm:text-md',
-                                    //     item?.completed && 'line-through'
-                                    // )}
                                 >
                                     {value}
                                 </div>
