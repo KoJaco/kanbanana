@@ -44,7 +44,8 @@ yarn-error.log*
 
 # misc
 todo.md
-./backupData*
-./backupData/*
+
+backupData/
+
 
 
