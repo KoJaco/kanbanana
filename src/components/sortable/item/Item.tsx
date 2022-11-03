@@ -21,14 +21,6 @@ export interface ItemProps {
     containerId: UniqueIdentifier;
     containerType?: 'simple' | 'checklist';
     completedItemOrder?: 'start' | 'end' | 'noChange' | 'remove';
-    // handleToggleCheckListItem?: (
-    //     itemId: UniqueIdentifier | undefined,
-    //     containerId: UniqueIdentifier
-    // ) => void;
-    // handleRemoveItem?: (
-    //     itemId: UniqueIdentifier | undefined,
-    //     containerId: UniqueIdentifier
-    // ) => void;
 
     setShowItemForm: (value: boolean) => void;
     children?: JSX.Element;

@@ -9,6 +9,7 @@ import { MdOutlineDone } from 'react-icons/md';
 
 import { useOnClickOutside, useOnClickInsideOnly } from '@/core/hooks';
 import { TItem, Color, UniqueIdentifier } from '@/core/types/sortableBoard';
+import { useTheme } from 'next-themes';
 
 var omit = require('object.omit');
 
@@ -36,6 +37,8 @@ const ItemForm = ({
     const [showColorPicker, setShowColorPicker] = useState(false);
 
     const { currentBoardSlug } = useKanbanStore();
+
+    const { theme } = useTheme();
 
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -87,72 +90,83 @@ const ItemForm = ({
         setShowForm(false);
     }
 
+    const transparentTextColor = (colorName: string, textDark: boolean) => {
+        if (colorName === 'transparent' && theme === 'light') {
+            return 'rgba(0,0,0,1)';
+        } else if (colorName === 'transparent' && theme === 'dark') {
+            return 'rgba(255,255,255,1)';
+        }
+        if (textDark) {
+            return '#333';
+        } else {
+            return '#fff';
+        }
+    };
+
     return (
-        <form onSubmit={handleSubmit} className="">
-            {props.containerType === 'checklist' ? (
-                <div></div>
-            ) : (
-                <>
-                    <textarea
-                        rows={1}
-                        ref={textAreaRef}
-                        name="content"
-                        id="taskContent"
-                        className="border-0 w-full mb-2 resize-none no-scrollbar bg-gray-50 dark:border-slate-700 text-slate-500 dark:text-slate-200 focus:ring-0 text-sm sm:text-md focus:outline-none placeholder:italic placeholder:text-gray-500/[0.5] dark:placeholder:text-slate-200/50 focus:resize-y bg-inherit group overflow-wrap"
-                        placeholder="Start writing..."
-                        value={itemState.content}
-                        onChange={handleUserInput}
-                        onInput={handleTextAreaInput}
-                    />
-                    <div className="opacity-100 py-5 max-h-0 border-t border-gray-200 dark:border-slate-700 flex justify-between items-center">
-                        <div className="flex">
-                            <button
-                                type="button"
-                                className="w-5 h-5 rounded-md hover:bg-red-600 cursor-pointer text-gray-500 hover:text-gray-50 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                                onClick={() =>
-                                    handleRemoveItem(
-                                        itemState.id,
-                                        props.containerId
-                                    )
-                                }
-                            >
-                                <AiOutlineDelete className="w-4 h-4" />
-                            </button>
-                        </div>
+        <form
+            onSubmit={handleSubmit}
+            className=""
+            id={`item-${props.item?.id}-form`}
+        >
+            <textarea
+                rows={1}
+                ref={textAreaRef}
+                name="content"
+                id="taskContent"
+                className="border-0 w-full mb-2 resize-none no-scrollbar bg-gray-50 dark:border-slate-700 text-slate-500 dark:text-slate-200 focus:ring-0 text-sm sm:text-md focus:outline-none placeholder:italic placeholder:text-gray-500/[0.5] dark:placeholder:text-slate-200/50 focus:resize-y bg-inherit group overflow-wrap"
+                placeholder="Start writing..."
+                value={itemState.content}
+                onChange={handleUserInput}
+                onInput={handleTextAreaInput}
+            />
+            <div className="opacity-100 py-5 max-h-0 border-t border-gray-200 dark:border-slate-700 flex justify-between items-center">
+                <div className="flex">
+                    <button
+                        type="button"
+                        className="w-5 h-5 rounded-md hover:bg-red-600 cursor-pointer text-gray-500 hover:text-gray-50 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                        onClick={() =>
+                            handleRemoveItem(itemState.id, props.containerId)
+                        }
+                    >
+                        <span className="sr-only">Delete Item</span>
+                        <AiOutlineDelete className="w-4 h-4" />
+                    </button>
+                </div>
 
-                        <div className="flex flex-shrink-0 gap-x-2">
-                            <button
-                                type="button"
-                                className="w-5 h-5 rounded-md cursor-pointer text-gray-500 hover:text-gray-50 hover:bg-gray-500 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent border-1"
-                                style={{
-                                    borderColor: itemState.badgeColor.textDark
-                                        ? '#333'
-                                        : '#f1f1f1',
-                                    backgroundColor: itemState.badgeColor.value,
-                                    color: itemState.badgeColor.textDark
-                                        ? '#333'
-                                        : '#fff',
-                                }}
-                                onClick={() =>
-                                    setShowColorPicker(!showColorPicker)
-                                }
-                            >
-                                <BsBrush className="w-4 h-4" />
-                            </button>
-                            {/* </ColorPicker> */}
+                <div className="flex flex-shrink-0 gap-x-2">
+                    <button
+                        type="button"
+                        className={`flex cursor-pointer rounded-lg items-center  justify-center w-5 h-5 ${
+                            itemState.badgeColor.name === 'transparent' &&
+                            'border-1 border-slate-500'
+                        }`}
+                        style={{
+                            backgroundColor: itemState.badgeColor.value,
+                            color: transparentTextColor(
+                                itemState.badgeColor.name,
+                                itemState.badgeColor.textDark
+                            ),
+                        }}
+                        onClick={() => setShowColorPicker(!showColorPicker)}
+                    >
+                        <span className="sr-only">Choose an item color</span>
+                        <BsBrush className="w-3 h-3" />
+                    </button>
+                    {/* </ColorPicker> */}
 
-                            <button
-                                type="submit"
-                                className="inline-flex items-center w-5 h-5 p-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600/[0.8] hover:bg-green hover:drop-shadow focus:outline-none focus:drop-shadow-lg transition-colors duration-1000 cursor-pointer"
-                            >
-                                <MdOutlineDone />
-                            </button>
-                        </div>
+                    <button
+                        type="submit"
+                        className="inline-flex items-center w-5 h-5 p-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600/[0.8] hover:bg-green hover:drop-shadow focus:outline-none focus:drop-shadow-lg transition-colors duration-1000 cursor-pointer"
+                    >
+                        <span className="sr-only">Save Item</span>
+                        <MdOutlineDone />
+                    </button>
+                </div>
 
-                        {children}
-                    </div>
-                </>
-            )}
+                {children}
+            </div>
+
             {showColorPicker && (
                 <div className="my-2">
                     <ColorPicker

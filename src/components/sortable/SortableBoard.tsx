@@ -66,7 +66,6 @@ import {
     HiChevronRight,
 } from 'react-icons/hi';
 import InlineBoardForm from '@/components/forms/InlineBoardForm';
-import { useOnClickOutside } from '@/core/hooks';
 import AnimateItemReorder from './AnimateItemReorder';
 import ItemAnimationWrapper from '@/components/sortable/item/ItemAnimationWrapper';
 
@@ -640,7 +639,7 @@ export default function SortableBoard({
 
                                 <button
                                     type="button"
-                                    className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray dark:hover:bg-slate-500 cursor-pointer transition-color duration-300 dark:text-white"
+                                    className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray hover:scale-110 dark:hover:bg-slate-700 cursor-pointer transition-color duration-300 dark:text-white"
                                     onClick={() => setShowInlineBoardForm(true)}
                                 >
                                     <MdOutlineEdit className="w-4 h-4 lg:w-5 lg:h-5" />

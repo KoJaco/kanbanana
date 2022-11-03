@@ -104,7 +104,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                 </h1>
                 <button
                     type="button"
-                    className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
+                    className="items-center text-slate-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 dark:hover:text-slate-100 hover:scale-110 cursor-pointer transition-color duration-300"
                     onClick={() => setShowForm(false)}
                 >
                     <MdOutlineCancel className="w-5 h-5" />
@@ -149,19 +149,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                                 tag.backgroundColor
                                             }
                                         />
-                                        {/* <span
-                                            className="text-sm rounded-full px-2"
-                                            style={{
-                                                color: tag.backgroundColor
-                                                    .textDark
-                                                    ? '#333'
-                                                    : '#fff',
-                                                backgroundColor:
-                                                    tag.backgroundColor.value,
-                                            }}
-                                        >
-                                            {tag.text}
-                                        </span> */}
+
                                         <div className="flex scale-0 w-0 opacity-0 group-hover:opacity-100 group-hover:scale-100 group-hover:w-auto transition-transform duration-300">
                                             <button
                                                 type="button"

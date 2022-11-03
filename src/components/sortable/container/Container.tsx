@@ -1,25 +1,16 @@
-import React, {
-    forwardRef,
-    useEffect,
-    useLayoutEffect,
-    useRef,
-    createRef,
-    useState,
-} from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import { Handle } from '../components';
-import { MdAdd, MdOutlineEdit } from 'react-icons/md';
+import { MdAdd, MdOutlineCancel, MdOutlineEdit } from 'react-icons/md';
 import {
     TContainer,
     TItem,
     UniqueIdentifier,
 } from '@/core/types/sortableBoard';
-import { AiOutlineDelete } from 'react-icons/ai';
 import { ModifyError } from 'dexie';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import ContainerInputGroup from '@/components/forms/inputs/ContainerInputGroup';
-import { useOnClickOutside, usePrevious } from '@/core/hooks';
-import { calculateBoundingBoxes } from '@/core/utils/kanbanBoard';
+import { useOnClickOutside } from '@/core/hooks';
 
 export interface ContainerProps {
     children: React.ReactNode;
@@ -239,31 +230,34 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                             </button> */}
 
                             <button
-                                className="ml-auto items-center justify-end text-slate-500 py-2 rounded-full hover:text-red-500 cursor-pointer transition-color duration-300"
-                                // style={{
-                                //     color: container?.badgeColor.textDark
-                                //         ? '#333'
-                                //         : '#fff',
-                                // }}
+                                className="ml-auto rounded-full items-center justify-end text-slate-500 p-1 hover:scale-110 hover:bg-white  dark:hover:bg-slate-900 dark:hover:text-slate-100 cursor-pointer transition-color duration-300"
                                 ref={excludedRef}
+                                onClick={() =>
+                                    setShowContainerForm(!showContainerForm)
+                                }
                             >
-                                <MdOutlineEdit
-                                    className="w-5 h-5"
-                                    // style={{
-                                    //     color: container?.badgeColor.textDark
-                                    //         ? '#333'
-                                    //         : '#fff',
-                                    // }}
-                                    onClick={() =>
-                                        setShowContainerForm(!showContainerForm)
-                                    }
-                                />
+                                {showContainerForm ? (
+                                    <>
+                                        <span className="sr-only">
+                                            Cancel Edit
+                                        </span>
+
+                                        <MdOutlineCancel className="w-5 h-5" />
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="sr-only">
+                                            Edit Board
+                                        </span>
+                                        <MdOutlineEdit className="w-5 h-5" />
+                                    </>
+                                )}
                             </button>
                         </div>
 
                         {showContainerForm && (
                             <div
-                                className="bg-gray-100 border-t -my-1 mt-4 px-2 pt-2 pb-4 dark:bg-slate-800 dark:border-slate-600"
+                                className="bg-gray-100 -my-1 mt-4 px-2 pt-2 pb-4 dark:bg-slate-800"
                                 ref={containerFormRef}
                             >
                                 <ContainerInputGroup
