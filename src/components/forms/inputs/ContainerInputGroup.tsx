@@ -7,14 +7,11 @@ import {
     UniqueIdentifier,
 } from '@/core/types/sortableBoard';
 import clsx from 'clsx';
-import { MdOutlineDone } from 'react-icons/md';
 import { useOnClickOutside } from '@/core/hooks/index';
-import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
 import ColorPicker from '@/components/pickers/ColorPicker';
 import Tooltip from '@/components/tooltip/Tooltip';
-import { AiOutlineDelete } from 'react-icons/ai';
 
-type ContainerFormProps = {
+type ContainerInputGroupProps = {
     id: UniqueIdentifier;
     // can optionally be given a container to edit.
     container?: TContainer;
@@ -42,10 +39,10 @@ const itemSortingOptions: {
     { id: 4, key: 'remove', name: 'Remove' },
 ];
 
-const ContainerForm = ({
+const ContainerInputGroup = ({
     handleAddOrUpdateContainer,
     ...props
-}: ContainerFormProps) => {
+}: ContainerInputGroupProps) => {
     const [title, setTitle] = useState(
         props.container === undefined ? '' : props.container.title
     );
@@ -81,15 +78,6 @@ const ContainerForm = ({
         () => setShowColorPicker(false),
         excludedColorPickerRef
     );
-
-    // function getNextContainerId() {
-    //     if (props.container === undefined) {
-    //         return 'A';
-    //     }
-    //     const containerIds = Object.keys(boardContainerItemMapping);
-    //     const lastContainerId = containerIds[containerIds.length - 1];
-    //     return String.fromCharCode(lastContainerId!.charCodeAt(0) + 1);
-    // }
 
     function handleSetBadgeColor(color: Color) {
         setBadgeColor(color);
@@ -403,28 +391,6 @@ const ContainerForm = ({
                             )}
                         </Listbox>
                     </div>
-                    {/* <div className="flex flex-col mt-5">
-                        <button
-                            type="button"
-                            className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-green-500 text-gray-50 hover:border-green-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary  drop-shadow disabled:cursor-not-allowed"
-                            onClick={() => {
-                                handleAddOrUpdateContainer({
-                                    id: props.id,
-                                    title: title,
-                                    type: containerType!.key,
-                                    completedItemOrder: itemSortingType!.key,
-                                    badgeColor: badgeColor,
-                                });
-                            }}
-                            disabled={title.length === 0}
-                        >
-                            <span className="sr-only">Save column</span>
-                            <MdOutlineDone
-                                className="h-5 w-5 "
-                                aria-hidden="true"
-                            />
-                        </button>
-                    </div> */}
                 </div>
                 <div className="flex flex-shrink-0 justify-end pr-2">
                     {props.handleRemoveContainer && (
@@ -436,13 +402,7 @@ const ContainerForm = ({
                             Delete Column
                         </button>
                     )}
-                    {/* <button
-                    type="button"
-                    className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    onClick={() => setShowForm(false)}
-                >
-                    Cancel
-                </button> */}
+
                     <button
                         type="submit"
                         className="ml-auto inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-dark-alt focus:outline-none transition-color duration-300 disabled:cursor-not-allowed invalid:border-pink-500"
@@ -460,46 +420,9 @@ const ContainerForm = ({
                         Save
                     </button>
                 </div>
-                {/* <div className="w-full flex flex-row">
-                    {props.handleRemoveContainer && (
-                        <button
-                            type="button"
-                            className="inline-flex px-2 py-1 flex-shrink-0 items-center justify-center rounded-md border-1  border-gray-200 bg-red-500 text-gray-50 hover:border-red-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed text-sm"
-                            // button is disabled if we only have one column, OR if we will be deleting all our tasks.
-                            // disabled={
-                            //     columns === 1 ? true : false
-                            //     // ||
-                            //     //   totalItemCount ===
-                            //     //       columnTasks!.length
-                            // }
-                            onClick={props.handleRemoveContainer}
-                        >
-                            Delete
-                        </button>
-                    )}
-
-                    <button
-                        type="button"
-                        className="ml-auto inline-flex px-2 py-1 flex-shrink-0 items-center justify-center rounded-md border-1  border-gray-200 bg-green-500 text-gray-50 hover:border-green-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed text-sm"
-                        onClick={() => {
-                            handleAddOrUpdateContainer({
-                                id: props.id,
-                                title: title,
-                                type: containerType!.key,
-                                completedItemOrder: itemSortingType!.key,
-                                badgeColor: badgeColor,
-                            });
-                        }}
-                        disabled={title.length === 0}
-                    >
-                        Save
-                        <span className="sr-only">Save column</span>
-
-                    </button>
-                </div> */}
             </div>
         </>
     );
 };
 
-export default ContainerForm;
+export default ContainerInputGroup;

@@ -2,11 +2,11 @@ import { useUIControlStore } from '@/stores/UIControlStore';
 import Sidebar from '@/components/navigation/Sidebar';
 import Navbar from '@/components/navigation/Navbar';
 
-type MainLayoutProps = {
+type BoardLayoutProps = {
     children: JSX.Element;
 };
 
-export default function MainLayout({ children }: MainLayoutProps) {
+export default function BoardLayout({ children }: BoardLayoutProps) {
     const { currentMode, sidebarOpen, setSidebarOpen } = useUIControlStore();
 
     return (

@@ -11,7 +11,7 @@ import { useOnClickOutside } from '@/core/hooks/index';
 import CreateBoardForm from '@/components/forms/CreateBoardForm';
 import BaseModal from '@/components/modals/BaseModal';
 
-const Dropzone = dynamic(() => import('@/components/files/Dropzone'), {
+const ImportExport = dynamic(() => import('@/components/files/ImportExport'), {
     ssr: false,
 });
 
@@ -47,7 +47,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         ref={modalContentRef}
                         className="flex w-3/5 max-w-3/4 max-h-1/2 bg-white dark:bg-slate-900 p-10 rounded-md gap-x-6 shadow-lg"
                     >
-                        <Dropzone handleCloseModal={setShowModal} />
+                        <ImportExport handleCloseModal={setShowModal} />
                     </div>
                 </div>
             </BaseModal>

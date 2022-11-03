@@ -22,7 +22,6 @@ const Tooltip = ({
                     tooltipRef.current.style.marginBottom = '20px';
                     break;
                 case 'right':
-                    tooltipRef.current.style.marginLeft = '20px';
                     break;
                 case 'down':
                     tooltipRef.current.style.marginTop = '20px';

@@ -10,7 +10,6 @@ import { BiSortDown, BiSortUp } from 'react-icons/bi';
 import { BsChevronBarDown } from 'react-icons/bs';
 import { TiDelete } from 'react-icons/ti';
 import {
-    Board,
     TContainer,
     Items,
     Containers,
@@ -20,11 +19,9 @@ import {
     ContainerOrder,
     UniqueIdentifier,
 } from '@/core/types/sortableBoard';
-import { getMaxIdFromString } from '@/core/utils/kanbanBoard';
-import ContainerForm from './ContainerForm';
-import TagForm from './TagForm';
+import ContainerInputGroup from './inputs/ContainerInputGroup';
+import TagInputGroup from './inputs/TagInputGroup';
 import Tag from '@/components/elements/Tag';
-import clsx from 'clsx';
 import { useTheme } from 'next-themes';
 
 type CreateBoardFormProps = {
@@ -794,7 +791,7 @@ const CreateBoardForm = ({
                                                             >
                                                                 {tagFormState ===
                                                                 'add' ? (
-                                                                    <TagForm
+                                                                    <TagInputGroup
                                                                         labels={
                                                                             true
                                                                         }
@@ -806,7 +803,7 @@ const CreateBoardForm = ({
                                                                         }
                                                                     />
                                                                 ) : (
-                                                                    <TagForm
+                                                                    <TagInputGroup
                                                                         labels={
                                                                             true
                                                                         }
@@ -879,7 +876,7 @@ const CreateBoardForm = ({
                                                                 {containerFormState ===
                                                                     'edit' &&
                                                                 boardContainers ? (
-                                                                    <ContainerForm
+                                                                    <ContainerInputGroup
                                                                         id={
                                                                             currentContainerId
                                                                         }
@@ -893,7 +890,7 @@ const CreateBoardForm = ({
                                                                         }
                                                                     />
                                                                 ) : (
-                                                                    <ContainerForm
+                                                                    <ContainerInputGroup
                                                                         id={getNextContainerId()}
                                                                         handleAddOrUpdateContainer={
                                                                             handleAddContainer

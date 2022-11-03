@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { Board, BoardTags, UniqueIdentifier } from '@/core/types/sortableBoard';
+import { Board, UniqueIdentifier } from '@/core/types/sortableBoard';
 import clsx from 'clsx';
 import { useTheme } from 'next-themes';
 

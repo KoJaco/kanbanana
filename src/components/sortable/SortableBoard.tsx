@@ -683,7 +683,7 @@ export default function SortableBoard({
 
                 <div
                     id="carousel"
-                    className="pb-10 mt-8 mx-4 sm:mx-10 md:mx-8 lg:mx-6 h-auto overflow-x-scroll snap-x whitespace-nowrap scroll-smooth touch-pan-auto overscroll-x-none transition-all duration-500 snap-proximity no-scrollbar"
+                    className="pb-10 mt-8 mx-4 sm:mx-10 md:mx-8 lg:mx-6 no-scrollbar h-auto overflow-x-scroll snap-x whitespace-nowrap scroll-smooth touch-pan-auto overscroll-x-none transition-all duration-500 "
                 >
                     <div
                         className="inline-grid grid-auto-cols auto-cols-max relative z-40"

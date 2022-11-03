@@ -19,11 +19,11 @@ import assert from 'assert';
 import { IndexableType, Table } from 'dexie';
 import { UniqueIdentifier } from '@/core/types/sortableBoard';
 
-type DropZoneProps = {
+type ImportExportProps = {
     handleCloseModal: (value: boolean) => void;
 };
 
-const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
+const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
     const [metaDataObject, setMetaDataObject] = useState({
         formatName: '',
         formatVersion: 0,
@@ -526,4 +526,4 @@ const Dropzone = ({ handleCloseModal }: DropZoneProps) => {
     );
 };
 
-export default Dropzone;
+export default ImportExport;

@@ -17,7 +17,7 @@ import { AiOutlineDelete } from 'react-icons/ai';
 import { ModifyError } from 'dexie';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
-import ContainerForm from '@/components/forms/ContainerForm';
+import ContainerInputGroup from '@/components/forms/inputs/ContainerInputGroup';
 import { useOnClickOutside, usePrevious } from '@/core/hooks';
 import { calculateBoundingBoxes } from '@/core/utils/kanbanBoard';
 
@@ -266,7 +266,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                                 className="bg-gray-100 border-t -my-1 mt-4 px-2 pt-2 pb-4 dark:bg-slate-800 dark:border-slate-600"
                                 ref={containerFormRef}
                             >
-                                <ContainerForm
+                                <ContainerInputGroup
                                     id={container.id}
                                     container={container}
                                     handleAddOrUpdateContainer={

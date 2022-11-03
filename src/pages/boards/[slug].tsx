@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
+import BoardLayout from '@/layouts/BoardLayout';
 
 // dynamically import board component, depends on IndexDB and dnt-kit.
 const SortableBoard = dynamic(
@@ -25,9 +26,11 @@ const BoardDetail: NextPage = () => {
     const { slug } = router.query;
 
     return (
-        <div className="h-auto ">
-            <SortableBoard slug={parseSlug(slug)} />
-        </div>
+        <BoardLayout>
+            <div className="h-auto ">
+                <SortableBoard slug={parseSlug(slug)} />
+            </div>
+        </BoardLayout>
     );
 };
 

@@ -1,27 +1,24 @@
-import { useState, useRef, Fragment } from 'react';
+import { useState, useRef } from 'react';
 import { useTheme } from 'next-themes';
-import { Menu, Transition } from '@headlessui/react';
 import Tag from '@/components/elements/Tag';
 import { BsBrush } from 'react-icons/bs';
-import ColorPickerPalette from '@/components/pickers/ColorPickerPalette';
 import ColorPicker from '@/components/pickers/ColorPicker';
 import { useOnClickOutside } from '@/core/hooks/index';
 import { IoMdAdd } from 'react-icons/io';
 import { BoardTag, Color } from '@/core/types/sortableBoard';
 
-type TagFormProps = {
+type TagInputGroupProps = {
     tagLabel?: string;
     labels?: boolean;
     inLineInputs?: boolean;
     tagNextToSave?: boolean;
-    // can optionally be given a tag, for editing
     tag?: BoardTag;
     tagIndex: number | null;
     addOrEdit?: 'add' | 'edit';
     handleAddOrUpdateTag: (tag: BoardTag, tagIndex?: number | null) => void;
 };
 
-const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
+const TagInputGroup = ({ addOrEdit = 'add', ...props }: TagInputGroupProps) => {
     const [tagText, setTagText] = useState(props.tag ? props.tag.text : '');
     const [colorState, setColorState] = useState(
         props.tag
@@ -65,7 +62,6 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
         }
     };
 
-    // not a form, just keeps track of inputs
     return (
         <>
             <div className="flex justify-between w-full gap-x-2">
@@ -136,15 +132,7 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
                                 }}
                                 onClick={handleToggleColorPicker}
                             >
-                                <BsBrush
-                                    className="w-5 h-5"
-
-                                    // style={{
-                                    //     color: colorState.textDark
-                                    //         ? '#333'
-                                    //         : '#fff',
-                                    // }}
-                                />
+                                <BsBrush className="w-5 h-5" />
                             </button>
                         </ColorPicker>
                     </div>
@@ -191,52 +179,15 @@ const TagForm = ({ addOrEdit = 'add', ...props }: TagFormProps) => {
 
             <div className="mt-3">
                 <div className="items-end text-sm group flex">
-                    {/* <button
-                        type="button"
-                        className="inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-1  border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary drop-shadow disabled:cursor-not-allowed"
-                        onClick={() => {
-                            console.log('hit');
-
-                            if (props.tagIndex !== null) {
-                                props.handleAddOrUpdateTag(
-                                    {
-                                        text: tagText,
-                                        backgroundColor: colorState,
-                                    },
-                                    props.tagIndex
-                                );
-                            } else {
-                                props.handleAddOrUpdateTag({
-                                    text: tagText,
-                                    backgroundColor: colorState,
-                                });
-                            }
-                        }}
-                        disabled={tagText.length === 0}
-                    >
-                        <span className="sr-only">Add</span>
-                        <MdOutlineDone className="h-5 w-5" aria-hidden="true" />
-                    </button> */}
                     {props.tagNextToSave && (
                         <span className="">
                             <Tag text={tagText} backgroundColor={colorState} />
                         </span>
                     )}
-                    {/* {tagText.length === 0 && (
-                        <span className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 dark:text-slate-100">
-                            Your tag cannot be empty.
-                        </span>
-                    )} */}
                 </div>
             </div>
-
-            {/* {showColorPicker && (
-                <div ref={colorPickerRef} className="relative mt-4">
-                    <ColorPickerPalette handlePickColor={handleSetColor} />
-                </div>
-            )} */}
         </>
     );
 };
 
-export default TagForm;
+export default TagInputGroup;

@@ -1,13 +1,12 @@
 import { BoardTag, BoardTags } from '@/core/types/sortableBoard';
-import { useState, useRef } from 'react';
-import TagForm from './TagForm';
+import { useState } from 'react';
+import TagInputGroup from './inputs/TagInputGroup';
 import { TiDelete } from 'react-icons/ti';
 import { BsChevronBarDown } from 'react-icons/bs';
 import { Transition } from '@headlessui/react';
 import { db } from '@/server/db';
 import { useRouter } from 'next/router';
 import { MdOutlineCancel, MdOutlineEdit } from 'react-icons/md';
-import { useOnClickOutside } from '@/core/hooks/index';
 import Tag from '../elements/Tag';
 type InlineBoardFormProps = {
     title: string;
@@ -239,7 +238,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                             leaveTo="transform opacity-0 scale-95"
                         >
                             {tagFormState === 'add' ? (
-                                <TagForm
+                                <TagInputGroup
                                     labels={false}
                                     inLineInputs={true}
                                     tagNextToSave={true}
@@ -247,7 +246,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                     handleAddOrUpdateTag={handleAddTag}
                                 />
                             ) : (
-                                <TagForm
+                                <TagInputGroup
                                     labels={false}
                                     inLineInputs={true}
                                     tagNextToSave={true}
