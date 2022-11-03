@@ -200,6 +200,7 @@ const CreateBoardForm = ({
             let newTags = Array.from(boardTags);
             newTags.splice(index, 1);
             setBoardTags(newTags);
+            setShowTagForm(false);
         }
     }
 
@@ -389,14 +390,14 @@ const CreateBoardForm = ({
                                             {/* HEADER SECTION */}
                                             <div className="bg-offset-bg py-6 px-4 sm:px-6">
                                                 <div className="flex items-center justify-between">
-                                                    <Dialog.Title className="text-lg font-medium text-slate-600">
+                                                    <Dialog.Title className="text-lg font-medium text-slate-800">
                                                         Create a new Board
                                                     </Dialog.Title>
 
                                                     <div className="ml-3 flex h-7 items-center">
                                                         <button
                                                             type="button"
-                                                            className="rounded-md transparent text-slate-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                                                            className="rounded-md transparent text-slate-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-white transition-translate duration-300"
                                                             onClick={() =>
                                                                 setShowBoardForm(
                                                                     false
@@ -414,7 +415,7 @@ const CreateBoardForm = ({
                                                     </div>
                                                 </div>
                                                 <div className="mt-1">
-                                                    <p className="text-sm text-slate-500">
+                                                    <p className="text-sm text-slate-700">
                                                         Fill out the information
                                                         below and do not forget
                                                         to save!
@@ -422,7 +423,7 @@ const CreateBoardForm = ({
                                                 </div>
                                             </div>
                                             <div className=" mt-4 space-y-4 sm:mt-10">
-                                                <div className="flex flex-1 flex-col justify-between border-b border-gray-100 dark:border-slate-500">
+                                                <div className="flex flex-1 flex-col justify-between border-b border-gray-100 dark:border-slate-600">
                                                     <div className="px-2 sm:px-4">
                                                         <div className="space-y-4 pt-6 pb-5 px-1">
                                                             <div>
@@ -436,8 +437,8 @@ const CreateBoardForm = ({
                                                                 <div className="mt-1">
                                                                     <input
                                                                         type="text"
-                                                                        name="board-title"
-                                                                        id="board-title"
+                                                                        name="boardTitle"
+                                                                        id="boardTitle"
                                                                         value={
                                                                             boardTitle
                                                                         }
@@ -446,17 +447,12 @@ const CreateBoardForm = ({
                                                                                 ? boardTitle
                                                                                 : 'Give your board a title.'
                                                                         }
-                                                                        className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-slate-800 dark:focus:border-slate-600 text-sm sm:text-md"
+                                                                        className="peer p-2 block outline-primary border-1 border-gray-300 w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-slate-800 dark:focus:border-slate-500 text-sm sm:text-md invalid:border-pink-300 dark:invalid:border-pink-500/50"
                                                                         required
                                                                         onChange={
                                                                             handleBoardTitleInputChange
                                                                         }
                                                                     />
-                                                                    {/* <p className="invisible peer-invalid:visible text-red-400 font-regular text-sm ml-1">
-                                                                        Title
-                                                                        cannot
-                                                                        be empty
-                                                                    </p> */}
                                                                 </div>
                                                             </div>
                                                             {/* small display for tag and container info */}
@@ -495,29 +491,12 @@ const CreateBoardForm = ({
                                                                                                 tag.backgroundColor
                                                                                             }
                                                                                         />
-                                                                                        {/* <span
-                                                                                            className="text-sm rounded-full px-2"
-                                                                                            style={{
-                                                                                                color: tag
-                                                                                                    .backgroundColor
-                                                                                                    .textDark
-                                                                                                    ? '#333'
-                                                                                                    : '#fff',
-                                                                                                backgroundColor:
-                                                                                                    tag
-                                                                                                        .backgroundColor
-                                                                                                        .value,
-                                                                                            }}
-                                                                                        >
-                                                                                            {
-                                                                                                tag.text
-                                                                                            }
-                                                                                        </span> */}
-                                                                                        <div className="flex">
+
+                                                                                        <div className="flex scale-0 w-0 opacity-0 group-hover:opacity-100 group-hover:scale-100 group-hover:w-auto transition-transform duration-300">
                                                                                             <button
                                                                                                 type="button"
-                                                                                                name="delete-tag"
-                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
+                                                                                                name="editTag"
+                                                                                                className=" hover:scale-110 focus-visible:opacity-100"
                                                                                                 onClick={() => {
                                                                                                     if (
                                                                                                         showTagForm
@@ -548,19 +527,27 @@ const CreateBoardForm = ({
                                                                                                     );
                                                                                                 }}
                                                                                             >
-                                                                                                <MdOutlineEdit className="text-slate-600" />
+                                                                                                <span className="sr-only">
+                                                                                                    Edit
+                                                                                                    Tag
+                                                                                                </span>
+                                                                                                <MdOutlineEdit className="text-slate-600 dark:text-slate-200" />
                                                                                             </button>
                                                                                             <button
                                                                                                 type="button"
-                                                                                                name="delete-tag"
-                                                                                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
+                                                                                                name="deleteTag"
+                                                                                                className="hover:scale-110 focus-visible:opacity-100"
                                                                                                 onClick={() =>
                                                                                                     handleRemoveTag(
                                                                                                         index
                                                                                                     )
                                                                                                 }
                                                                                             >
-                                                                                                <TiDelete className="text-slate-600" />
+                                                                                                <span className="sr-only">
+                                                                                                    Delete
+                                                                                                    Tag
+                                                                                                </span>
+                                                                                                <TiDelete className="text-slate-600 dark:text-slate-200" />
                                                                                             </button>
                                                                                         </div>
                                                                                     </div>
@@ -574,9 +561,9 @@ const CreateBoardForm = ({
                                                                         htmlFor="board-containers"
                                                                         className="block text-sm font-medium text-slate-600 dark:text-slate-100"
                                                                     >
-                                                                        Containers:
+                                                                        Columns:
                                                                     </label>
-                                                                    <div className="mt-1 gap-y-2 gap-x-2 my-4">
+                                                                    <div className="grid grid-cols-2 mt-1 gap-y-2 gap-x-2 my-4">
                                                                         {/* map through containers for display only*/}
                                                                         {boardContainerItemMapping !==
                                                                             null &&
@@ -605,10 +592,10 @@ const CreateBoardForm = ({
                                                                                                     key={
                                                                                                         index
                                                                                                     }
-                                                                                                    className="group rounded-md shadow my-2 text-md relative bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-800"
+                                                                                                    className="cols-span-1 grid-rows-auto group rounded-md drop-shadow my-2 text-md relative bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-800 px-2 py-2"
                                                                                                 >
-                                                                                                    <div className="flex flex-col gap-x-12 px-2 py-2 text-slate-600 ">
-                                                                                                        <div className="flex justify-between items-center mb-1">
+                                                                                                    <div className="flex flex-col text-slate-600 mb-1 ">
+                                                                                                        <div className="flex mb-2">
                                                                                                             <div
                                                                                                                 className={`flex mr-auto w-5 h-5 rounded-lg ${
                                                                                                                     container
@@ -624,9 +611,10 @@ const CreateBoardForm = ({
                                                                                                                             .value,
                                                                                                                 }}
                                                                                                             />
-                                                                                                            <div className="flex items-center ml-auto mb-auto">
+                                                                                                            <div className="flex items-center mb-auto">
                                                                                                                 <button
                                                                                                                     type="button"
+                                                                                                                    name="editColumn"
                                                                                                                     className="opacity-0 group-hover:opacity-100 flex justify-end transition-opacity duration-300 hover:scale-110"
                                                                                                                     style={{
                                                                                                                         color: transparentTextColor(
@@ -644,11 +632,15 @@ const CreateBoardForm = ({
                                                                                                                         )
                                                                                                                     }
                                                                                                                 >
-                                                                                                                    <MdModeEdit className="text-slate-600 w-4 dark:text-slate-200" />
+                                                                                                                    <span className="sr-only">
+                                                                                                                        Edit
+                                                                                                                        Column
+                                                                                                                    </span>
+                                                                                                                    <MdModeEdit className="text-slate-600 w-4 dark:text-slate-100" />
                                                                                                                 </button>
                                                                                                                 <button
                                                                                                                     type="button"
-                                                                                                                    name="delete-tag"
+                                                                                                                    name="deleteColumn"
                                                                                                                     className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-110"
                                                                                                                     onClick={() =>
                                                                                                                         handleRemoveContainer(
@@ -656,12 +648,16 @@ const CreateBoardForm = ({
                                                                                                                         )
                                                                                                                     }
                                                                                                                 >
-                                                                                                                    <TiDelete className="text-slate-600 w-5 h-5 dark:text-slate-200" />
+                                                                                                                    <span className="sr-only">
+                                                                                                                        Delete
+                                                                                                                        Column
+                                                                                                                    </span>
+                                                                                                                    <TiDelete className="text-slate-600 w-5 h-5 dark:text-slate-100" />
                                                                                                                 </button>
                                                                                                             </div>
                                                                                                         </div>
 
-                                                                                                        <div className="flex flex-row items-center justify-start ml-1 gap-x-10">
+                                                                                                        <div className="flex flex-row items-center justify-start gap-x-4 sm:gap-x-6">
                                                                                                             <div
                                                                                                                 className="flex flex-col"
                                                                                                                 style={{
@@ -675,17 +671,17 @@ const CreateBoardForm = ({
                                                                                                                     ),
                                                                                                                 }}
                                                                                                             >
-                                                                                                                <label className="text-sm font-bold text-slate-600 dark:text-slate-200/75">
+                                                                                                                <label className="text-sm font-bold text-slate-600 dark:text-slate-100">
                                                                                                                     Title
                                                                                                                 </label>
-                                                                                                                <div className="text-light text-slate-500 dark:text-slate-200/50">
+                                                                                                                <div className="text-light text-sm text-slate-500 dark:text-slate-100/75">
                                                                                                                     {
                                                                                                                         container.title
                                                                                                                     }
                                                                                                                 </div>
                                                                                                             </div>
                                                                                                             <div
-                                                                                                                className="flex flex-col"
+                                                                                                                className="flex flex-col text-sm"
                                                                                                                 style={{
                                                                                                                     color: transparentTextColor(
                                                                                                                         container
@@ -697,10 +693,10 @@ const CreateBoardForm = ({
                                                                                                                     ),
                                                                                                                 }}
                                                                                                             >
-                                                                                                                <label className="text-sm font-bold text-slate-600 dark:text-slate-200/75">
+                                                                                                                <label className="text-sm font-bold text-slate-600 dark:text-slate-100">
                                                                                                                     Type
                                                                                                                 </label>
-                                                                                                                <div className="text-light text-slate-500 dark:text-slate-200/50">
+                                                                                                                <div className="text-light text-slate-500 dark:text-slate-100/75">
                                                                                                                     {
                                                                                                                         container.type
                                                                                                                     }
@@ -721,10 +717,10 @@ const CreateBoardForm = ({
                                                                                                                         ),
                                                                                                                     }}
                                                                                                                 >
-                                                                                                                    <label className="text-sm font-bold text-slate-600 dark:text-slate-200/75">
+                                                                                                                    <label className="text-sm font-bold text-slate-600 dark:text-slate-100">
                                                                                                                         Ordering
                                                                                                                     </label>
-                                                                                                                    <div className="text-light text-slate-500 dark:text-slate-200/50">
+                                                                                                                    <div className="text-light text-sm text-slate-500 dark:text-slate-100/75">
                                                                                                                         {
                                                                                                                             container.completedItemOrder
                                                                                                                         }
@@ -746,7 +742,7 @@ const CreateBoardForm = ({
                                                     </div>
                                                 </div>
                                                 {/* Board tag/container input*/}
-                                                <div className="flex flex-1 flex-col justify-between border-b border-gray-100 dark:border-slate-500">
+                                                <div className="flex flex-1 flex-col justify-between">
                                                     <div className="px-2 sm:px-4">
                                                         <div className="space-y-2 px-1">
                                                             <div className="relative inline-block w-full"></div>
@@ -855,8 +851,7 @@ const CreateBoardForm = ({
                                                                     }
                                                                 }}
                                                             >
-                                                                Add some
-                                                                containers
+                                                                Add some columns
                                                                 <BsChevronBarDown
                                                                     className="-mr-1 ml-2 h-5 w-5"
                                                                     aria-hidden="true"
@@ -903,25 +898,33 @@ const CreateBoardForm = ({
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex flex-shrink-0 justify-end px-4 py-4">
+                                        <div className="flex flex-shrink-0 justify-end items-end px-4 py-4">
                                             <button
                                                 type="button"
-                                                className="rounded-md border border-gray-300 dark:border-slate-500 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                                className="mr-auto rounded-md border border-gray-300 dark:border-slate-500 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                                 onClick={handleCancelEdit}
                                             >
                                                 Cancel
                                             </button>
-                                            <button
-                                                type="submit"
-                                                className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-dark-alt focus:outline-none transition-color duration-300 disabled:cursor-not-allowed"
-                                                disabled={
-                                                    boardTitle.length < 1
-                                                        ? true
-                                                        : false
-                                                }
-                                            >
-                                                Save
-                                            </button>
+                                            <div className="flex flex-row items-end group">
+                                                {boardTitle.length < 1 && (
+                                                    <span className="flex  opacity-0 italic group-hover:opacity-100 text-sm text-slate-500 dark:text-slate-100/50 transition-opacity duration-300">
+                                                        Add a board title to
+                                                        save
+                                                    </span>
+                                                )}
+                                                <button
+                                                    type="submit"
+                                                    className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary focus:outline-none transition-color duration-300 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    disabled={
+                                                        boardTitle.length < 1
+                                                            ? true
+                                                            : false
+                                                    }
+                                                >
+                                                    Save Board
+                                                </button>
+                                            </div>
                                         </div>
                                     </form>
                                 </Dialog.Panel>

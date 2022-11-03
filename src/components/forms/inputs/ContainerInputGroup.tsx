@@ -9,7 +9,8 @@ import {
 import clsx from 'clsx';
 import { useOnClickOutside } from '@/core/hooks/index';
 import ColorPicker from '@/components/pickers/ColorPicker';
-import Tooltip from '@/components/tooltip/Tooltip';
+import { useTheme } from 'next-themes';
+import { BiCheck } from 'react-icons/bi';
 
 type ContainerInputGroupProps = {
     id: UniqueIdentifier;
@@ -70,6 +71,8 @@ const ContainerInputGroup = ({
             : props.container.badgeColor
     );
 
+    const { theme } = useTheme();
+
     const colorPickerRef = useRef(null);
     const excludedColorPickerRef = useRef(null);
 
@@ -112,6 +115,19 @@ const ContainerInputGroup = ({
         }
         return 0;
     }
+
+    const transparentTextColor = (colorName: string, textDark: boolean) => {
+        if (colorName === 'transparent' && theme === 'light') {
+            return 'rgba(0,0,0,1)';
+        } else if (colorName === 'transparent' && theme === 'dark') {
+            return 'rgba(255,255,255,1)';
+        }
+        if (textDark) {
+            return '#333';
+        } else {
+            return '#fff';
+        }
+    };
 
     // need to conditionally change styling using this const, as HeadlessUi Listbox doesn't seem to pass down disabled?
     const sortingOptionsDisabled =
@@ -163,23 +179,20 @@ const ContainerInputGroup = ({
                                 <button
                                     type="button"
                                     ref={excludedColorPickerRef}
-                                    className="cursor-pointer rounded-full items-center p-1"
+                                    className={`cursor-pointer rounded-full items-center p-1 ${
+                                        badgeColor.name === 'transparent' &&
+                                        'border-1 border-slate-500'
+                                    }`}
                                     style={{
                                         backgroundColor: badgeColor.value,
-                                        color: badgeColor.textDark
-                                            ? '#555'
-                                            : '#fff',
+                                        color: transparentTextColor(
+                                            badgeColor.name,
+                                            badgeColor.textDark
+                                        ),
                                     }}
                                     onClick={handleToggleColorPicker}
                                 >
-                                    <BsBrush
-                                        className="w-5 h-5"
-                                        style={{
-                                            color: badgeColor.textDark
-                                                ? '#555'
-                                                : '#fff',
-                                        }}
-                                    />
+                                    <BsBrush className="w-5 h-5" />
                                 </button>
                             </ColorPicker>
                         </div>
@@ -396,7 +409,7 @@ const ContainerInputGroup = ({
                     {props.handleRemoveContainer && (
                         <button
                             type="button"
-                            className="rounded-md border mr-auto border-gray-300 dark:border-slate-700 bg-red-400 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="rounded-md border dark:border-slate-800 bg-red-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-400 border-red-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-color duration-300"
                             onClick={props.handleRemoveContainer}
                         >
                             Delete Column
@@ -404,8 +417,11 @@ const ContainerInputGroup = ({
                     )}
 
                     <button
-                        type="submit"
-                        className="ml-auto inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-dark-alt focus:outline-none transition-color duration-300 disabled:cursor-not-allowed invalid:border-pink-500"
+                        type="button"
+                        className={clsx(
+                            props.handleRemoveContainer ? 'w-auto' : 'w-full',
+                            'ml-auto inline-flex items-center justify-center py-1 px-2 gap-x-2 rounded-md border-1 border-emerald-600 dark:border-slate-800 bg-emerald-600 hover:bg-emerald-500 text-slate-50 focus:outline-none focus:ring-2 focus:ring-green-500 drop-shadow disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-emerald-600 hover:drop-shadow-lg transition-color transition-all duration-300 group text-sm'
+                        )}
                         onClick={() => {
                             handleAddOrUpdateContainer({
                                 id: props.id,
@@ -417,7 +433,11 @@ const ContainerInputGroup = ({
                         }}
                         disabled={title.length === 0}
                     >
-                        Save
+                        <span>Save Column</span>
+                        <BiCheck
+                            className="h-5 w-5 group-hover:scale-110 transition-transform duration-300"
+                            aria-hidden="true"
+                        />
                     </button>
                 </div>
             </div>

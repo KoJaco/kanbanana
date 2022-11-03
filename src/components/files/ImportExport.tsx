@@ -426,21 +426,21 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <button
-                                                id="importButton"
-                                                className="mt-5 flex items-center justify-center h-10 w-full rounded-lg border-1 border-emerald-500 text-emerald-500 hover:hue-rotate-15 transition-color duration-300 disabled:border-red-500 disabled:text-red-500 disabled:cursor-not-allowed"
-                                                onClick={() => {
-                                                    handleImportDB();
-                                                }}
-                                            >
-                                                <BsDownload className="w-7 h-7" />
-                                            </button>
-                                            {/* <button className="flex mt-6 items-center justify-center w-full ml-auto  rounded-md text-md dark:text-slate-200 ">
-                                        <span className="border-b rounded-sm w-1/2 mr-4 dark:border-slate-200/50 "></span>
-                                        Import
-                                        <span className="border-b rounded-sm w-1/2 ml-4 dark:border-slate-200/50"></span>
-                                    </button> */}
+                                            <label>
+                                                <span className="sr-only">
+                                                    Import database from JSON
+                                                    file: {acceptedFileItems}
+                                                </span>
+                                                <button
+                                                    id="importButton"
+                                                    className="mt-5 flex items-center justify-center h-10 w-full rounded-lg border-1 border-emerald-500 text-emerald-500 hover:hue-rotate-15 transition-color duration-300 disabled:border-red-500 disabled:text-red-500 disabled:cursor-not-allowed"
+                                                    onClick={() => {
+                                                        handleImportDB();
+                                                    }}
+                                                >
+                                                    <BsDownload className="w-7 h-7" />
+                                                </button>
+                                            </label>
                                         </>
                                     )}
                                 </div>
@@ -465,27 +465,22 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                         {stringToSlug(filename)}.json
                                     </p>
                                 </div>
-
-                                <button
-                                    id="exportButton"
-                                    className="group mt-auto flex items-center justify-center h-10 w-full rounded-lg border-1 border-emerald-500 text-emerald-500 hover:hue-rotate-15 transition-color duration-300 disabled:border-red-500 disabled:text-red-500 disabled:cursor-not-allowed"
-                                    onClick={handleExportDB}
-                                    disabled={filename.length === 0}
-                                >
-                                    <BsUpload className="w-7 h-7" />
-                                </button>
+                                <label className="mt-auto">
+                                    <span className="sr-only">
+                                        Export database to JSON file with name:{' '}
+                                        {filename}
+                                    </span>
+                                    <button
+                                        id="exportButton"
+                                        className="group flex items-center justify-center h-10 w-full rounded-lg border-1 border-emerald-500 text-emerald-500 hover:hue-rotate-15 transition-color duration-300 disabled:border-red-500 disabled:text-red-500 disabled:cursor-not-allowed"
+                                        onClick={handleExportDB}
+                                        disabled={filename.length === 0}
+                                    >
+                                        <BsUpload className="w-7 h-7" />
+                                    </button>
+                                </label>
                             </div>
                         </div>
-                        {/* <div className="flex flex-row border-t dark:border-slate-700 mt-4">
-                            <div className="py-2">
-                                <button
-                                    type="button"
-                                    className="bg-red-500 p-2 rounded-md"
-                                >
-                                    Reset Database
-                                </button>
-                            </div>
-                        </div> */}
                     </>
                 ) : (
                     <>
@@ -500,12 +495,16 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                             )}
 
                             {!loadingStatus.done && (
-                                <button
-                                    className="flex items-center justify-center w-32 h-32 border-1 border-emerald-500 rounded-lg hover:scale-105 hover:hue-rotate-15 hover:border-2 transition-transform duration-300"
-                                    onClick={() => handleDone()}
-                                >
-                                    <MdOutlineDone className="w-16 h-16 text-emerald-500" />
-                                </button>
+                                <label>
+                                    <span className="sr-only">Acknowledge</span>
+                                    <button
+                                        name="done"
+                                        className="flex items-center justify-center w-32 h-32 border-1 border-emerald-500 rounded-lg hover:scale-105 hover:hue-rotate-15 hover:border-2 transition-transform duration-300"
+                                        onClick={() => handleDone()}
+                                    >
+                                        <MdOutlineDone className="w-16 h-16 text-emerald-500" />
+                                    </button>
+                                </label>
                             )}
 
                             {/* progress status text */}

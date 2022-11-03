@@ -166,7 +166,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                             <button
                                                 type="button"
                                                 name="editTag"
-                                                className=" hover:scale-110 focus-visible:opacity-100"
+                                                className="hover:scale-110 focus-visible:opacity-100"
                                                 onClick={() => {
                                                     if (showTagForm) {
                                                         setCurrentTagIndex(
@@ -240,7 +240,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                             {tagFormState === 'add' ? (
                                 <TagInputGroup
                                     labels={false}
-                                    inLineInputs={true}
+                                    inlineInputs={true}
                                     tagNextToSave={true}
                                     tagIndex={null}
                                     handleAddOrUpdateTag={handleAddTag}
@@ -248,7 +248,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                             ) : (
                                 <TagInputGroup
                                     labels={false}
-                                    inLineInputs={true}
+                                    inlineInputs={true}
                                     tagNextToSave={true}
                                     tagIndex={currentTagIndex}
                                     tag={
@@ -262,15 +262,6 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                             )}
                         </Transition>
                     </div>
-                    {/* <div className="flex items-start ml-8">
-                        <button
-                            type="button"
-                            className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray cursor-pointer transition-color duration-300"
-                            onClick={() => setShowForm(false)}
-                        >
-                            <MdOutlineCancel className="w-5 h-5" />
-                        </button>
-                    </div> */}
                 </div>
             </div>
             <div className="flex flex-shrink-0 justify-end pr-2 py-4">
@@ -281,13 +272,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                 >
                     Delete Board
                 </button>
-                {/* <button
-                    type="button"
-                    className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    onClick={() => setShowForm(false)}
-                >
-                    Cancel
-                </button> */}
+
                 <button
                     type="submit"
                     className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-primary-darker py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-dark-alt focus:outline-none transition-color duration-300 disabled:cursor-not-allowed invalid:border-pink-500"
@@ -296,8 +281,6 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                     Save
                 </button>
             </div>
-
-            {/* <TagForm tagLabel="Add tags here" handleAddTag={handleAddTag} /> */}
         </form>
     );
 };

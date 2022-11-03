@@ -10,7 +10,10 @@ class MyDocument extends Document {
                     <meta charSet="utf-8" name="theme-color" content="#fff" />
                     {/* recognize manifest */}
                     <link rel="manifest" href="/manifest.json" />
-                    <link rel="apple-touch-icon" href="/icon.png"></link>
+                    <link
+                        rel="apple-touch-icon"
+                        href="/apple-touch-icon.png"
+                    ></link>
 
                     <link
                         rel="preconnect"

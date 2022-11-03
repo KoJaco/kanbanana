@@ -4,13 +4,13 @@ import Tag from '@/components/elements/Tag';
 import { BsBrush } from 'react-icons/bs';
 import ColorPicker from '@/components/pickers/ColorPicker';
 import { useOnClickOutside } from '@/core/hooks/index';
-import { IoMdAdd } from 'react-icons/io';
+import { BiCheck } from 'react-icons/bi';
 import { BoardTag, Color } from '@/core/types/sortableBoard';
 
 type TagInputGroupProps = {
     tagLabel?: string;
     labels?: boolean;
-    inLineInputs?: boolean;
+    inlineInputs?: boolean;
     tagNextToSave?: boolean;
     tag?: BoardTag;
     tagIndex: number | null;
@@ -70,7 +70,7 @@ const TagInputGroup = ({ addOrEdit = 'add', ...props }: TagInputGroupProps) => {
                         {props.labels && (
                             <label
                                 htmlFor="Tag"
-                                className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75]"
+                                className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75] after:content-['*'] after:ml-0.5 after:text-red-500"
                             >
                                 {props.tagLabel ? props.tagLabel : 'Tag:'}
                             </label>
@@ -88,12 +88,13 @@ const TagInputGroup = ({ addOrEdit = 'add', ...props }: TagInputGroupProps) => {
                             id="text"
                             value={tagText}
                             placeholder="Write your tag here."
-                            className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md  shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-700 dark:focus:outline-none  dark:focus:ring-1 dark:focus:ring-slate-800 text-sm sm:text-md"
+                            className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:focus:outline-none  dark:focus:ring-1 dark:focus:ring-slate-800 text-sm sm:text-md invalid:border-pink-300 dark:invalid:border-pink-500/50"
                             onChange={(event) =>
                                 setTagText(
                                     event.currentTarget.value.toLowerCase()
                                 )
                             }
+                            required
                         />
                     </div>
                 </div>
@@ -102,7 +103,7 @@ const TagInputGroup = ({ addOrEdit = 'add', ...props }: TagInputGroupProps) => {
                     <div className="flex items-center space-x-2 justify-start">
                         {props.labels && (
                             <label
-                                htmlFor="tag-color"
+                                htmlFor="tagColor"
                                 className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75]"
                             >
                                 Color
@@ -132,49 +133,58 @@ const TagInputGroup = ({ addOrEdit = 'add', ...props }: TagInputGroupProps) => {
                                 }}
                                 onClick={handleToggleColorPicker}
                             >
+                                <span className="sr-only">
+                                    Pick a tag color
+                                </span>
                                 <BsBrush className="w-5 h-5" />
                             </button>
                         </ColorPicker>
                     </div>
                 </div>
-                <div className="flex items-center flex-col justify-center w-12">
-                    {props.labels && (
-                        <label
-                            htmlFor="tag-color"
-                            className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75]"
-                        >
-                            Save
-                        </label>
-                    )}
+                {props.inlineInputs && (
+                    <div className="flex items-center flex-col justify-center w-16">
+                        {props.labels && (
+                            <label
+                                htmlFor="saveTag"
+                                className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75]"
+                            >
+                                Save Tag
+                            </label>
+                        )}
 
-                    <div className="mt-1">
-                        <button
-                            type="button"
-                            className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border-1  border-gray-200 bg-emerald-500 text-gray-50 hover:border-green-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-green-500 drop-shadow disabled:cursor-not-allowed"
-                            onClick={() => {
-                                if (addOrEdit === 'edit') {
-                                    // if update, i.e. given an index
-                                    props.handleAddOrUpdateTag(
-                                        {
+                        <div className="mt-1">
+                            <button
+                                type="button"
+                                name="saveTag"
+                                className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border-1 border-emerald-600 dark:border-slate-800 bg-emerald-500 text-slate-100 focus:outline-none focus:ring-2 focus:ring-green-500 drop-shadow disabled:cursor-not-allowed disabled:opacity-50 hover:drop-shadow-lg transition-color duration-300 group"
+                                onClick={() => {
+                                    if (addOrEdit === 'edit') {
+                                        // if update, i.e. given an index
+                                        props.handleAddOrUpdateTag(
+                                            {
+                                                text: tagText,
+                                                backgroundColor: colorState,
+                                            },
+                                            props.tagIndex
+                                        );
+                                    } else {
+                                        props.handleAddOrUpdateTag({
                                             text: tagText,
                                             backgroundColor: colorState,
-                                        },
-                                        props.tagIndex
-                                    );
-                                } else {
-                                    props.handleAddOrUpdateTag({
-                                        text: tagText,
-                                        backgroundColor: colorState,
-                                    });
-                                }
-                            }}
-                            disabled={tagText.length === 0}
-                        >
-                            <span className="sr-only">Save column</span>
-                            <IoMdAdd className="h-5 w-5 " aria-hidden="true" />
-                        </button>
+                                        });
+                                    }
+                                }}
+                                disabled={tagText.length === 0}
+                            >
+                                <span className="sr-only">Save Tag</span>
+                                <BiCheck
+                                    className="h-5 w-5 group-hover:scale-110 transition-transform duration-300"
+                                    aria-hidden="true"
+                                />
+                            </button>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
 
             <div className="mt-3">
@@ -185,6 +195,36 @@ const TagInputGroup = ({ addOrEdit = 'add', ...props }: TagInputGroupProps) => {
                         </span>
                     )}
                 </div>
+                {!props.inlineInputs && (
+                    <button
+                        type="button"
+                        className="ml-auto mt-3 inline-flex w-full items-center justify-center py-1 px-2 gap-x-2 rounded-md border-1 border-emerald-600 dark:border-slate-800 bg-emerald-600 hover:bg-emerald-500 text-slate-50 focus:outline-none focus:ring-2 focus:ring-green-500 drop-shadow disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-emerald-600 hover:drop-shadow-lg transition-color transition-all duration-300 group text-sm"
+                        onClick={() => {
+                            if (addOrEdit === 'edit') {
+                                // if update, i.e. given an index
+                                props.handleAddOrUpdateTag(
+                                    {
+                                        text: tagText,
+                                        backgroundColor: colorState,
+                                    },
+                                    props.tagIndex
+                                );
+                            } else {
+                                props.handleAddOrUpdateTag({
+                                    text: tagText,
+                                    backgroundColor: colorState,
+                                });
+                            }
+                        }}
+                        disabled={tagText.length === 0}
+                    >
+                        <span>Save Tag</span>
+                        <BiCheck
+                            className="h-5 w-5 group-hover:scale-110 transition-transform duration-300"
+                            aria-hidden="true"
+                        />
+                    </button>
+                )}
             </div>
         </>
     );
