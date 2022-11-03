@@ -1,8 +1,6 @@
 import { useUIControlStore } from '@/stores/UIControlStore';
-import Navbar from '@/components/navigation/Navbar';
 import { useTheme } from 'next-themes';
 import React from 'react';
-import { MdMenuOpen } from 'react-icons/md';
 import Link from 'next/link';
 type BoardLayoutProps = {
     children: JSX.Element;

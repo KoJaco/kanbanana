@@ -1,10 +1,4 @@
-import Document, {
-    DocumentContext,
-    Head,
-    Html,
-    Main,
-    NextScript,
-} from 'next/document';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
 
 class MyDocument extends Document {
     // This <Head> element is to be used SOLELY for data you would like loaded on every single page.
@@ -13,9 +7,10 @@ class MyDocument extends Document {
         return (
             <Html>
                 <Head>
-                    <meta charSet="utf-8" />
+                    <meta charSet="utf-8" name="theme-color" content="#fff" />
                     {/* recognize manifest */}
-                    {/* <link rel="manifest" href="/manifest.json" /> */}
+                    <link rel="manifest" href="/manifest.json" />
+                    <link rel="apple-touch-icon" href="/icon.png"></link>
 
                     <link
                         rel="preconnect"

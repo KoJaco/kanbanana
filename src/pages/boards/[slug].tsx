@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
@@ -28,7 +29,9 @@ const BoardDetail: NextPage = () => {
     return (
         <BoardLayout>
             <div className="h-auto ">
-                <SortableBoard slug={parseSlug(slug)} />
+                <Suspense fallback={'loading..'}>
+                    <SortableBoard slug={parseSlug(slug)} />
+                </Suspense>
             </div>
         </BoardLayout>
     );

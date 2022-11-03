@@ -23,9 +23,6 @@ const BoardMenu = () => {
 
     const handleCloseSidebar = () => {
         setSidebarOpen(false);
-        // if (sidebarOpen && screenSize !== undefined && screenSize <= 900) {
-        //     setSidebarOpen(false);
-        // }
     };
 
     const { boardCount, setBoardCount } = useKanbanStore();
@@ -110,21 +107,16 @@ const BoardMenu = () => {
                     <Link
                         href={{
                             pathname: '/boards',
-                            query: {
-                                boards: 'all',
-                            },
                         }}
                         passHref={true}
                     >
                         <a
                             style={{
                                 backgroundColor:
-                                    currentRoute === '/boards?boards=all'
-                                        ? '#FFC414'
-                                        : '',
+                                    currentRoute === '/boards' ? '#FFC414' : '',
                             }}
                             className={
-                                currentRoute === '/boards?boards=all'
+                                currentRoute === '/boards'
                                     ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
                                     : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
                             }
@@ -137,7 +129,7 @@ const BoardMenu = () => {
                     </Link>
                 </div>
 
-                <div className="flex flex-col sm:max-h-64 md:max-h-96 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
+                <div className="flex flex-col max-h-64 md:max-h-96 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
                     {boards?.map((board, index) => (
                         <Link
                             key={index}
@@ -188,7 +180,7 @@ const BoardMenu = () => {
                 </div>
                 <div className="flex flex-col sm:max-h-64 md:max-h-80 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
                     {/* Dynamic component, client-side only */}
-                    <ol className="inline-flex px-2 items-center gap-y-2  gap-x-1 w-full max-h-96 py-4 whitespace-normal flex-wrap">
+                    <ol className="inline-flex px-2 items-center gap-y-2  gap-x-1 w-full max-h-36 md:max-h-64 py-4 whitespace-normal flex-wrap">
                         {allTags.map((tag, index) => (
                             <Link
                                 key={index}

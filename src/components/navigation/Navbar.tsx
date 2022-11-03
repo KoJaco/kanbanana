@@ -25,7 +25,7 @@ const Navbar = ({ setSidebarOpen }: NavbarProps) => {
                 <div className="flex flex-1"></div>
                 <div className="ml-4 flex items-center lg:ml-6 gap-x-6">
                     <Link type="button" href="/" passHref={true}>
-                        <a className="rounded-full bg-transparent p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-slate-500 focus:drop-shadow-sm transition-shadow duration-300 cursor-pointer px-1">
+                        <a className="rounded-full bg-transparent p-1 text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer px-1">
                             Why the bananas?
                         </a>
                     </Link>

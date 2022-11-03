@@ -288,7 +288,7 @@ const AllBoards = () => {
                                                             data.tagText
                                                         );
                                                     }).length > 0) ||
-                                                data.boards === 'all'
+                                                router.asPath === '/boards'
                                             ) {
                                                 return (
                                                     <Link

@@ -1,0 +1,23 @@
+{
+    "theme_color": "#6967CE",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "/",
+    "name": "Kanbanana",
+    "short_name": "Kanbanana",
+    "description": "A hobby project for making awesome kanban boards!",
+    "icons": [
+        {
+            "src": "/kojaco-logo-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+
+        {
+            "src": "/kojaco-logo-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
