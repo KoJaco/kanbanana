@@ -37,7 +37,8 @@
         "next-auth.d.ts",
         "**/*.ts",
         "**/*.tsx",
-        "**/*.js"
+        "**/*.js",
+        "src/components/masks/CanvasParticle.jsx"
     ],
     "exclude": ["node_modules"]
 }

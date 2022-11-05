@@ -19,7 +19,7 @@ const Tag = (props: TagProps) => {
             return 'rgba(255,255,255,1)';
         }
         if (props.backgroundColor.textDark) {
-            return '#333';
+            return 'black';
         } else {
             return '#fff';
         }
@@ -35,9 +35,6 @@ const Tag = (props: TagProps) => {
                     }`}
                     style={{
                         backgroundColor: props.backgroundColor.value,
-                        // props.backgroundColor.name === 'transparent'
-                        //     ? 'rgba(255, 255, 255, 0.75)'
-                        //     : ,
                     }}
                 >
                     <span

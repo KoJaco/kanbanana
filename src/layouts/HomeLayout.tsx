@@ -50,7 +50,7 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
                     </div>
                 </div>
 
-                <main className="dark:bg-slate-900 touch-pan-y">
+                <main className="dark:bg-slate-900 touch-pan-y h-full w-full flex items-center justify-center">
                     {children}
                 </main>
             </div>
