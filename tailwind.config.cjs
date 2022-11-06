@@ -62,9 +62,7 @@ module.exports = {
             borderWidth: {
                 1: '1px',
             },
-            borderColor: {
-                color: 'rgba(0, 0, 0, 0.1)',
-            },
+
             width: {
                 400: '400px',
                 760: '760px',

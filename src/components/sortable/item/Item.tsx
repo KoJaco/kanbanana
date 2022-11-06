@@ -249,7 +249,7 @@ export const Item = React.memo(
                     });
                     setTimeout(() => {
                         setEnableAnimation(false);
-                    }, 700);
+                    }, 500);
                 }
             }
 
@@ -259,8 +259,6 @@ export const Item = React.memo(
             ) {
                 let item = document.getElementById(`item-${itemId}`);
                 if (itemId) {
-                    setEnableAnimation(true);
-
                     if (item) item.style.opacity = '0';
 
                     setTimeout(() => {
@@ -290,13 +288,8 @@ export const Item = React.memo(
                                         newContainerItemMapping;
                                     boardItem.updatedAt = new Date(Date.now());
                                 });
-                            // catch any errors
                         });
                     }, 500);
-
-                    setTimeout(() => {
-                        setEnableAnimation(false);
-                    }, 700);
                 }
             }
 

@@ -5,49 +5,58 @@ import { BsArrowRight } from 'react-icons/bs';
 import clsx from 'clsx';
 
 const navigationLinks = [
-    { name: 'what?', href: '/#what', current: true },
-    { name: 'why?', href: '/#why', current: false },
-    { name: 'how?', href: '/#how', current: false },
-    { name: 'who?', href: '/#who', current: false },
+    { name: 'what?', href: '/#what' },
+    { name: 'why?', href: '/#why' },
+    { name: 'how?', href: '/#how' },
+    { name: 'who?', href: '/#who' },
 ];
 
 const Home: NextPage = () => {
     const [currentLink, setCurrentLink] = useState('what?');
 
-    const conditionalColoring = (twIndicator: 'border' | 'text' | 'bg') => {
+    function handleChangeSection(linkName: string) {
+        const contentWrapper = document.getElementById('contentWrapper');
+        const currentSection = document.getElementById(linkName);
+
+        if (contentWrapper && currentSection) {
+            contentWrapper.scrollTop = currentSection.offsetTop;
+        }
+
+        setCurrentLink(linkName);
+    }
+
+    const conditionalColoring = () => {
         switch (currentLink) {
             case 'what?':
-                return `${twIndicator}-orange-500`;
+                return '#6967CE';
             case 'why?':
-                return `${twIndicator}-indigo-500`;
+                return '#FFC414';
             case 'how?':
-                return `${twIndicator}-yellow-500`;
+                return '#0ea5e9';
             case 'who?':
-                return `${twIndicator}-red-500`;
+                return '#f97316';
             default:
-                return `${twIndicator}-orange-500`;
+                return '#6967CE';
         }
     };
 
     return (
         <HomeLayout>
-            <div className="grid grid-cols-3 w-[88vw] h-[88vh]">
-                <div className="flex flex-col h-1/2  self-center justify-center">
+            <div className="flex flex-row w-[88vw] h-[88vh]">
+                <div className="flex flex-col h-1/2 self-center justify-center ">
                     <nav
-                        className={clsx(
-                            'border-l-2 transition-color duration-300',
-                            conditionalColoring('border')
-                        )}
+                        className="border-l-2 transition-color duration-500"
+                        style={{ borderColor: conditionalColoring() }}
                     >
-                        <ul className="ml-10">
+                        <ul className="my-8">
                             {navigationLinks.map((link, index) => (
-                                <li className="mb-2" key={index}>
+                                <li className="mb-2 group" key={index}>
                                     <a
                                         type="button"
-                                        className="flex items-center group cursor-pointer"
+                                        className="ml-10 flex items-center cursor-pointer"
                                         href={link.href}
                                         onClick={() => {
-                                            setCurrentLink(link.name);
+                                            handleChangeSection(link.name);
                                         }}
                                     >
                                         {link.name === currentLink ? (
@@ -75,17 +84,43 @@ const Home: NextPage = () => {
                         </ul>
                     </nav>
                 </div>
+
                 <div
                     id="contentWrapper"
-                    className={clsx(
-                        'col-span-2 flex flex-col w-full h-[75vh] self-center border-r-2 transition-color duration-300',
-                        conditionalColoring('border')
-                    )}
+                    className="grid grid-flow-row w-2/3 ml-auto mr-1 h-[75vh] self-center transition-color duration-300 overflow-y-hidden scroll-smooth snap-y touch-pan-y no-scrollbar"
                 >
-                    <div id="what?"></div>
-                    <div id="why?"></div>
-                    <div id="how?"></div>
-                    <div id="who?"></div>
+                    <section
+                        id="what?"
+                        className="row-span-1 snap-start flex flex-col bg-green-200 w-full h-[75vh]"
+                    >
+                        <div></div>
+                    </section>
+                    <section
+                        id="why?"
+                        className="row-span-1 snap-start flex bg-orange-200 w-full h-[75vh]"
+                    ></section>
+                    <section
+                        id="how?"
+                        className="row-span-1 snap-start flex bg-blue-200 w-full h-[75vh]"
+                    ></section>
+                    <section
+                        id="who?"
+                        className="row-span-1 snap-start flex bg-red-200 w-full h-[75vh]"
+                    ></section>
+
+                    {/* psuedo border element */}
+                </div>
+                {/* side slider wrapper */}
+                <div className="flex self-center h-[75vh]">
+                    <span
+                        className={clsx(
+                            'flex w-[3px] h-1/3 transition-translate duration-500 rounded-full',
+                            currentLink === 'why?' && 'translate-y-[18vh]',
+                            currentLink === 'how?' && 'translate-y-[35vh]',
+                            currentLink === 'who?' && 'translate-y-[50vh]'
+                        )}
+                        style={{ backgroundColor: conditionalColoring() }}
+                    ></span>
                 </div>
             </div>
         </HomeLayout>

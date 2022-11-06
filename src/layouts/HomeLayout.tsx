@@ -2,6 +2,8 @@ import { useUIControlStore } from '@/stores/UIControlStore';
 import { useTheme } from 'next-themes';
 import React from 'react';
 import Link from 'next/link';
+import { SiKibana } from 'react-icons/si';
+
 type BoardLayoutProps = {
     children: JSX.Element;
 };
@@ -16,6 +18,16 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
                 {/* Navbar */}
                 <div className="sticky top-0 z-[150] flex h-16 flex-shrink-0 bg-white dark:bg-slate-900 dark:border-b dark:border-slate-700/[0.5] dark:shadow-slate-900 shadow dark:shadow-sm">
                     <div className="flex flex-1 justify-between px-4">
+                        <div className="flex flex-shrink-0 items-center px-4">
+                            <Link href="/">
+                                <div className="cursor-pointer items-center gap-3 flex text-xl font-medium tracking-tight">
+                                    <SiKibana className="text-offset" />
+                                    <span className="ml-1 text-slate-500 dark:text-slate-100">
+                                        Kan-banana
+                                    </span>
+                                </div>
+                            </Link>
+                        </div>
                         <div className="flex flex-1"></div>
                         <div className="ml-4 flex items-center lg:ml-6 gap-x-6">
                             <Link href="/boards" passHref={true}>

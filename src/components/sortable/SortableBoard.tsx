@@ -226,8 +226,6 @@ export default function SortableBoard({
     const recentlyMovedToNewContainer = useRef(false);
     const isSortingContainer = activeId ? containers.includes(activeId) : false;
 
-    // const [enableAnimation, setEnableAnimation] = useState(false);
-
     useEffect(() => {
         if (board !== undefined) {
             setItems(board.containerItemMapping);
@@ -237,7 +235,6 @@ export default function SortableBoard({
                 getMaxIdFromObjectKeyStrings(Object.keys(board.items))
             );
             setShowInlineBoardForm(false);
-            // setEnableAnimation(true);
         }
     }, [
         board,
@@ -394,8 +391,6 @@ export default function SortableBoard({
     }, [items]);
 
     if (!items || !board) return null;
-
-    console.log(enableAnimation);
 
     return (
         // <div className="flex flex-col flex-1 h-screen">
@@ -761,9 +756,9 @@ export default function SortableBoard({
                                                                         ref={createRef()}
                                                                     >
                                                                         <SortableItem
-                                                                            key={
-                                                                                itemId
-                                                                            }
+                                                                            // key={
+                                                                            //     itemId
+                                                                            // }
                                                                             item={
                                                                                 item
                                                                             }

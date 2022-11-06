@@ -177,7 +177,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <div className="pt-5 flex flex-grow flex-col overflow-y-auto bg-gradient-to-b from-primary to-primary-dark-alt dark:bg-gradient-to-b dark:from-slate-800 dark:to-slate-900">
                     <div className="flex flex-shrink-0 items-center px-4">
                         <Link href="/">
-                            <div className="cursor-pointer items-center gap-3 mt-4 flex text-xl font-medium tracking-tight text-gray-50">
+                            <div className="cursor-pointer items-center gap-3 flex text-xl font-medium tracking-tight text-gray-50">
                                 <SiKibana className="text-offset" />
                                 <span className="ml-1">Kan-banana</span>
                             </div>
