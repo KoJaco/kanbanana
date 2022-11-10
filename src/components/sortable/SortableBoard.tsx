@@ -877,9 +877,6 @@ export default function SortableBoard({
                                                                         ref={createRef()}
                                                                     >
                                                                         <SortableItem
-                                                                            key={
-                                                                                itemId
-                                                                            }
                                                                             itemsReorderedExternally={
                                                                                 itemsReorderedExternally
                                                                             }

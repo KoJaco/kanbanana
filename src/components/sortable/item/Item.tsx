@@ -1,14 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import clsx from 'clsx';
-import type { DraggableSyntheticListeners } from '@dnd-kit/core';
-import type { Transform } from '@dnd-kit/utilities';
-import { Handle } from '../components';
-import { TItem, UniqueIdentifier } from '@/core/types/sortableBoard';
-import ItemForm from '@/components/forms/ItemForm';
 import { FiEdit } from 'react-icons/fi';
 import { BiCheck } from 'react-icons/bi';
+import type { DraggableSyntheticListeners } from '@dnd-kit/core';
+import type { Transform } from '@dnd-kit/utilities';
+import { TItem, UniqueIdentifier, Board } from '@/core/types/sortableBoard';
 
+import { Handle } from '../components';
 import styles from './Item.module.css';
+import ItemForm from '@/components/forms/ItemForm';
+
 import { useOnClickOutside } from '@/core/hooks';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
@@ -58,6 +59,9 @@ export interface ItemProps {
 }
 
 export const Item = React.memo(
+    /**
+     * HOC for sharing logic between SortableItem and the rendered item DragOverlay.
+     * **/
     React.forwardRef<HTMLLIElement, ItemProps>(
         (
             {
@@ -91,24 +95,12 @@ export const Item = React.memo(
             },
             ref
         ) => {
-            useEffect(() => {
-                if (!dragOverlay) {
-                    return;
-                }
+            // Zustand global store state, need current board for indexDB, animation enabled so as not to interfere with drag and drop animations and vise versa.
+            const { setEnableAnimation, currentBoardSlug } = useKanbanStore();
 
-                document.body.style.cursor = 'grabbing';
-
-                return () => {
-                    document.body.style.cursor = '';
-                };
-            }, [dragOverlay]);
-
-            // Zustand store state
-
+            // click outside functionality, exclude openForm button
             const itemFormRef = useRef(null);
             const excludedRef = useRef(null);
-
-            const { setEnableAnimation, currentBoardSlug } = useKanbanStore();
 
             useOnClickOutside(
                 itemFormRef,
@@ -116,143 +108,179 @@ export const Item = React.memo(
                 excludedRef
             );
 
+            useEffect(() => {
+                if (!dragOverlay) {
+                    return;
+                }
+                document.body.style.cursor = 'grabbing';
+                return () => {
+                    document.body.style.cursor = '';
+                };
+            }, [dragOverlay]);
+
             function handleToggleChecklistItem(
                 itemId: UniqueIdentifier | undefined,
                 containerId: UniqueIdentifier
             ) {
+                // toggles the checked (completed) status on an Item, and toggles the enable animation global state variable.
                 setEnableAnimation(true);
 
                 if (itemId) {
-                    // setTimeout(() => {
                     db.transaction('rw', db.boards, async () => {
                         await db.boards
                             .where('slug')
                             .equals(currentBoardSlug)
-                            .modify((boardItem: any) => {
-                                // init variables to use
-                                let completedItemState: boolean =
-                                    boardItem.items[itemId].completed;
-                                let containerItems: UniqueIdentifier[] =
-                                    Array.from(
-                                        boardItem.containerItemMapping[
-                                            containerId
-                                        ]
+                            .modify((board: Board) => {
+                                if (board.items[itemId] === undefined) {
+                                    throw new Error(
+                                        `Failed to modify item with id: ${itemId}. Item does not exist in board items`
                                     );
-
-                                let itemIndex = containerItems.indexOf(itemId);
-
-                                switch (completedItemOrder) {
-                                    case 'noChange':
-                                        // break and simply set item's completed property to !property
-                                        break;
-                                    case 'start':
-                                        if (
-                                            itemIndex < containerItems.length &&
-                                            !completedItemState
-                                        ) {
-                                            // if item is not marked as completed, shift item to front and update completed.
-                                            // asserted is not undefined, if itemIndex < length
-                                            containerItems.unshift(
-                                                containerItems!.splice(
-                                                    itemIndex,
-                                                    1
-                                                )[0]!
-                                            );
-                                            boardItem.containerItemMapping[
+                                } else {
+                                    // init variables to use in calcs.
+                                    let completedItemState: boolean =
+                                        board.items[itemId]!.completed;
+                                    let containerItems: UniqueIdentifier[] =
+                                        Array.from(
+                                            board.containerItemMapping[
                                                 containerId
-                                            ] = containerItems;
-                                        } else if (
-                                            itemIndex < containerItems.length &&
-                                            completedItemState
-                                        ) {
-                                            // if item is completed and we want to 'uncheck' it, the item is spliced to just before the other 'checked' items.
-                                            let lastCompletedIndex: number = 0;
-                                            for (
-                                                let i =
-                                                    containerItems.length - 1;
-                                                i >= 0;
-                                                i--
-                                            ) {
-                                                let iId = containerItems[i]!;
-                                                if (
-                                                    boardItem.items[iId]
-                                                        .completed
-                                                ) {
-                                                    lastCompletedIndex = i;
-                                                    break;
-                                                }
-                                            }
-                                            containerItems.splice(itemIndex, 1);
-                                            containerItems.splice(
-                                                lastCompletedIndex,
-                                                0,
-                                                itemId
-                                            );
-
-                                            boardItem.containerItemMapping[
-                                                containerId
-                                            ] = containerItems;
-                                        }
-                                        break;
-                                    case 'end':
-                                        if (
-                                            itemIndex < containerItems.length &&
-                                            !completedItemState
-                                        ) {
-                                            // if item is not marked as completed, shift item to front and update completed.
-                                            // asserted is not undefined, if itemIndex < length
-                                            containerItems.push(
-                                                containerItems!.splice(
-                                                    itemIndex,
-                                                    1
-                                                )[0]!
-                                            );
-                                            boardItem.containerItemMapping[
-                                                containerId
-                                            ] = containerItems;
-                                        } else if (
-                                            itemIndex < containerItems.length &&
-                                            completedItemState
-                                        ) {
-                                            // if item is completed and we want to 'uncheck' it, the item is spliced to just before the other 'checked' items.
-                                            let lastCompletedIndex: number = 0;
-                                            for (
-                                                let i = 0;
-                                                i < containerItems.length;
-                                                i++
-                                            ) {
-                                                let iId = containerItems[i]!;
-                                                if (
-                                                    boardItem.items[iId]
-                                                        .completed
-                                                ) {
-                                                    lastCompletedIndex = i;
-                                                    break;
-                                                }
-                                            }
-                                            containerItems.splice(itemIndex, 1);
-                                            containerItems.splice(
-                                                lastCompletedIndex,
-                                                0,
-                                                itemId
-                                            );
-
-                                            boardItem.containerItemMapping[
-                                                containerId
-                                            ] = containerItems;
-                                        }
-                                        break;
-                                    default:
-                                        throw new Error(
-                                            'Something went wrong!'
+                                            ]!
                                         );
+
+                                    let itemIndex =
+                                        containerItems.indexOf(itemId);
+
+                                    switch (completedItemOrder) {
+                                        case 'noChange':
+                                            // break and set item's completed property to !property
+                                            break;
+                                        case 'start':
+                                            if (
+                                                itemIndex <
+                                                    containerItems.length &&
+                                                !completedItemState
+                                            ) {
+                                                // if item is not marked as completed, shift item to front and update completed.
+                                                // assert NOT undefined, if itemIndex < length
+                                                containerItems.unshift(
+                                                    containerItems!.splice(
+                                                        itemIndex,
+                                                        1
+                                                    )[0]!
+                                                );
+                                                board.containerItemMapping[
+                                                    containerId
+                                                ] = containerItems;
+                                            } else if (
+                                                itemIndex <
+                                                    containerItems.length &&
+                                                completedItemState
+                                            ) {
+                                                // if item is completed and we want to 'uncheck' it, the item is spliced to just before the other 'checked' items.
+                                                let lastCompletedIndex: number = 0;
+                                                for (
+                                                    let i =
+                                                        containerItems.length -
+                                                        1;
+                                                    i >= 0;
+                                                    i--
+                                                ) {
+                                                    let iId =
+                                                        containerItems[i]!;
+                                                    // assert NOT undefined, items array is unchanged in length at this point.
+                                                    if (
+                                                        board.items[iId]!
+                                                            .completed
+                                                    ) {
+                                                        lastCompletedIndex = i;
+                                                        break;
+                                                    }
+                                                }
+                                                // splice in checked item at new index.
+                                                containerItems.splice(
+                                                    itemIndex,
+                                                    1
+                                                );
+                                                containerItems.splice(
+                                                    lastCompletedIndex,
+                                                    0,
+                                                    itemId
+                                                );
+
+                                                board.containerItemMapping[
+                                                    containerId
+                                                ] = containerItems;
+                                            }
+                                            break;
+                                        case 'end':
+                                            if (
+                                                itemIndex <
+                                                    containerItems.length &&
+                                                !completedItemState
+                                            ) {
+                                                // if item is not marked as completed, shift item to front and update completed.
+                                                // asserted is not undefined, if itemIndex < length
+                                                containerItems.push(
+                                                    containerItems!.splice(
+                                                        itemIndex,
+                                                        1
+                                                    )[0]!
+                                                );
+                                                board.containerItemMapping[
+                                                    containerId
+                                                ] = containerItems;
+                                            } else if (
+                                                itemIndex <
+                                                    containerItems.length &&
+                                                completedItemState
+                                            ) {
+                                                // if item is completed and we want to 'uncheck' it, the item is spliced to just before the other 'checked' items.
+                                                let lastCompletedIndex: number = 0;
+                                                for (
+                                                    let i = 0;
+                                                    i < containerItems.length;
+                                                    i++
+                                                ) {
+                                                    let iId =
+                                                        containerItems[i]!;
+                                                    if (
+                                                        board.items[iId]!
+                                                            .completed
+                                                    ) {
+                                                        lastCompletedIndex = i;
+                                                        break;
+                                                    }
+                                                }
+                                                containerItems.splice(
+                                                    itemIndex,
+                                                    1
+                                                );
+                                                containerItems.splice(
+                                                    lastCompletedIndex,
+                                                    0,
+                                                    itemId
+                                                );
+
+                                                board.containerItemMapping[
+                                                    containerId
+                                                ] = containerItems;
+                                            }
+                                            break;
+                                        default:
+                                            throw new Error(
+                                                `Something went wrong while attempting to check the completed button on item: ${itemId}.`
+                                            );
+                                    }
+
+                                    // toggle completed item state, happens for all cases
+                                    if (board.items[itemId]) {
+                                        board.items[itemId]!.completed =
+                                            !completedItemState;
+                                    }
                                 }
-                                // toggle completed item state, happens for all cases
-                                boardItem.items[itemId].completed =
-                                    !completedItemState;
                             });
                     });
                     setTimeout(() => {
+                        // timeout function matches animation time frame, toggle itemReorderExt.. ref to allow drag and drop referential variables to update correctly.
                         if (itemsReorderedExternally)
                             itemsReorderedExternally.current = true;
                         setEnableAnimation(false);
@@ -264,6 +292,7 @@ export const Item = React.memo(
                 itemId: UniqueIdentifier | undefined,
                 containerId: UniqueIdentifier
             ) {
+                // function for removing an item either within ItemForm, or when 'remove' is selected in the Container type dropdown.
                 let item = document.getElementById(`item-${itemId}`);
                 if (itemId) {
                     if (item) item.style.opacity = '0';
@@ -303,6 +332,7 @@ export const Item = React.memo(
             }
 
             return renderItem ? (
+                // render method for drag overlay
                 renderItem({
                     dragOverlay: Boolean(dragOverlay),
                     dragging: Boolean(dragging),
@@ -317,11 +347,12 @@ export const Item = React.memo(
                     value,
                 })
             ) : (
+                // functional item component
                 <li
                     id={`item-${item?.id}`}
                     key={index}
                     className={clsx(
-                        'group transition-opacity duration-300',
+                        'group transition-opacity duration-500',
                         containerType === 'checklist' && item?.completed
                             ? 'opacity-50'
                             : 'opacity-100',
@@ -357,7 +388,7 @@ export const Item = React.memo(
                     <label htmlFor="content" className="sr-only">
                         Task, note, or item content
                     </label>
-                    {/* main item content after wrapper */}
+                    {/* main content */}
                     <div
                         // className="flex flex-row justify-between w-full items-center pt-1 mb-4"
                         className={clsx(
@@ -426,7 +457,7 @@ export const Item = React.memo(
                                     {containerType === 'checklist' &&
                                         completedItemOrder && (
                                             <button
-                                                // id="checkItem"
+                                                id={`checkItem${item?.id}`}
                                                 type="button"
                                                 className="flex items-center justify-center appearance-none w-7 h-7 rounded-full border-1 border-gray-300 dark:border-slate-500 place-self-center self-center -translate-y-2 mr-4 hover:shadow transition-transform cursor-pointer"
                                                 onClick={() =>
@@ -454,14 +485,8 @@ export const Item = React.memo(
                                         )}
                                 </div>
 
-                                <div
-                                    id={`${value}`}
-                                    className="self-start whitespace-normal pb-2 text-slate-600 dark:text-slate-100 break-all text-sm sm:text-md"
-                                    // className={clsx(
-                                    //     'self-start whitespace-normal pb-2 text-slate-600 dark:text-slate-100 break-all text-sm sm:text-md',
-                                    //     item?.completed && 'line-through'
-                                    // )}
-                                >
+                                <div className="self-start whitespace-normal pb-2 text-slate-600 dark:text-slate-100 break-all text-sm sm:text-md">
+                                    {/* value here is text content */}
                                     {value}
                                 </div>
                             </div>
