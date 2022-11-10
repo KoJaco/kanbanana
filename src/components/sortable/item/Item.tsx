@@ -21,6 +21,7 @@ export interface ItemProps {
     containerId: UniqueIdentifier;
     containerType?: 'simple' | 'checklist';
     completedItemOrder?: 'start' | 'end' | 'noChange' | 'remove';
+    itemsReorderedExternally?: React.MutableRefObject<boolean>;
 
     setShowItemForm: (value: boolean) => void;
     children?: JSX.Element;
@@ -61,8 +62,12 @@ export const Item = React.memo(
         (
             {
                 item,
+                showItemForm,
                 containerId,
+                containerType,
+                completedItemOrder,
                 setShowItemForm,
+                itemsReorderedExternally,
                 children,
                 color,
                 dragOverlay,
@@ -136,7 +141,7 @@ export const Item = React.memo(
 
                                 let itemIndex = containerItems.indexOf(itemId);
 
-                                switch (props.completedItemOrder) {
+                                switch (completedItemOrder) {
                                     case 'noChange':
                                         // break and simply set item's completed property to !property
                                         break;
@@ -248,6 +253,8 @@ export const Item = React.memo(
                             });
                     });
                     setTimeout(() => {
+                        if (itemsReorderedExternally)
+                            itemsReorderedExternally.current = true;
                         setEnableAnimation(false);
                     }, 500);
                 }
@@ -289,6 +296,8 @@ export const Item = React.memo(
                                     boardItem.updatedAt = new Date(Date.now());
                                 });
                         });
+                        if (itemsReorderedExternally)
+                            itemsReorderedExternally.current = true;
                     }, 500);
                 }
             }
@@ -313,7 +322,7 @@ export const Item = React.memo(
                     key={index}
                     className={clsx(
                         'group transition-opacity duration-300',
-                        props.containerType === 'checklist' && item?.completed
+                        containerType === 'checklist' && item?.completed
                             ? 'opacity-50'
                             : 'opacity-100',
                         styles.Wrapper,
@@ -369,7 +378,7 @@ export const Item = React.memo(
                             className={clsx(
                                 'flex flex-row w-full transition-opacity duration-300 focus-visible:opacity-75 group-focus:opacity-75',
                                 styles.actionBar,
-                                props.containerType === 'checklist' &&
+                                containerType === 'checklist' &&
                                     item?.completed &&
                                     'opacity-0'
                             )}
@@ -383,7 +392,7 @@ export const Item = React.memo(
                                             : 'w-4 h-4 rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-slate-600 focus-visible:scale-105 transition-transform duration-300 dark:text-gray-50'
                                     )}
                                     onClick={() =>
-                                        setShowItemForm(!props.showItemForm)
+                                        setShowItemForm(!showItemForm)
                                     }
                                     ref={excludedRef}
                                     disabled={item?.completed}
@@ -400,13 +409,13 @@ export const Item = React.memo(
                             </div>
                         </div>
 
-                        {props.showItemForm && item ? (
+                        {showItemForm && item ? (
                             <div ref={itemFormRef} className="relative z-40">
                                 <ItemForm
                                     item={item}
                                     containerType="simple"
                                     containerId={containerId}
-                                    showForm={props.showItemForm}
+                                    showForm={showItemForm}
                                     setShowForm={setShowItemForm}
                                     handleRemoveItem={handleRemoveItem}
                                 />
@@ -414,14 +423,14 @@ export const Item = React.memo(
                         ) : (
                             <div className="flex flex-row items-center">
                                 <div>
-                                    {props?.containerType === 'checklist' &&
-                                        props.completedItemOrder && (
+                                    {containerType === 'checklist' &&
+                                        completedItemOrder && (
                                             <button
                                                 // id="checkItem"
                                                 type="button"
                                                 className="flex items-center justify-center appearance-none w-7 h-7 rounded-full border-1 border-gray-300 dark:border-slate-500 place-self-center self-center -translate-y-2 mr-4 hover:shadow transition-transform cursor-pointer"
                                                 onClick={() =>
-                                                    props.completedItemOrder ===
+                                                    completedItemOrder ===
                                                     'remove'
                                                         ? handleRemoveItem(
                                                               item?.id,

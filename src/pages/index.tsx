@@ -42,10 +42,11 @@ const Home: NextPage = () => {
 
     return (
         <HomeLayout>
-            <div className="flex flex-row w-[88vw] h-[88vh]">
-                <div className="flex flex-col h-1/2 self-center justify-center ">
+            <div className="flex flex-col md:flex-row w-[88vw] h-[88vh]">
+                <div className="flex flex-col h-1/2 self-center justify-center">
+                    {/* desktop styling */}
                     <nav
-                        className="border-l-2 transition-color duration-500"
+                        className="hidden md:block border-l-2 transition-color duration-500"
                         style={{ borderColor: conditionalColoring() }}
                     >
                         <ul className="my-8">
@@ -60,7 +61,7 @@ const Home: NextPage = () => {
                                         }}
                                     >
                                         {link.name === currentLink ? (
-                                            <span className="text-slate-800 dark:text-slate-100">
+                                            <span className="block text-slate-800 dark:text-slate-100">
                                                 <BsArrowRight className="w-5 h-4 mr-2" />
                                             </span>
                                         ) : (
@@ -83,38 +84,67 @@ const Home: NextPage = () => {
                             ))}
                         </ul>
                     </nav>
+                    {/* mobile / ipad mini nav styling */}
+                    <nav className="md:hidden block w-[88vw] items-center justify-center">
+                        <ul
+                            className="flex flex-row self-center place-self-center border-b-2"
+                            style={{ borderColor: conditionalColoring() }}
+                        >
+                            {navigationLinks.map((link, index) => (
+                                <>
+                                    <li
+                                        className="group flex flex-col"
+                                        key={index}
+                                    >
+                                        <a
+                                            type="button"
+                                            className="ml-10 flex items-center cursor-pointer"
+                                            href={link.href}
+                                            onClick={() => {
+                                                handleChangeSection(link.name);
+                                            }}
+                                        >
+                                            <span className="text-slate-700 dark:text-slate-200">
+                                                {link.name}
+                                            </span>
+                                        </a>
+                                    </li>
+                                </>
+                            ))}
+                        </ul>
+                    </nav>
                 </div>
 
                 <div
                     id="contentWrapper"
-                    className="grid grid-flow-row w-2/3 ml-auto mr-1 h-[75vh] self-center transition-color duration-300 overflow-y-hidden scroll-smooth snap-y touch-pan-y no-scrollbar"
+                    className="grid grid-flow-col md:grid-flow-row w-[88vw] md:w-2/3 md:ml-auto md:mr-1 h-[88vh] md:h-[75vh] self-center transition-color duration-300 overflow-x-hidden md:overflow-y-hidden scroll-smooth snap-y touch-pan-y no-scrollbar"
                 >
                     <section
                         id="what?"
-                        className="row-span-1 snap-start flex flex-col bg-green-200 w-full h-[75vh]"
+                        className="row-span-1 snap-start flex flex-col bg-green-200 w-[88vw] h-[88vh] md:w-full md:h-[75vh]"
                     >
                         <div></div>
                     </section>
                     <section
                         id="why?"
-                        className="row-span-1 snap-start flex bg-orange-200 w-full h-[75vh]"
+                        className="row-span-1 snap-start flex flex-col bg-green-200 w-[88vw] h-[88vh] md:w-full md:h-[75vh]"
                     ></section>
                     <section
                         id="how?"
-                        className="row-span-1 snap-start flex bg-blue-200 w-full h-[75vh]"
+                        className="row-span-1 snap-start flex flex-col bg-green-200 w-[88vw] h-[88vh] md:w-full md:h-[75vh]"
                     ></section>
                     <section
                         id="who?"
-                        className="row-span-1 snap-start flex bg-red-200 w-full h-[75vh]"
+                        className="row-span-1 snap-start flex flex-col bg-green-200 w-[88vw] h-[88vh] md:w-full md:h-[75vh]"
                     ></section>
 
                     {/* psuedo border element */}
                 </div>
                 {/* side slider wrapper */}
-                <div className="flex self-center h-[75vh]">
+                <div className="flex self-center md:h-[75vh]">
                     <span
                         className={clsx(
-                            'flex w-[3px] h-1/3 transition-translate duration-500 rounded-full',
+                            'flex w-[1/3] h-[3px] md:w-[3px] md:h-1/3 transition-translate duration-500 rounded-full bg-red-500',
                             currentLink === 'why?' && 'translate-y-[18vh]',
                             currentLink === 'how?' && 'translate-y-[35vh]',
                             currentLink === 'who?' && 'translate-y-[50vh]'

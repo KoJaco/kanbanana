@@ -39,18 +39,10 @@ const AnimateItemReorder = ({
 
             if (hasPrevBoundingBox) {
                 React.Children.forEach(children, (child: any) => {
-                    const domNode = child.ref.current;
+                    const domNode = child.ref?.current;
                     const firstBox = prevBoundingBox[child.key];
                     const lastBox = boundingBox[child.key];
                     const changeInY = firstBox?.top - lastBox?.top;
-
-                    // console.log('firstBox');
-                    // console.log(firstBox);
-                    // console.log('lastBox');
-                    // console.log(lastBox);
-
-                    // console.log('changeInY');
-                    // console.log(changeInY);
 
                     if (changeInY) {
                         requestAnimationFrame(() => {

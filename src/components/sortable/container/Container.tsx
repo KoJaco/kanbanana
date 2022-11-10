@@ -11,6 +11,7 @@ import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import ContainerInputGroup from '@/components/forms/inputs/ContainerInputGroup';
 import { useOnClickOutside } from '@/core/hooks';
+import AnimateItemReorder from '../AnimateItemReorder';
 
 export interface ContainerProps {
     children: React.ReactNode;
@@ -214,21 +215,6 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                 {container && (
                     <>
                         <div className="flex items-center justify-between mt-auto inset-y-0 border-t dark:border-slate-600 transition-opacity duration-300 py-2 px-1">
-                            {/* <button
-                                type="button"
-                                className="w-5 h-5 rounded-md hover:bg-red-600 cursor-pointer text-gray-500 hover:text-gray-50 flex items-center justify-center transition-color duration-300 disabled:text-gray-500/[0.5] disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                                // button is disabled if we only have one column, OR if we will be deleting all our tasks.
-                                // disabled={
-                                //     columns === 1 ? true : false
-                                //     // ||
-                                //     //   totalItemCount ===
-                                //     //       columnTasks!.length
-                                // }
-                                onClick={onRemove}
-                            >
-                                <AiOutlineDelete className="w-4 h-4" />
-                            </button> */}
-
                             <button
                                 className="ml-auto rounded-full items-center justify-end text-slate-500 p-1 hover:scale-110 hover:bg-white  dark:hover:bg-slate-900 dark:hover:text-slate-100 cursor-pointer transition-color duration-300"
                                 ref={excludedRef}

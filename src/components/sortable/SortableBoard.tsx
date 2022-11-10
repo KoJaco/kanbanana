@@ -1,10 +1,11 @@
 import React, {
     createRef,
+    memo,
     useCallback,
     useEffect,
-    useLayoutEffect,
     useRef,
     useState,
+    forwardRef,
 } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -28,6 +29,7 @@ import {
     KeyboardCoordinateGetter,
     defaultDropAnimationSideEffects,
 } from '@dnd-kit/core';
+import type { ClientRect } from '@dnd-kit/core';
 import {
     AnimateLayoutChanges,
     SortableContext,
@@ -69,7 +71,11 @@ import InlineBoardForm from '@/components/forms/InlineBoardForm';
 import AnimateItemReorder from './AnimateItemReorder';
 import ItemAnimationWrapper from '@/components/sortable/item/ItemAnimationWrapper';
 
-// TODO: fix up items undefined with active/overId selecting index
+interface ItemAnimationWrapperProps {
+    id: UniqueIdentifier;
+    ref: HTMLLIElement;
+    children: JSX.Element;
+}
 
 function getMaxIdFromObjectKeyStrings(keyStrings: string[]): number {
     if (!keyStrings || keyStrings.length === 0) {
@@ -179,6 +185,42 @@ interface SortableBoardProps {
     vertical?: boolean;
 }
 
+const scroller = (direction: string, value?: number) => {
+    let carousel = document.getElementById('carousel');
+    if (carousel !== null) {
+        switch (direction) {
+            case 'end':
+                carousel.scrollLeft =
+                    carousel.scrollWidth - carousel.offsetWidth;
+                break;
+            case 'start':
+                carousel.scrollLeft =
+                    carousel.clientWidth - carousel.offsetWidth;
+                break;
+            case 'left':
+                carousel.scrollLeft = value
+                    ? carousel.scrollLeft - value
+                    : carousel.scrollLeft - 500;
+                break;
+            case 'right':
+                carousel.scrollLeft = value
+                    ? carousel.scrollLeft + value
+                    : carousel.scrollLeft + 500;
+                break;
+            default:
+                break;
+        }
+    } else {
+        // report the error.
+        throw new Error('Something went wrong while scrolling!');
+    }
+};
+
+const defaultScale = {
+    scaleX: 1,
+    scaleY: 1,
+};
+
 export default function SortableBoard({
     slug,
     adjustScale = false,
@@ -224,6 +266,8 @@ export default function SortableBoard({
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
     const lastOverId = useRef<UniqueIdentifier | null>(null);
     const recentlyMovedToNewContainer = useRef(false);
+    const itemsReorderedExternally = useRef(false);
+
     const isSortingContainer = activeId ? containers.includes(activeId) : false;
 
     useEffect(() => {
@@ -246,6 +290,92 @@ export default function SortableBoard({
         setShowInlineBoardForm,
     ]);
 
+    const customVerticalListSortingStrategy: SortingStrategy = ({
+        activeIndex,
+        activeNodeRect: fallbackActiveRect,
+        index,
+        rects,
+        overIndex,
+    }) => {
+        // implement animation here
+        const activeNodeRect = rects[activeIndex] ?? fallbackActiveRect;
+
+        if (!activeNodeRect) {
+            return null;
+        }
+
+        if (index === activeIndex) {
+            const overIndexRect = rects[overIndex];
+
+            if (!overIndexRect) {
+                return null;
+            }
+
+            return {
+                x: 0,
+                y:
+                    activeIndex < overIndex
+                        ? overIndexRect.top +
+                          overIndexRect.height -
+                          (activeNodeRect.top + activeNodeRect.height)
+                        : overIndexRect.top - activeNodeRect.top,
+                ...defaultScale,
+            };
+        }
+
+        const itemGap = getItemGap(rects, index, activeIndex);
+
+        if (index > activeIndex && index <= overIndex) {
+            return {
+                x: 0,
+                y: -activeNodeRect.height - itemGap,
+                ...defaultScale,
+            };
+        }
+
+        if (index < activeIndex && index >= overIndex) {
+            return {
+                x: 0,
+                y: activeNodeRect.height + itemGap,
+                ...defaultScale,
+            };
+        }
+
+        return {
+            x: 0,
+            y: 0,
+            ...defaultScale,
+        };
+    };
+
+    function getItemGap(
+        clientRects: ClientRect[],
+        index: number,
+        activeIndex: number
+    ) {
+        const currentRect: ClientRect | undefined = clientRects[index];
+        const previousRect: ClientRect | undefined = clientRects[index - 1];
+        const nextRect: ClientRect | undefined = clientRects[index + 1];
+
+        if (!currentRect) {
+            return 0;
+        }
+
+        if (activeIndex < index) {
+            return previousRect
+                ? currentRect.top - (previousRect.top + previousRect.height)
+                : nextRect
+                ? nextRect.top - (currentRect.top + currentRect.height)
+                : 0;
+        }
+
+        return nextRect
+            ? nextRect.top - (currentRect.top + currentRect.height)
+            : previousRect
+            ? currentRect.top - (previousRect.top + previousRect.height)
+            : 0;
+    }
+
     /**
      * Custom collision detection strategy optimized for multiple containers
      *
@@ -254,37 +384,6 @@ export default function SortableBoard({
      * - If there are no intersecting containers, return the last matched intersection
      *
      */
-
-    const scroller = (direction: string, value?: number) => {
-        let carousel = document.getElementById('carousel');
-        if (carousel !== null) {
-            switch (direction) {
-                case 'end':
-                    carousel.scrollLeft =
-                        carousel.scrollWidth - carousel.offsetWidth;
-                    break;
-                case 'start':
-                    carousel.scrollLeft =
-                        carousel.clientWidth - carousel.offsetWidth;
-                    break;
-                case 'left':
-                    carousel.scrollLeft = value
-                        ? carousel.scrollLeft - value
-                        : carousel.scrollLeft - 500;
-                    break;
-                case 'right':
-                    carousel.scrollLeft = value
-                        ? carousel.scrollLeft + value
-                        : carousel.scrollLeft + 500;
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            // report the error.
-            throw new Error('Something went wrong while scrolling!');
-        }
-    };
 
     const collisionDetectionStrategy: CollisionDetection = useCallback(
         (args) => {
@@ -304,6 +403,7 @@ export default function SortableBoard({
                     ? // If there are droppables intersecting with the pointer, return those
                       pointerIntersections
                     : rectIntersection(args);
+
             let overId = getFirstCollision(intersections, 'id');
 
             if (overId !== null) {
@@ -324,6 +424,10 @@ export default function SortableBoard({
                 }
 
                 lastOverId.current = overId;
+                if (activeId && itemsReorderedExternally.current) {
+                    // if items were just reordered by out checklist effect,
+                    return [{ id: activeId }];
+                }
 
                 return [{ id: overId }];
             }
@@ -332,9 +436,14 @@ export default function SortableBoard({
             // and the `overId` may become `null`. We manually set the cached `lastOverId`
             // to the id of the draggable item that was moved to the new container, otherwise
             // the previous `overId` will be returned which can cause items to incorrectly shift positions
-            if (recentlyMovedToNewContainer.current) {
+            if (
+                recentlyMovedToNewContainer.current ||
+                itemsReorderedExternally.current
+            ) {
                 lastOverId.current = activeId;
             }
+
+            // when draggable items are re-ordered with a layout animation, do the same as above
 
             // If no droppable is matched, return the last match
             return lastOverId.current ? [{ id: lastOverId.current }] : [];
@@ -386,9 +495,16 @@ export default function SortableBoard({
 
     useEffect(() => {
         requestAnimationFrame(() => {
+            // reset refs on item changes
             recentlyMovedToNewContainer.current = false;
+            itemsReorderedExternally.current = false;
         });
     }, [items]);
+
+    console.log('items');
+    console.log(items);
+    console.log('boarditems');
+    console.log(board?.containerItemMapping);
 
     if (!items || !board) return null;
 
@@ -415,6 +531,7 @@ export default function SortableBoard({
                     }
 
                     if (active.id in items) {
+                        // moving containers
                         setContainers((containers) => {
                             const activeIndex = containers.indexOf(active.id);
                             const overIndex = containers.indexOf(over.id);
@@ -424,11 +541,13 @@ export default function SortableBoard({
                                 overIndex
                             );
                         });
-                        // must return out
                         return;
                     }
-
-                    overId = over.id;
+                    if (itemsReorderedExternally.current) {
+                        overId = active.id;
+                    } else {
+                        overId = over.id;
+                    }
 
                     const overContainer = findContainer(overId);
                     const activeContainer = findContainer(active.id);
@@ -494,10 +613,12 @@ export default function SortableBoard({
                             };
                         });
                     } else if (activeContainer === overContainer) {
+                        // problem with setting items, when simply clicking drag, overId is set to something different.
                         setItems((items) => {
                             if (!items) {
                                 throw new Error('Items were undefined');
                             }
+
                             const activeIndex = items[activeContainer]!.indexOf(
                                 active.id
                             );
@@ -584,7 +705,6 @@ export default function SortableBoard({
                                         defaultEmptyContainer;
                                 });
                         });
-
                         setActiveId(null);
                         return;
                     }
@@ -689,7 +809,7 @@ export default function SortableBoard({
                             items={[...containers, PLACEHOLDER_ID]}
                             strategy={
                                 vertical
-                                    ? verticalListSortingStrategy
+                                    ? customVerticalListSortingStrategy
                                     : horizontalListSortingStrategy
                             }
                         >
@@ -745,20 +865,24 @@ export default function SortableBoard({
                                                                         ?.items[
                                                                         itemId
                                                                     ];
+
                                                                 return (
                                                                     <ItemAnimationWrapper
                                                                         key={
                                                                             itemId
                                                                         }
-                                                                        id={
+                                                                        wrapperId={
                                                                             itemId
                                                                         }
                                                                         ref={createRef()}
                                                                     >
                                                                         <SortableItem
-                                                                            // key={
-                                                                            //     itemId
-                                                                            // }
+                                                                            key={
+                                                                                itemId
+                                                                            }
+                                                                            itemsReorderedExternally={
+                                                                                itemsReorderedExternally
+                                                                            }
                                                                             item={
                                                                                 item
                                                                             }
@@ -1056,6 +1180,7 @@ function DroppableContainer({
         },
         animateLayoutChanges,
     });
+
     const isOverContainer = over
         ? (id === over.id && active?.data.current?.type !== 'container') ||
           items?.includes(over.id)
@@ -1088,7 +1213,7 @@ function DroppableContainer({
 
 interface SortableItemProps {
     item?: TItem;
-    // ref: HTMLElement | null;
+    itemsReorderedExternally: React.MutableRefObject<boolean>;
     setShowItemForm?: (value: boolean) => void;
     containerId: UniqueIdentifier;
     container: TContainer | undefined;
@@ -1114,8 +1239,86 @@ function useMountStatus() {
     return isMounted;
 }
 
+// const SortableItem = memo(
+//     forwardRef<HTMLDivElement, SortableItemProps>(
+//         (
+//             {
+//                 item,
+//                 disabled,
+//                 id,
+//                 index,
+//                 handle = true,
+//                 renderItem,
+//                 style,
+//                 containerId,
+//                 container,
+//                 getIndex,
+//                 wrapperStyle,
+//             },
+//             ref
+//         ) => {
+//             const {
+//                 setNodeRef,
+//                 setActivatorNodeRef,
+//                 listeners,
+//                 isDragging,
+//                 isSorting,
+//                 over,
+//                 overIndex,
+//                 transform,
+//                 transition,
+//             } = useSortable({
+//                 id,
+//             });
+
+//             const mounted = useMountStatus();
+//             const mountedWhileDragging = isDragging && !mounted;
+//             const [showItemForm, setShowItemForm] = useState(false);
+
+//             return (
+//                 <Item
+//                     item={item}
+//                     containerId={containerId}
+//                     containerType={container ? container.type : 'simple'}
+//                     completedItemOrder={
+//                         container ? container.completedItemOrder : 'noChange'
+//                     }
+//                     animationRef={ref}
+//                     ref={disabled ? undefined : setNodeRef}
+//                     showItemForm={showItemForm}
+//                     setShowItemForm={setShowItemForm}
+//                     value={item?.content || '...'}
+//                     dragging={isDragging}
+//                     sorting={isSorting}
+//                     handle={handle}
+//                     handleProps={
+//                         handle ? { ref: setActivatorNodeRef } : undefined
+//                     }
+//                     index={index}
+//                     wrapperStyle={wrapperStyle({ index })}
+//                     style={style({
+//                         index,
+//                         value: id,
+//                         isDragging,
+//                         isSorting,
+//                         overIndex: over ? getIndex(over.id) : overIndex,
+//                         containerId,
+//                     })}
+//                     color={item ? item.badgeColor.value : '#fff'}
+//                     transition={transition}
+//                     transform={transform}
+//                     fadeIn={mountedWhileDragging}
+//                     listeners={listeners}
+//                     renderItem={renderItem}
+//                 />
+//             );
+//         }
+//     )
+// );
+
 function SortableItem({
     item,
+    itemsReorderedExternally,
     disabled,
     id,
     index,
@@ -1152,6 +1355,7 @@ function SortableItem({
             completedItemOrder={
                 container ? container.completedItemOrder : 'noChange'
             }
+            itemsReorderedExternally={itemsReorderedExternally}
             ref={disabled ? undefined : setNodeRef}
             showItemForm={showItemForm}
             setShowItemForm={setShowItemForm}
