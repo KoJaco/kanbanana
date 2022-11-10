@@ -1,7 +1,5 @@
 import React from 'react';
 
-const now = new Date(Date.now()).toLocaleString();
-
 export function getMaxIdFromString<T extends Object>(obj: T) {
     /* 
         * Adheres to structure '<name>-<id>', splits on '-' and tries to parse Id to number.
@@ -36,6 +34,39 @@ export function getMaxIdFromString<T extends Object>(obj: T) {
         }
     });
     // return the max
+    return Math.max(...idArray);
+}
+
+export function getMaxIdFromObjectKeyStrings(keyStrings: string[]): number {
+    // used in finding the maxId in an Objects keys (unique identifiers)
+    // Aim is to always set an items ID above the maxId obtained in the items object
+    if (!keyStrings || keyStrings.length === 0) {
+        return 0;
+    }
+    let idArray: number[] = [];
+    keyStrings.forEach((key) => {
+        try {
+            if (key === undefined) {
+                throw new Error('Key was undefined');
+            }
+            // try to parse id to integer
+            let idNum = parseInt(key, 10);
+            if (isNaN(idNum)) {
+                throw new Error(
+                    'Something went wrong while trying to parse key to an integer. Value was NOT a Number.'
+                );
+                // continue trying to parse
+            }
+            // push id to number array
+            idArray.push(idNum);
+        } catch (error) {
+            let message;
+            if (error instanceof Error) message = error.message;
+            else message = String(error);
+            // proceed but report the error
+            reportError({ message });
+        }
+    });
     return Math.max(...idArray);
 }
 

@@ -1,17 +1,17 @@
 import React, { forwardRef, useRef, useState } from 'react';
-import { Handle } from '../components';
 import { MdAdd, MdOutlineCancel, MdOutlineEdit } from 'react-icons/md';
-import {
+import { ModifyError } from 'dexie';
+
+import { Handle } from '../components';
+import ContainerInputGroup from '@/components/forms/inputs/ContainerInputGroup';
+import { db } from '@/server/db';
+import { useKanbanStore } from '@/stores/KanbanStore';
+import { useOnClickOutside } from '@/core/hooks';
+import type {
     TContainer,
     TItem,
     UniqueIdentifier,
 } from '@/core/types/sortableBoard';
-import { ModifyError } from 'dexie';
-import { db } from '@/server/db';
-import { useKanbanStore } from '@/stores/KanbanStore';
-import ContainerInputGroup from '@/components/forms/inputs/ContainerInputGroup';
-import { useOnClickOutside } from '@/core/hooks';
-import AnimateItemReorder from '../AnimateItemReorder';
 
 export interface ContainerProps {
     children: React.ReactNode;
@@ -53,6 +53,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
         }: ContainerProps,
         ref
     ) => {
+        // local state
         const [showContainerForm, setShowContainerForm] = useState(false);
         // global store
         const { maxItemId, increaseMaxItemId, currentBoardSlug } =
@@ -69,7 +70,6 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
 
         function handleAddItem() {
             // maxItemId has been set in upon loading the board in SortableBoard.
-
             const newItemIdentifier: UniqueIdentifier = `${maxItemId + 1}`;
 
             let newItem: TItem = {
@@ -110,7 +110,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                     );
                 })
                 .catch((e: Error) => {
-                    console.error('Generic error: ' + e);
+                    console.error('Uh oh! Something went wrong: ' + e);
                 });
 
             increaseMaxItemId();
@@ -125,16 +125,18 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         boardItem.containers[container.id] = container;
                         boardItem.updatedAt = new Date(Date.now());
                     });
-            });
+            })
+                .catch('ModifyError', (e: ModifyError) => {
+                    // ModifyError did occur
+                    console.error(
+                        e.failures.length + ' items failed to modify'
+                    );
+                })
+                .catch((e) => {
+                    console.error('Generic error: ' + e);
+                });
+
             setShowContainerForm(false);
-            // .catch (Dexie.ModifyError, error => {
-
-            //     // ModifyError did occur
-            //     console.error(error.failures.length + " items failed to modify");
-
-            // }).catch (error => {
-            //     console.error("Generic error: " + error);
-            // })
         }
 
         return (
@@ -143,7 +145,6 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                 ref={ref}
                 style={
                     {
-                        // backgroundColor: container?.badgeColor.value,
                         ...style,
                         '--columns': columns,
                     } as React.CSSProperties
@@ -153,12 +154,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                 tabIndex={onClick ? 0 : undefined}
             >
                 {label ? (
-                    <div
-                        className="flex justify-start items-center mb-2 py-1 px-1 group rounded-t-md"
-                        // style={{
-                        //     backgroundColor: container?.badgeColor.value,
-                        // }}
-                    >
+                    <div className="flex justify-start items-center mb-2 py-1 px-1 group rounded-t-md">
                         <div
                             className="w-6 h-6 rounded-md mr-3 shadow border border-inherit dark:border-slate-600"
                             style={{
@@ -166,26 +162,10 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                             }}
                         ></div>
                         <div className="flex flex-wrap flex-col whitespace-normal">
-                            <h1
-                                className="text-l font-medium"
-                                // style={{
-                                //     color: container?.badgeColor.textDark
-                                //         ? '#333'
-                                //         : '#fff',
-                                // }}
-                            >
-                                {label}
-                            </h1>
+                            <h1 className="text-l font-medium">{label}</h1>
                         </div>
 
                         <div className="flex items-center ml-auto gap-x-4 text-slate-600 hover:scale-105 focus:scale-105 transition-transform duration-300 ">
-                            {/* <div
-                                className="w-6 h-6 rounded-lg border-inherit"
-                                style={{
-                                    backgroundColor:
-                                        container?.badgeColor.value,
-                                }}
-                            ></div> */}
                             <Handle
                                 {...handleProps}
                                 className="rounded-md opacity-0 group-focus-visible:opacity-75 focus:opacity-75 group-hover:opacity-75 focus-visible:outline-none focus-visible:ring-1 focus-visible:scale-110 focus-visible:ring-offset-4 transition-transform duration-300"

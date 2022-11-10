@@ -1,13 +1,18 @@
 import React, {
     createRef,
-    memo,
     useCallback,
     useEffect,
     useRef,
     useState,
-    forwardRef,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { MdOutlineEdit } from 'react-icons/md';
+import {
+    HiChevronDoubleLeft,
+    HiChevronDoubleRight,
+    HiChevronLeft,
+    HiChevronRight,
+} from 'react-icons/hi';
 import {
     CancelDrop,
     closestCenter,
@@ -43,14 +48,21 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { coordinateGetter as multipleContainersCoordinateGetter } from '@/core/utils/keyboardCoordinates';
 
-import { Container, ContainerProps } from './container';
-import { Item } from './item';
-
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
+
+import { Container, ContainerProps } from './container';
+import { Item } from './item';
+import Tag from '@/components/elements/Tag';
+
+import InlineBoardForm from '@/components/forms/InlineBoardForm';
+import AnimateItemReorder from './AnimateItemReorder';
+import ItemAnimationWrapper from '@/components/sortable/item/ItemAnimationWrapper';
+
 import { blankBoard } from '@/core/consts/blankBoard';
-import {
+import { getMaxIdFromObjectKeyStrings } from '@/core/utils/sortableBoard';
+import type {
     ContainerItemMapping,
     Containers,
     TContainer,
@@ -59,56 +71,7 @@ import {
     Items,
     BoardTags,
 } from '@/core/types/sortableBoard';
-import { MdOutlineEdit } from 'react-icons/md';
-import Tag from '../elements/Tag';
-import {
-    HiChevronDoubleLeft,
-    HiChevronDoubleRight,
-    HiChevronLeft,
-    HiChevronRight,
-} from 'react-icons/hi';
-import InlineBoardForm from '@/components/forms/InlineBoardForm';
-import AnimateItemReorder from './AnimateItemReorder';
-import ItemAnimationWrapper from '@/components/sortable/item/ItemAnimationWrapper';
-
-interface ItemAnimationWrapperProps {
-    id: UniqueIdentifier;
-    ref: HTMLLIElement;
-    children: JSX.Element;
-}
-
-function getMaxIdFromObjectKeyStrings(keyStrings: string[]): number {
-    if (!keyStrings || keyStrings.length === 0) {
-        return 0;
-    }
-    let idArray: number[] = [];
-    keyStrings.forEach((key) => {
-        try {
-            if (key === undefined) {
-                throw new Error('Key was undefined');
-            }
-            // try to parse id to integer
-            let idNum = parseInt(key, 10);
-            if (isNaN(idNum)) {
-                console.error(
-                    'Something went wrong while trying to parse key to an integer. Value is Not a Number.'
-                );
-                // continue trying to parse
-            }
-            // push id to number array
-            idArray.push(idNum);
-        } catch (error) {
-            let message;
-            if (error instanceof Error) message = error.message;
-            else message = String(error);
-
-            // proceed but report the error
-            reportError({ message });
-        }
-    });
-    // return the max
-    return Math.max(...idArray);
-}
+import Dexie from 'dexie';
 
 const initialTags: BoardTags = [
     {
@@ -118,25 +81,20 @@ const initialTags: BoardTags = [
 ];
 
 const dropAnimation: DropAnimation = {
-    // duration: 500,
-    // easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+    // custom drop animation
+    duration: 300,
+    easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
     sideEffects: defaultDropAnimationSideEffects({
         styles: {
             active: {
                 opacity: '0.5',
-                // transition: 'opacity, 0.8s',
-                // transitionTimingFunction: 'ease-in-out',
             },
-            // dragOverlay: {
-            //     opacity: '0',
-            //     transition: 'opacity, 0.5s',
-            //     transitionTimingFunction: 'ease-in-out',
-            // },
         },
     }),
 };
 
 const scrollButtons = [
+    // scroll button for mapping
     {
         id: 1,
         direction: 'start',
@@ -150,40 +108,6 @@ const scrollButtons = [
         icon: <HiChevronDoubleRight className="w-6 h-6" />,
     },
 ];
-
-var omit = require('object.omit');
-export const TRASH_ID = 'void';
-const PLACEHOLDER_ID = 'placeholder';
-const empty: UniqueIdentifier[] | undefined = [];
-
-interface SortableBoardProps {
-    slug: string;
-    adjustScale?: boolean;
-    cancelDrop?: CancelDrop;
-    columns?: number;
-    containerStyle?: React.CSSProperties;
-    coordinateGetter?: KeyboardCoordinateGetter;
-    getItemStyles?(args: {
-        value: UniqueIdentifier;
-        index: number;
-        overIndex: number;
-        isDragging: boolean;
-        containerId: UniqueIdentifier;
-        isSorting: boolean;
-        isDragOverlay: boolean;
-    }): React.CSSProperties;
-    wrapperStyle?(args: { index: number }): React.CSSProperties;
-    totalItemCount?: number;
-    items?: ContainerItemMapping;
-    handle?: boolean;
-    renderItem?: any;
-    strategy?: SortingStrategy;
-    modifiers?: Modifiers;
-    minimal?: boolean;
-    trashable?: boolean;
-    scrollable?: boolean;
-    vertical?: boolean;
-}
 
 const scroller = (direction: string, value?: number) => {
     let carousel = document.getElementById('carousel');
@@ -216,6 +140,39 @@ const scroller = (direction: string, value?: number) => {
     }
 };
 
+var omit = require('object.omit');
+const PLACEHOLDER_ID = 'placeholder';
+const empty: UniqueIdentifier[] | undefined = [];
+
+interface SortableBoardProps {
+    slug: string;
+    adjustScale?: boolean;
+    cancelDrop?: CancelDrop;
+    columns?: number;
+    containerStyle?: React.CSSProperties;
+    coordinateGetter?: KeyboardCoordinateGetter;
+    getItemStyles?(args: {
+        value: UniqueIdentifier;
+        index: number;
+        overIndex: number;
+        isDragging: boolean;
+        containerId: UniqueIdentifier;
+        isSorting: boolean;
+        isDragOverlay: boolean;
+    }): React.CSSProperties;
+    wrapperStyle?(args: { index: number }): React.CSSProperties;
+    totalItemCount?: number;
+    items?: ContainerItemMapping;
+    handle?: boolean;
+    renderItem?: any;
+    strategy?: SortingStrategy;
+    modifiers?: Modifiers;
+    minimal?: boolean;
+    trashable?: boolean;
+    scrollable?: boolean;
+    vertical?: boolean;
+}
+
 const defaultScale = {
     scaleX: 1,
     scaleY: 1,
@@ -237,16 +194,16 @@ export default function SortableBoard({
     vertical = false,
     scrollable = true,
 }: SortableBoardProps) {
+    // local state
     const [items, setItems] = useState<ContainerItemMapping>(
         blankBoard.containerItemMapping
     );
     const [containers, setContainers] = useState(
         Object.keys(items) as UniqueIdentifier[]
     );
-
     const [showInlineBoardForm, setShowInlineBoardForm] = useState(false);
 
-    // Zustand store state
+    // Zustand global store vars
     const {
         totalItemCount,
         columnCount,
@@ -263,14 +220,15 @@ export default function SortableBoard({
         [totalItemCount, columnCount, slug]
     );
 
+    // referential vars, keep track of drag and drop and item state
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
     const lastOverId = useRef<UniqueIdentifier | null>(null);
     const recentlyMovedToNewContainer = useRef(false);
     const itemsReorderedExternally = useRef(false);
-
     const isSortingContainer = activeId ? containers.includes(activeId) : false;
 
     useEffect(() => {
+        // initially grab boards from indexDB and set items, keep track of board changes.
         if (board !== undefined) {
             setItems(board.containerItemMapping);
             setContainers(board.containerOrder);
@@ -290,91 +248,13 @@ export default function SortableBoard({
         setShowInlineBoardForm,
     ]);
 
-    const customVerticalListSortingStrategy: SortingStrategy = ({
-        activeIndex,
-        activeNodeRect: fallbackActiveRect,
-        index,
-        rects,
-        overIndex,
-    }) => {
-        // implement animation here
-        const activeNodeRect = rects[activeIndex] ?? fallbackActiveRect;
-
-        if (!activeNodeRect) {
-            return null;
-        }
-
-        if (index === activeIndex) {
-            const overIndexRect = rects[overIndex];
-
-            if (!overIndexRect) {
-                return null;
-            }
-
-            return {
-                x: 0,
-                y:
-                    activeIndex < overIndex
-                        ? overIndexRect.top +
-                          overIndexRect.height -
-                          (activeNodeRect.top + activeNodeRect.height)
-                        : overIndexRect.top - activeNodeRect.top,
-                ...defaultScale,
-            };
-        }
-
-        const itemGap = getItemGap(rects, index, activeIndex);
-
-        if (index > activeIndex && index <= overIndex) {
-            return {
-                x: 0,
-                y: -activeNodeRect.height - itemGap,
-                ...defaultScale,
-            };
-        }
-
-        if (index < activeIndex && index >= overIndex) {
-            return {
-                x: 0,
-                y: activeNodeRect.height + itemGap,
-                ...defaultScale,
-            };
-        }
-
-        return {
-            x: 0,
-            y: 0,
-            ...defaultScale,
-        };
-    };
-
-    function getItemGap(
-        clientRects: ClientRect[],
-        index: number,
-        activeIndex: number
-    ) {
-        const currentRect: ClientRect | undefined = clientRects[index];
-        const previousRect: ClientRect | undefined = clientRects[index - 1];
-        const nextRect: ClientRect | undefined = clientRects[index + 1];
-
-        if (!currentRect) {
-            return 0;
-        }
-
-        if (activeIndex < index) {
-            return previousRect
-                ? currentRect.top - (previousRect.top + previousRect.height)
-                : nextRect
-                ? nextRect.top - (currentRect.top + currentRect.height)
-                : 0;
-        }
-
-        return nextRect
-            ? nextRect.top - (currentRect.top + currentRect.height)
-            : previousRect
-            ? currentRect.top - (previousRect.top + previousRect.height)
-            : 0;
-    }
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            // reset refs on item changes, onDragOver will init this.
+            recentlyMovedToNewContainer.current = false;
+            itemsReorderedExternally.current = false;
+        });
+    }, [items]);
 
     /**
      * Custom collision detection strategy optimized for multiple containers
@@ -472,13 +352,10 @@ export default function SortableBoard({
 
     const getIndex = (id: UniqueIdentifier) => {
         const container = findContainer(id);
-
         if (!container) {
             return -1;
         }
-
         const index = items[container]!.indexOf(id);
-
         return index;
     };
 
@@ -488,28 +365,13 @@ export default function SortableBoard({
             // Dragged across containers
             setItems(clonedItems);
         }
-
         setActiveId(null);
         setClonedItems(null);
     };
 
-    useEffect(() => {
-        requestAnimationFrame(() => {
-            // reset refs on item changes
-            recentlyMovedToNewContainer.current = false;
-            itemsReorderedExternally.current = false;
-        });
-    }, [items]);
-
-    console.log('items');
-    console.log(items);
-    console.log('boarditems');
-    console.log(board?.containerItemMapping);
-
     if (!items || !board) return null;
 
     return (
-        // <div className="flex flex-col flex-1 h-screen">
         <div className="h-full w-full overflow-y-auto">
             <DndContext
                 sensors={sensors}
@@ -544,6 +406,7 @@ export default function SortableBoard({
                         return;
                     }
                     if (itemsReorderedExternally.current) {
+                        // if we have just reordered items via the item checked (completed) functionality, overId must equal the active id.
                         overId = active.id;
                     } else {
                         overId = over.id;
@@ -613,7 +476,6 @@ export default function SortableBoard({
                             };
                         });
                     } else if (activeContainer === overContainer) {
-                        // problem with setting items, when simply clicking drag, overId is set to something different.
                         setItems((items) => {
                             if (!items) {
                                 throw new Error('Items were undefined');
@@ -725,14 +587,12 @@ export default function SortableBoard({
                                 );
                             }
                         });
-
                     setActiveId(null);
                 }}
                 cancelDrop={cancelDrop}
                 onDragCancel={onDragCancel}
                 modifiers={modifiers}
             >
-                {/* TITLE */}
                 <div className="my-8 ml-4 mx-4 sm:mx-10 md:mx-8 lg:mx-6">
                     {showInlineBoardForm ? (
                         <div id="boardFormContainer" className="relative z-50">
@@ -809,7 +669,7 @@ export default function SortableBoard({
                             items={[...containers, PLACEHOLDER_ID]}
                             strategy={
                                 vertical
-                                    ? customVerticalListSortingStrategy
+                                    ? verticalListSortingStrategy
                                     : horizontalListSortingStrategy
                             }
                         >
@@ -1090,17 +950,20 @@ export default function SortableBoard({
             if (deleteCount === 1) {
                 console.log('Deleted container ' + containerID);
             }
-        });
+        })
+            .catch(Dexie.ModifyError, (error) => {
+                console.error(
+                    error.failures.length + 'Failed to remove container'
+                );
+            })
+            .catch((error) => {
+                console.error('Uh oh! Something went wrong. ' + error);
+            });
         setTotalItemCount(board ? Object.keys(board.items).length : 0);
-
-        // setContainers((containers) =>
-        //     containers.filter((id) => id !== containerID)
-        // );
     }
 
     function handleAddContainer() {
         const newContainerId = getNextContainerId();
-        // add container to index db (server-client state), should refetch via useLiveQuery
 
         let newContainer: TContainer = {
             id: newContainerId,
@@ -1118,16 +981,23 @@ export default function SortableBoard({
             await db.boards
                 .where('slug')
                 .equals(currentBoardSlug)
-                .modify((boardItem: any) => {
+                .modify((board: Board) => {
                     // add container to containers object
-                    boardItem.containers[newContainerId] = newContainer;
-
-                    boardItem.containerOrder.push(newContainerId);
+                    board.containers[newContainerId] = newContainer;
+                    board.containerOrder.push(newContainerId);
                     // add new empty array of itemIds to containerItemMapping object
-                    boardItem.containerItemMapping[newContainerId] = [];
-                    boardItem.updatedAt = new Date(Date.now());
+                    board.containerItemMapping[newContainerId] = [];
+                    board.updatedAt = new Date(Date.now());
                 });
-        });
+        })
+            .catch(Dexie.ModifyError, (error) => {
+                console.error(
+                    error.failures.length + 'Failed to add container'
+                );
+            })
+            .catch((error) => {
+                console.error('Uh oh! Something went wrong. ' + error);
+            });
     }
 
     function getNextContainerId() {
@@ -1235,83 +1105,6 @@ function useMountStatus() {
 
     return isMounted;
 }
-
-// const SortableItem = memo(
-//     forwardRef<HTMLDivElement, SortableItemProps>(
-//         (
-//             {
-//                 item,
-//                 disabled,
-//                 id,
-//                 index,
-//                 handle = true,
-//                 renderItem,
-//                 style,
-//                 containerId,
-//                 container,
-//                 getIndex,
-//                 wrapperStyle,
-//             },
-//             ref
-//         ) => {
-//             const {
-//                 setNodeRef,
-//                 setActivatorNodeRef,
-//                 listeners,
-//                 isDragging,
-//                 isSorting,
-//                 over,
-//                 overIndex,
-//                 transform,
-//                 transition,
-//             } = useSortable({
-//                 id,
-//             });
-
-//             const mounted = useMountStatus();
-//             const mountedWhileDragging = isDragging && !mounted;
-//             const [showItemForm, setShowItemForm] = useState(false);
-
-//             return (
-//                 <Item
-//                     item={item}
-//                     containerId={containerId}
-//                     containerType={container ? container.type : 'simple'}
-//                     completedItemOrder={
-//                         container ? container.completedItemOrder : 'noChange'
-//                     }
-//                     animationRef={ref}
-//                     ref={disabled ? undefined : setNodeRef}
-//                     showItemForm={showItemForm}
-//                     setShowItemForm={setShowItemForm}
-//                     value={item?.content || '...'}
-//                     dragging={isDragging}
-//                     sorting={isSorting}
-//                     handle={handle}
-//                     handleProps={
-//                         handle ? { ref: setActivatorNodeRef } : undefined
-//                     }
-//                     index={index}
-//                     wrapperStyle={wrapperStyle({ index })}
-//                     style={style({
-//                         index,
-//                         value: id,
-//                         isDragging,
-//                         isSorting,
-//                         overIndex: over ? getIndex(over.id) : overIndex,
-//                         containerId,
-//                     })}
-//                     color={item ? item.badgeColor.value : '#fff'}
-//                     transition={transition}
-//                     transform={transform}
-//                     fadeIn={mountedWhileDragging}
-//                     listeners={listeners}
-//                     renderItem={renderItem}
-//                 />
-//             );
-//         }
-//     )
-// );
 
 function SortableItem({
     item,

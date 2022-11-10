@@ -1,14 +1,17 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, {
+    JSXElementConstructor,
+    useEffect,
+    useLayoutEffect,
+    useState,
+} from 'react';
 
 import { usePrevious } from '@/core/hooks';
-import { calculateBoundingBoxes } from '@/core/utils/kanbanBoard';
+import { calculateBoundingBoxes } from '@/core/utils/sortableBoard';
 
 type AnimateItemReorderProps = {
     children: any;
     animationEnabled: boolean;
 };
-
-// https://dev.to/toantd90/react-beautiful-animation-reordering-the-list-of-items-1mbp
 
 const AnimateItemReorder = ({
     children,
