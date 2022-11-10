@@ -13,6 +13,7 @@ import ItemForm from '@/components/forms/ItemForm';
 import { useOnClickOutside } from '@/core/hooks';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
+import { ModifyError } from 'dexie';
 
 var omit = require('object.omit');
 
@@ -277,6 +278,19 @@ export const Item = React.memo(
                                             !completedItemState;
                                     }
                                 }
+                            })
+                            .catch('ModifyError', (e: ModifyError) => {
+                                // Failed with ModifyError, check e.failures.
+                                console.error(
+                                    'ModifyError occurred: ' +
+                                        e.failures.length +
+                                        ` failures. Failed to toggle 'completed' button in item with id: ${itemId}`
+                                );
+                            })
+                            .catch((e: Error) => {
+                                console.error(
+                                    'Uh oh! Something went wrong: ' + e
+                                );
                             });
                     });
                     setTimeout(() => {
@@ -323,6 +337,19 @@ export const Item = React.memo(
                                     boardItem.containerItemMapping =
                                         newContainerItemMapping;
                                     boardItem.updatedAt = new Date(Date.now());
+                                }) // Catch modification error and generic error.
+                                .catch('ModifyError', (e: ModifyError) => {
+                                    // Failed with ModifyError, check e.failures.
+                                    console.error(
+                                        'ModifyError occurred: ' +
+                                            e.failures.length +
+                                            ` failures. Failed to remove item with id: ${itemId}`
+                                    );
+                                })
+                                .catch((e: Error) => {
+                                    console.error(
+                                        'Uh oh! Something went wrong: ' + e
+                                    );
                                 });
                         });
                         if (itemsReorderedExternally)
@@ -390,7 +417,6 @@ export const Item = React.memo(
                     </label>
                     {/* main content */}
                     <div
-                        // className="flex flex-row justify-between w-full items-center pt-1 mb-4"
                         className={clsx(
                             'w-full bg-white dark:bg-slate-900 dark:shadow-md group',
                             styles.Item,

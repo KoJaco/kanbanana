@@ -34,7 +34,6 @@ import {
     KeyboardCoordinateGetter,
     defaultDropAnimationSideEffects,
 } from '@dnd-kit/core';
-import type { ClientRect } from '@dnd-kit/core';
 import {
     AnimateLayoutChanges,
     SortableContext,
@@ -49,6 +48,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { coordinateGetter as multipleContainersCoordinateGetter } from '@/core/utils/keyboardCoordinates';
 
 import { useLiveQuery } from 'dexie-react-hooks';
+import Dexie, { ModifyError } from 'dexie';
 import { db } from '@/server/db';
 import { useKanbanStore } from '@/stores/KanbanStore';
 
@@ -71,7 +71,6 @@ import type {
     Items,
     BoardTags,
 } from '@/core/types/sortableBoard';
-import Dexie from 'dexie';
 
 const initialTags: BoardTags = [
     {
@@ -565,6 +564,19 @@ export default function SortableBoard({
                                         newContainerOrder;
                                     boardItem.containers[newContainerId] =
                                         defaultEmptyContainer;
+                                }) // Catch modification error and generic error.
+                                .catch('ModifyError', (e: ModifyError) => {
+                                    // Failed with ModifyError, check e.failures.
+                                    console.error(
+                                        'ModifyError occurred: ' +
+                                            e.failures.length +
+                                            ' failures. Failed to add new container.'
+                                    );
+                                })
+                                .catch((e: Error) => {
+                                    console.error(
+                                        'Uh oh! Something went wrong: ' + e
+                                    );
                                 });
                         });
                         setActiveId(null);
