@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
+import clsx from 'clsx';
+
 import { fullColorPalette } from '@/core/consts/branding';
 import { Color } from '@/core/types/sortableBoard';
-
-import clsx from 'clsx';
 
 type ColorPickerProps = {
     pickerType?: 'popover' | 'inline';

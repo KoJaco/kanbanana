@@ -92,10 +92,7 @@ const BoardMenu = () => {
     return (
         <>
             <div>
-                <div
-                    className="
-                                            group flex items-center px-2 py-2 text-base font-medium rounded-md"
-                >
+                <div className="group flex items-center px-2 py-2 text-base font-medium rounded-md">
                     <span className="h-full ">
                         <BsGrid className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 dark:text-slate-50" />
                     </span>

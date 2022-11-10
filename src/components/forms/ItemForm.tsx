@@ -7,11 +7,8 @@ import ColorPicker from '@/components/pickers/ColorPicker';
 
 import { MdOutlineDone } from 'react-icons/md';
 
-import { useOnClickOutside, useOnClickInsideOnly } from '@/core/hooks';
 import { TItem, Color, UniqueIdentifier } from '@/core/types/sortableBoard';
 import { useTheme } from 'next-themes';
-
-var omit = require('object.omit');
 
 type ItemFormProps = {
     containerType: 'checklist' | 'simple';
