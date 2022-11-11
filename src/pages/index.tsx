@@ -1,4 +1,6 @@
 import type { NextPage } from 'next';
+import Head from 'next/head';
+
 import { useState } from 'react';
 import HomeLayout from '@/layouts/HomeLayout';
 import { BsArrowRight } from 'react-icons/bs';

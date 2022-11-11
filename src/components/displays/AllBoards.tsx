@@ -29,38 +29,6 @@ const daysPerMonths = [
     31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
 ];
 
-const days = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-];
-
-// type TDateObj = {
-//     // month: string | undefined;
-//     monthIndex: number;
-//     dayName: string;
-//     dayIndex: number;
-//     dayOfTheWeek: number;
-// };
-
-// interface Months {
-//     [key: UniqueIdentifier]: TDateObj[];
-// }
-
-// {board?.updatedAt.toLocaleString(
-//     'en-uk',
-//     {
-//         weekday: 'long',
-//         year: 'numeric',
-//         month: 'short',
-//         day: 'numeric',
-//     }
-// )}
-
 interface Days {
     [key: UniqueIdentifier]: Board[];
     // {'22/9/2022': [board1, board2]},
@@ -218,7 +186,6 @@ const AllBoards = () => {
                             {tabs.map((tab, tabIdx) => (
                                 <button
                                     key={tab}
-                                    name={tab}
                                     className={clsx(
                                         tab === currentTime
                                             ? 'text-gray-900 dark:text-slate-100'
@@ -232,6 +199,7 @@ const AllBoards = () => {
                                     aria-current={
                                         tab === currentTime ? 'page' : undefined
                                     }
+                                    aria-label={`Set Timeframe to ${tab}`}
                                     onClick={() => {
                                         setCurrentTime(tab);
                                     }}
@@ -252,137 +220,147 @@ const AllBoards = () => {
                     </div>
                 </div>
             </div>
+            {boards.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-[50vh] w-full text-slate-700 dark:text-slate-100">
+                    <h1 className="text-3xl ">No boards yet?</h1>
+                    <p className="text-lg">
+                        Click the New Board button in the sidebar to get
+                        creating!
+                    </p>
+                </div>
+            ) : (
+                <div className="flex flex-col">
+                    {/* map through sorted objects. */}
+                    {Object.entries(filteredBoards).map(
+                        (boardsInDateRange, index) => {
+                            const dateIdentifier: string = boardsInDateRange[0];
+                            const boards: Board[] = boardsInDateRange[1];
 
-            <div className="flex flex-col">
-                {/* map through sorted objects. */}
-                {Object.entries(filteredBoards).map(
-                    (boardsInDateRange, index) => {
-                        const dateIdentifier: string = boardsInDateRange[0];
-                        const boards: Board[] = boardsInDateRange[1];
+                            return (
+                                <div key={index} className="mt-4">
+                                    {/* Date range identifier */}
+                                    {boards.length > 0 && (
+                                        <div className="flex flex-col h-auto w-full text-slate-600 dark:text-slate-100/75">
+                                            {dateIdentifier}
+                                        </div>
+                                    )}
 
-                        return (
-                            <div key={index} className="mt-4">
-                                {/* Date range identifier */}
-                                {boards.length > 0 && (
-                                    <div className="flex flex-col h-auto w-full text-slate-600 dark:text-slate-100/75">
-                                        {dateIdentifier}
-                                    </div>
-                                )}
+                                    <div className="mb-10">
+                                        {/* Map through boards to generate board cards*/}
+                                        <ul
+                                            role="list"
+                                            className="grid xl:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6"
+                                        >
+                                            {/* map through boards */}
+                                            {boards?.map((board, index) => {
+                                                let { title, slug, tags } =
+                                                    board;
 
-                                <div className="mb-10">
-                                    {/* Map through boards to generate board cards*/}
-                                    <ul
-                                        role="list"
-                                        className="grid xl:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6"
-                                    >
-                                        {/* map through boards */}
-                                        {boards?.map((board, index) => {
-                                            let { title, slug, tags } = board;
-
-                                            if (
-                                                (data &&
-                                                    tags &&
-                                                    tags?.filter((tag) => {
-                                                        return (
-                                                            tag.text ===
-                                                            data.tagText
-                                                        );
-                                                    }).length > 0) ||
-                                                router.asPath === '/boards'
-                                            ) {
-                                                return (
-                                                    <Link
-                                                        key={index}
-                                                        href={{
-                                                            pathname: `/boards/[slug]`,
-                                                            query: {
-                                                                slug: encodeURIComponent(
-                                                                    slug
-                                                                ),
-                                                            },
-                                                        }}
-                                                        passHref={true}
-                                                    >
-                                                        <a className="mt-4 w-full col-span-1 bg-gray-50 dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 rounded-lg divide-y divide-slate-200 drop-shadow-md hover:drop-shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
-                                                            {/* Title, timestamp, and tags */}
-                                                            <div className="flex w-full items-end justify-between space-x-6 p-6">
-                                                                <div className="flex-1 truncate">
-                                                                    <div className="flex justify-between items-start space-x-3">
-                                                                        <h3 className="truncate text-md font-medium text-slate-900 dark:text-gray-50">
-                                                                            {
-                                                                                title
-                                                                            }
-                                                                        </h3>
-                                                                    </div>
-                                                                    <p className="mt-1 truncate text-sm text-gray-500 dark:text-slate-200 whitespace-normal">
-                                                                        {board.updatedAt.toLocaleString(
-                                                                            'en-uk',
-                                                                            {
-                                                                                weekday:
-                                                                                    'long',
-                                                                                month: 'short',
-                                                                                day: 'numeric',
-                                                                                hour: 'numeric',
-                                                                                minute: 'numeric',
-                                                                                second: 'numeric',
-                                                                            }
-                                                                        )}
-                                                                    </p>
-                                                                    <div className="space-x-1">
-                                                                        {tags?.map(
-                                                                            (
-                                                                                tag,
-                                                                                index
-                                                                            ) => (
-                                                                                <span
-                                                                                    key={
-                                                                                        index
-                                                                                    }
-                                                                                    className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                                                                                        tag
-                                                                                            .backgroundColor
-                                                                                            .name ===
-                                                                                            'transparent' &&
-                                                                                        'border-1 border-slate-500'
-                                                                                    }`}
-                                                                                    style={{
-                                                                                        backgroundColor:
+                                                if (
+                                                    (data &&
+                                                        tags &&
+                                                        tags?.filter((tag) => {
+                                                            return (
+                                                                tag.text ===
+                                                                data.tagText
+                                                            );
+                                                        }).length > 0) ||
+                                                    router.asPath === '/boards'
+                                                ) {
+                                                    return (
+                                                        <Link
+                                                            key={index}
+                                                            href={{
+                                                                pathname: `/boards/[slug]`,
+                                                                query: {
+                                                                    slug: encodeURIComponent(
+                                                                        slug
+                                                                    ),
+                                                                },
+                                                            }}
+                                                            passHref={true}
+                                                        >
+                                                            <a className="mt-4 w-full col-span-1 bg-gray-50 dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 rounded-lg divide-y divide-slate-200 drop-shadow-md hover:drop-shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
+                                                                {/* Title, timestamp, and tags */}
+                                                                <div className="flex w-full items-end justify-between space-x-6 p-6">
+                                                                    <div className="flex-1 truncate">
+                                                                        <div className="flex justify-between items-start space-x-3">
+                                                                            <h3 className="truncate text-md font-medium text-slate-900 dark:text-gray-50">
+                                                                                {
+                                                                                    title
+                                                                                }
+                                                                            </h3>
+                                                                        </div>
+                                                                        <p className="mt-1 truncate text-sm text-gray-500 dark:text-slate-200 whitespace-normal">
+                                                                            {board.updatedAt.toLocaleString(
+                                                                                'en-uk',
+                                                                                {
+                                                                                    weekday:
+                                                                                        'long',
+                                                                                    month: 'short',
+                                                                                    day: 'numeric',
+                                                                                    hour: 'numeric',
+                                                                                    minute: 'numeric',
+                                                                                    second: 'numeric',
+                                                                                }
+                                                                            )}
+                                                                        </p>
+                                                                        <div className="space-x-1">
+                                                                            {tags?.map(
+                                                                                (
+                                                                                    tag,
+                                                                                    index
+                                                                                ) => (
+                                                                                    <span
+                                                                                        key={
+                                                                                            index
+                                                                                        }
+                                                                                        className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
                                                                                             tag
                                                                                                 .backgroundColor
-                                                                                                .value,
-                                                                                        color: textColorStyle(
-                                                                                            tag
-                                                                                                .backgroundColor
-                                                                                                .name,
-                                                                                            tag
-                                                                                                .backgroundColor
-                                                                                                .textDark
-                                                                                        ),
-                                                                                    }}
-                                                                                >
-                                                                                    {
-                                                                                        tag.text
-                                                                                    }
-                                                                                </span>
-                                                                            )
-                                                                        )}
+                                                                                                .name ===
+                                                                                                'transparent' &&
+                                                                                            'border-1 border-slate-500'
+                                                                                        }`}
+                                                                                        style={{
+                                                                                            backgroundColor:
+                                                                                                tag
+                                                                                                    .backgroundColor
+                                                                                                    .value,
+                                                                                            color: textColorStyle(
+                                                                                                tag
+                                                                                                    .backgroundColor
+                                                                                                    .name,
+                                                                                                tag
+                                                                                                    .backgroundColor
+                                                                                                    .textDark
+                                                                                            ),
+                                                                                        }}
+                                                                                    >
+                                                                                        {
+                                                                                            tag.text
+                                                                                        }
+                                                                                    </span>
+                                                                                )
+                                                                            )}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </a>
-                                                    </Link>
-                                                );
-                                            } else {
-                                                return null;
-                                            }
-                                        })}
-                                    </ul>
+                                                            </a>
+                                                        </Link>
+                                                    );
+                                                } else {
+                                                    return null;
+                                                }
+                                            })}
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                        );
-                    }
-                )}
-            </div>
+                            );
+                        }
+                    )}
+                </div>
+            )}
         </>
     );
 };

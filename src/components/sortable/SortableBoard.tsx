@@ -622,6 +622,7 @@ export default function SortableBoard({
                                     type="button"
                                     className="items-center text-slate-500 p-2 rounded-full hover:bg-light-gray hover:scale-110 dark:hover:bg-slate-700 cursor-pointer transition-color duration-300 dark:text-white"
                                     onClick={() => setShowInlineBoardForm(true)}
+                                    aria-label="Edit Board"
                                 >
                                     <MdOutlineEdit className="w-4 h-4 lg:w-5 lg:h-5" />
                                 </button>
@@ -832,7 +833,8 @@ export default function SortableBoard({
                         <button
                             key={index}
                             onClick={() => scroller(button.direction)}
-                            className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed w-7 h-7 text-slate-600/[.8] hover:text-slate-600 dark:text-gray-50  transition-opacity duration-300 "
+                            className="bg-transparent disabled:text-gray-500/[0.5] disabled:cursor-not-allowed w-7 h-7 text-slate-600/[.8] hover:text-slate-600 dark:text-gray-50  transition-opacity duration-300"
+                            aria-label={`Scroll to the ${button.direction}`}
                         >
                             {button.icon}
                         </button>

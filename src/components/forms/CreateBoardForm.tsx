@@ -402,6 +402,7 @@ const CreateBoardForm = ({
                                                                     false
                                                                 )
                                                             }
+                                                            aria-label="Close Panel"
                                                         >
                                                             <span className="sr-only">
                                                                 Close panel

@@ -1,4 +1,6 @@
 import { useTheme } from 'next-themes';
+import Head from 'next/head';
+
 import React from 'react';
 import Link from 'next/link';
 import { SiKibana } from 'react-icons/si';
@@ -12,6 +14,10 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
 
     return (
         <>
+            <Head>
+                <title>Home</title>
+                <meta name="robots" content="index, follow" />
+            </Head>
             <div className="flex flex-1 flex-col dark:bg-slate-900 h-screen">
                 {/* Navbar */}
                 <div className="sticky top-0 z-[150] flex h-16 flex-shrink-0 bg-white dark:bg-slate-900 dark:border-b dark:border-slate-700/[0.5] dark:shadow-slate-900 shadow dark:shadow-sm">

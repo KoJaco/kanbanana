@@ -271,8 +271,9 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
     return (
         <div className="relative p-10 w-full">
             <button
-                className="absolute flex items-center justify-center w-10 h-10 top-0 right-0 text-slate-700 hover:text-slate-900 hover:bg-light-gray dark:text-slate-200 dark:hover:bg-slate-700 rounded-full transition-color duration-300"
+                className="absolute flex items-center justify-center w-10 h-10 top-0 right-0 text-slate-700 hover:text-slate-900 hover:bg-light-gray dark:text-slate-200 dark:hover:bg-slate-800 rounded-md transition-color duration-300"
                 onClick={handleCloseModal}
+                aria-label="Close Import/Export"
             >
                 <MdClose className="h-7 w-7 " />
             </button>
@@ -434,6 +435,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                                     onClick={() => {
                                                         handleImportDB();
                                                     }}
+                                                    aria-label="Import Database"
                                                 >
                                                     <BsDownload className="w-7 h-7" />
                                                 </button>
@@ -472,6 +474,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                         className="group flex items-center justify-center h-10 w-full rounded-lg border-1 border-emerald-500 text-emerald-500 hover:hue-rotate-15 transition-color duration-300 disabled:border-red-500 disabled:text-red-500 disabled:cursor-not-allowed"
                                         onClick={handleExportDB}
                                         disabled={filename.length === 0}
+                                        aria-label="Export Button"
                                     >
                                         <BsUpload className="w-7 h-7" />
                                     </button>
@@ -519,6 +522,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                         name="done"
                                         className="flex items-center justify-center w-32 h-32 border-1 border-emerald-500 rounded-lg hover:scale-105 hover:hue-rotate-15 hover:border-2 transition-transform duration-300"
                                         onClick={() => handleDone()}
+                                        aria-label="Done/Close"
                                     >
                                         <MdOutlineDone className="w-16 h-16 text-emerald-500" />
                                     </button>

@@ -35,7 +35,7 @@ const Navbar = ({ setSidebarOpen }: NavbarProps) => {
                                 Light and Dark Mode Toggle
                             </span>
                             <input
-                                id={`${theme}`}
+                                id="themeToggle"
                                 type="checkbox"
                                 className="absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md invisible checked:invisible"
                                 checked={theme === 'light' ? false : true}

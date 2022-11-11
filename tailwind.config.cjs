@@ -34,6 +34,7 @@ module.exports = {
             },
             colors: {
                 primary: '#6967CE',
+                offset: '#FFC414',
                 'primary-darker': '#5556BA',
                 'primary-dark-alt': '#00176D',
             },

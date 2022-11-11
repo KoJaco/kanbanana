@@ -118,6 +118,7 @@ const BoardMenu = () => {
                                     : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
                             }
                             onClick={handleCloseSidebar}
+                            aria-label="View All Boards"
                         >
                             <div className="flex justify-between items-end">
                                 <span className="capitalize">All Boards</span>
@@ -179,24 +180,28 @@ const BoardMenu = () => {
                     {/* Dynamic component, client-side only */}
                     <ol className="inline-flex px-2 items-center gap-y-2  gap-x-1 w-full max-h-36 md:max-h-64 py-4 whitespace-normal flex-wrap">
                         {allTags.map((tag, index) => (
-                            <Link
-                                key={index}
-                                href={{
-                                    pathname: '/boards',
-                                    query: { tagText: tag.text },
-                                }}
-                                passHref={true}
-                            >
-                                <a
-                                    className="hover:scale-110 transition-transform duration-300"
-                                    onClick={handleCloseSidebar}
+                            <li key={index}>
+                                <Link
+                                    href={{
+                                        pathname: '/boards',
+                                        query: { tagText: tag.text },
+                                    }}
+                                    passHref={true}
                                 >
-                                    <Tag
-                                        text={tag.text}
-                                        backgroundColor={tag.backgroundColor}
-                                    />
-                                </a>
-                            </Link>
+                                    <a
+                                        className="hover:scale-110 transition-transform duration-300"
+                                        onClick={handleCloseSidebar}
+                                    >
+                                        <label className="sr-only">{`Link to boards with tag: ${tag}`}</label>
+                                        <Tag
+                                            text={tag.text}
+                                            backgroundColor={
+                                                tag.backgroundColor
+                                            }
+                                        />
+                                    </a>
+                                </Link>
+                            </li>
                         ))}
                     </ol>
                 </div>

@@ -210,7 +210,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     </div>
                     {/* Sidebar Footer Desktop */}
                     <button
-                        className="flex flex-shrink-0 bg-transparent py-3 px-2 group hover:bg-offset-bg transition-color duration-300"
+                        className="flex flex-shrink-0 bg-transparent py-3 px-2 group hover:bg-offset-bg transition-color duration-300 border-t border-indigo-700 dark:border-slate-700"
                         onClick={() => {
                             setShowModal(!showModal);
                         }}

@@ -453,6 +453,7 @@ export const Item = React.memo(
                                     }
                                     ref={excludedRef}
                                     disabled={item?.completed}
+                                    aria-label="Mark Item Completed"
                                 >
                                     <FiEdit />
                                 </button>
@@ -498,6 +499,7 @@ export const Item = React.memo(
                                                               containerId
                                                           )
                                                 }
+                                                aria-label="Show Item Form"
                                             >
                                                 <BiCheck
                                                     className="opacity-0 w-6 h-6 text-slate-500 checkItem transition-opacity duration-500"

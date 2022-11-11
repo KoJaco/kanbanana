@@ -1,6 +1,7 @@
 import { useUIControlStore } from '@/stores/UIControlStore';
 import Sidebar from '@/components/navigation/Sidebar';
 import Navbar from '@/components/navigation/Navbar';
+import Head from 'next/head';
 
 type BoardLayoutProps = {
     children: JSX.Element;
@@ -11,6 +12,10 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
 
     return (
         <>
+            <Head>
+                <title>Boards</title>
+                <meta name="robots" content="index, NoFollow" />
+            </Head>
             {/* Sidebar, static on desktop, responsive/closed on mobile */}
             <Sidebar
                 sidebarOpen={sidebarOpen}

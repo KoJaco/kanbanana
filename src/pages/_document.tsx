@@ -7,7 +7,16 @@ class MyDocument extends Document {
         return (
             <Html>
                 <Head>
-                    <meta charSet="utf-8" name="theme-color" content="#fff" />
+                    <meta
+                        charSet="utf-8"
+                        name="theme-color"
+                        content="#fff"
+                        lang="en"
+                    />
+                    <meta
+                        name="description"
+                        content="Kan-banana is a small, progressive web application for creating, storing, and filtering data in a 'kanban board' format. It is a hobby project developed by full-stack developer KoJaco."
+                    />
                     {/* recognize manifest */}
                     <link rel="manifest" href="/manifest.json" />
                     <link
@@ -29,7 +38,7 @@ class MyDocument extends Document {
                         rel="stylesheet"
                     />
                 </Head>
-                <body className="h-full">
+                <body className="h-full" lang="en">
                     <Main />
                     <NextScript />
                 </body>
