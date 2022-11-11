@@ -17,7 +17,8 @@ import { stringToSlug } from '@/core/utils/misc';
 import clsx from 'clsx';
 import assert from 'assert';
 import { IndexableType, Table } from 'dexie';
-import { UniqueIdentifier } from '@/core/types/sortableBoard';
+
+import ResetDBForm from '@/components/forms/ResetDBForm';
 
 type ImportExportProps = {
     handleCloseModal: (value: boolean) => void;
@@ -58,7 +59,6 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
 
     const onDrop = useCallback(
         async (acceptedFiles: FileWithPath[]) => {
-            // do something
             acceptedFiles.forEach(async (file) => {
                 const reader = new FileReader();
 
@@ -155,23 +155,14 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
 
     const [filename, setFilename] = useState('');
 
-    // const [metaComparison, setMetaComparison] = useState({
-    //     databaseName: { name: 'checklistitDB', equals: false },
-    //     databaseVersion: { version: '1', equals: false },
-    //     tables: {
-    //         tableCount: { count: 1, equals: false },
-    //         tableName: { name: 'boards', equals: false },
-    //         tableSchema: { schema: 'slug,tag,updatedAt', equals: false },
-    //         tableRowCount: { rowCount: 9, equals: false },
-    //     },
-    // });
-
     const [loadingStatus, setLoadingStatus] = useState({
         inProgress: false,
         done: true,
         totalRows: 0,
         completedRows: 0,
     });
+
+    const [showResetDBForm, setShowResetDBForm] = useState(false);
 
     const [importBlob, setImportBlob] = useState<FileWithPath | null>(null);
 
@@ -219,13 +210,12 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
             }
             if (dbNamesEqual && schemaEqual) {
                 // importInto
-
                 await importInto(db, importBlob, {
                     overwriteValues: true,
                     progressCallback: progressCallback,
                 });
             } else {
-                // import as a separate database
+                // import as a separate database, is this necessary? or can we always import into?
                 const db = await importDB(importBlob, {
                     progressCallback: progressCallback,
                 });
@@ -481,6 +471,26 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                 </label>
                             </div>
                         </div>
+                        {showResetDBForm ? (
+                            <ResetDBForm
+                                handleCloseResetDBForm={() =>
+                                    setShowResetDBForm(false)
+                                }
+                            />
+                        ) : (
+                            <div className="border-t h-auto dark:border-slate-700 flex flex-row items-center justify-center w-full group">
+                                <span className="dark:bg-slate-400 h-[1px] w-1/3 mr-auto mt-4 group-hover:bg-primary-darker transition-color duration-300"></span>
+                                <button
+                                    className="text-center items-center text-xl mx-auto mt-4 dark:text-slate-200/75 py-2 rounded-md group-hover:scale-105 group-hover:text-primary-darker transition-color duration-300"
+                                    onClick={() => {
+                                        setShowResetDBForm(true);
+                                    }}
+                                >
+                                    Reset Database
+                                </button>
+                                <span className="dark:bg-slate-400 h-[1px] w-1/3 ml-auto mt-4 group-hover:bg-primary-darker transition-color duration-300"></span>
+                            </div>
+                        )}
                     </>
                 ) : (
                     <>
