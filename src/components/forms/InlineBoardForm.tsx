@@ -119,6 +119,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                     type="button"
                     className="items-center text-slate-500 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 dark:hover:text-slate-100 hover:scale-110 cursor-pointer transition-color duration-300"
                     onClick={() => setShowForm(false)}
+                    aria-label="Close Board Form"
                 >
                     <MdOutlineCancel className="w-5 h-5" />
                 </button>
@@ -189,6 +190,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                                         100
                                                     );
                                                 }}
+                                                aria-label="Edit Tag"
                                             >
                                                 <MdOutlineEdit className="text-slate-600" />
                                             </button>
@@ -199,6 +201,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
                                                 onClick={() =>
                                                     handleRemoveTag(tag)
                                                 }
+                                                aria-label="Delete Tag"
                                             >
                                                 <TiDelete className="text-slate-600" />
                                             </button>

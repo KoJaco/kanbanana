@@ -221,9 +221,9 @@ const AllBoards = () => {
                 </div>
             </div>
             {boards.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[50vh] w-full text-slate-700 dark:text-slate-100">
-                    <h1 className="text-3xl ">No boards yet?</h1>
-                    <p className="text-lg">
+                <div className="flex flex-col items-center justify-center h-[50vh] w-full text-slate-700 dark:text-slate-100 px-4">
+                    <h1 className="text-3xl mb-4">No boards yet?</h1>
+                    <p className="text-lg whitespace-normal">
                         Click the New Board button in the sidebar to get
                         creating!
                     </p>
