@@ -46,7 +46,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 >
                     <div
                         ref={modalContentRef}
-                        className="flex w-3/5 max-w-3/4 max-h-1/2 bg-white dark:bg-slate-900 rounded-md gap-x-6 shadow-lg"
+                        className="flex w-4/5 lg:w-3/5 md:max-w-3/4 h-auto bg-white dark:bg-slate-900 rounded-md gap-x-6 shadow-lg"
                     >
                         <ImportExport
                             handleCloseModal={() => setShowModal(false)}

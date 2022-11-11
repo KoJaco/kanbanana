@@ -1,4 +1,3 @@
-import { useUIControlStore } from '@/stores/UIControlStore';
 import { useTheme } from 'next-themes';
 import React from 'react';
 import Link from 'next/link';
@@ -10,7 +9,6 @@ type BoardLayoutProps = {
 
 export default function BoardLayout({ children }: BoardLayoutProps) {
     const { theme, setTheme } = useTheme();
-    const { currentMode } = useUIControlStore();
 
     return (
         <>
@@ -38,7 +36,7 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
                             <div className="ml-4 mt-1">
                                 <label className="appearance-none">
                                     <input
-                                        id={currentMode}
+                                        id={theme}
                                         type="checkbox"
                                         className="absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md invisible checked:invisible"
                                         checked={

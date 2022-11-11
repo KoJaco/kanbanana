@@ -172,11 +172,6 @@ interface SortableBoardProps {
     vertical?: boolean;
 }
 
-const defaultScale = {
-    scaleX: 1,
-    scaleY: 1,
-};
-
 export default function SortableBoard({
     slug,
     adjustScale = false,
@@ -205,7 +200,6 @@ export default function SortableBoard({
     // Zustand global store vars
     const {
         totalItemCount,
-        columnCount,
         setTotalItemCount,
         currentBoardSlug,
         setCurrentBoardSlug,
@@ -216,7 +210,7 @@ export default function SortableBoard({
     // useLiveQuery() for indexDB state management, watch for changes in local board state.
     const board: Board | undefined = useLiveQuery(
         () => db.boards.get(slug),
-        [totalItemCount, columnCount, slug]
+        [totalItemCount, slug]
     );
 
     // referential vars, keep track of drag and drop and item state

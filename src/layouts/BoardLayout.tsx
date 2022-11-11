@@ -7,12 +7,10 @@ type BoardLayoutProps = {
 };
 
 export default function BoardLayout({ children }: BoardLayoutProps) {
-    const { currentMode, sidebarOpen, setSidebarOpen } = useUIControlStore();
+    const { sidebarOpen, setSidebarOpen } = useUIControlStore();
 
     return (
         <>
-            {/* Main Layout */}
-
             {/* Sidebar, static on desktop, responsive/closed on mobile */}
             <Sidebar
                 sidebarOpen={sidebarOpen}
@@ -20,7 +18,6 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
             />
 
             <div className="lg:pl-64 flex flex-1 flex-col dark:bg-slate-900 h-screen">
-                {/* Navbar */}
                 <Navbar setSidebarOpen={setSidebarOpen} />
 
                 <main className="dark:bg-slate-900 touch-pan-y">

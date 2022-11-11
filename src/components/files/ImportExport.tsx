@@ -269,7 +269,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
     });
 
     return (
-        <div className="relative p-10">
+        <div className="relative p-10 w-full">
             <button
                 className="absolute flex items-center justify-center w-10 h-10 top-0 right-0 text-slate-700 hover:text-slate-900 hover:bg-light-gray dark:text-slate-200 dark:hover:bg-slate-700 rounded-full transition-color duration-300"
                 onClick={handleCloseModal}
@@ -278,8 +278,8 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
             </button>
             <div className="flex flex-col gap-y-8 w-full h-full">
                 {!loadingStatus.inProgress && loadingStatus.done ? (
-                    <>
-                        <div className="flex flex-row">
+                    <div className="flex flex-col">
+                        <div className="flex flex-row w-full">
                             <p className="text-sm text-slate-700 dark:text-slate-200/75 whitespace-normal">
                                 Import a database from another device, or export
                                 your existing database to share your database
@@ -287,8 +287,8 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                 as backups incase something goes wrong.
                             </p>
                         </div>
-                        <div className="flex flex-row w-full gap-x-10">
-                            <div className="flex flex-col w-full">
+                        <div className="md:flex md:flex-row w-full md:gap-x-10 gap-y-10">
+                            <div className="flex flex-col w-full my-10 md:my-0">
                                 <h1 className="text-xl dark:text-slate-200/75 text-slate-600 self-start mb-4 w-full border-b pb-2  dark:border-slate-700">
                                     Import
                                 </h1>
@@ -381,7 +381,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                                         </div>
                                                     </div>
                                                     {/* Current DB */}
-                                                    <div className="flex flex-col ml-auto text-sm">
+                                                    <div className="md:flex flex-col ml-auto text-sm">
                                                         <p className="text-slate-600 font-medium dark:text-slate-200/75">
                                                             Current Database:
                                                         </p>
@@ -442,17 +442,17 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                     )}
                                 </div>
                             </div>
-                            <div className="flex flex-col">
+                            <div className="flex flex-col my-10 md:my-0">
                                 <h1 className="text-xl dark:text-slate-200/75 self-start mb-4 w-full border-b pb-2 dark:border-slate-700">
                                     Export
                                 </h1>
-                                <div className="mb-4 flex flex-col h-32 items-start justify-center">
+                                <div className="mb-4 flex flex-col h-32 items-start justify-start md:justify-center">
                                     <label className="text-sm text-slate-600 font-medium dark:text-slate-200/75 self-start mb-2 after:content-['*'] after:ml-0.5 after:text-red-500">
                                         Filename:
                                     </label>
                                     <input
                                         type="text"
-                                        className="appearance-none bg-gray-100 dark:bg-slate-800 rounded-md border-1 border-emerald-500/50 outline-none text-sm py-1 px-2 self-center invalid:border-red-500/50"
+                                        className="appearance-none bg-gray-100 dark:bg-slate-800 rounded-md border-1 border-emerald-500/50 outline-none text-sm py-1 px-2 w-full md:self-center invalid:border-red-500/50"
                                         value={filename}
                                         onChange={handleInputChange}
                                         autoFocus
@@ -499,7 +499,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                 <span className="bg-slate-300 dark:bg-slate-400 h-[1px] w-1/3 ml-auto mt-4 group-hover:bg-primary-darker transition-color duration-300"></span>
                             </div>
                         )}
-                    </>
+                    </div>
                 ) : (
                     <>
                         <div className="flex flex-col gap-y-10 items-center justify-center w-full">

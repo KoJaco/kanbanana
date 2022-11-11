@@ -1,5 +1,4 @@
 import { useTheme } from 'next-themes';
-import { useUIControlStore } from '@/stores/UIControlStore';
 import React from 'react';
 import { MdMenuOpen } from 'react-icons/md';
 import Link from 'next/link';
@@ -10,7 +9,7 @@ type NavbarProps = {
 
 const Navbar = ({ setSidebarOpen }: NavbarProps) => {
     const { theme, setTheme } = useTheme();
-    const { currentMode } = useUIControlStore();
+
     return (
         <div className="sticky top-0 z-[150] flex h-16 flex-shrink-0 bg-white dark:bg-slate-900 dark:border-b dark:border-slate-700/[0.5] dark:shadow-slate-900 shadow dark:shadow-sm">
             <button
@@ -36,7 +35,7 @@ const Navbar = ({ setSidebarOpen }: NavbarProps) => {
                                 Light and Dark Mode Toggle
                             </span>
                             <input
-                                id={currentMode}
+                                id={`${theme}`}
                                 type="checkbox"
                                 className="absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md invisible checked:invisible"
                                 checked={theme === 'light' ? false : true}
