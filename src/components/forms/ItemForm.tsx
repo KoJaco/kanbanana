@@ -9,6 +9,7 @@ import { MdOutlineDone } from 'react-icons/md';
 
 import { TItem, Color, UniqueIdentifier } from '@/core/types/sortableBoard';
 import { useTheme } from 'next-themes';
+import { ModifyError } from 'dexie';
 
 type ItemFormProps = {
     containerType: 'checklist' | 'simple';
@@ -83,6 +84,18 @@ const ItemForm = ({
             .modify((boardItem: any) => {
                 boardItem.items[itemState.id] = itemState;
                 boardItem.updatedAt = new Date(Date.now());
+            })
+            .catch('ModifyError', (e: ModifyError) => {
+                console.error(
+                    'ModifyError occurred: ' +
+                        e.failures.length +
+                        ` failures. Failed to updated item: ${itemState.id}.`
+                );
+            })
+            .catch((e: Error) => {
+                console.error(
+                    'Uh oh! Something went wrong when updated the item: ' + e
+                );
             });
         setShowForm(false);
     }
@@ -150,7 +163,6 @@ const ItemForm = ({
                         <span className="sr-only">Choose an item color</span>
                         <BsBrush className="w-3 h-3" />
                     </button>
-                    {/* </ColorPicker> */}
 
                     <button
                         type="submit"

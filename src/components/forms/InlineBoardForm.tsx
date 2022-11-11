@@ -8,6 +8,7 @@ import { db } from '@/server/db';
 import { useRouter } from 'next/router';
 import { MdOutlineCancel, MdOutlineEdit } from 'react-icons/md';
 import Tag from '../elements/Tag';
+
 type InlineBoardFormProps = {
     title: string;
     slug: string;
@@ -69,11 +70,23 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
     function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
         // update title, board tags, and updatedAt timestamp
-        db.boards.update(props.slug, {
-            title: boardTitle,
-            tags: boardTags,
-            updatedAt: new Date(Date.now()),
-        });
+        db.boards
+            .update(props.slug, {
+                title: boardTitle,
+                tags: boardTags,
+                updatedAt: new Date(Date.now()),
+            })
+            .then(function (updated) {
+                if (updated) {
+                    console.info(
+                        `Board with slug: ${props.slug}, was successfully updated!`
+                    );
+                } else {
+                    console.info(
+                        `Board with slug: ${props.slug}, doesn't seem to exist, or something went wrong.`
+                    );
+                }
+            });
         setShowForm(false);
     }
 

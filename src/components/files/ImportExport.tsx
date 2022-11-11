@@ -11,7 +11,7 @@ import download from 'downloadjs';
 
 import { ExportProgress } from 'dexie-export-import/dist/export';
 import { BsDownload, BsUpload } from 'react-icons/bs';
-import { MdOutlineDone } from 'react-icons/md';
+import { MdOutlineDone, MdClose } from 'react-icons/md';
 import { stringToSlug } from '@/core/utils/misc';
 
 import clsx from 'clsx';
@@ -21,7 +21,7 @@ import { IndexableType, Table } from 'dexie';
 import ResetDBForm from '@/components/forms/ResetDBForm';
 
 type ImportExportProps = {
-    handleCloseModal: (value: boolean) => void;
+    handleCloseModal: () => void;
 };
 
 const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
@@ -171,7 +171,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
     }
 
     function handleDone() {
-        handleCloseModal(false);
+        handleCloseModal();
         setLoadingStatus({
             ...loadingStatus,
             done: true,
@@ -269,15 +269,22 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
     });
 
     return (
-        <>
+        <div className="relative p-10">
+            <button
+                className="absolute flex items-center justify-center w-10 h-10 top-0 right-0 text-slate-700 hover:text-slate-900 hover:bg-light-gray dark:text-slate-200 dark:hover:bg-slate-700 rounded-full transition-color duration-300"
+                onClick={handleCloseModal}
+            >
+                <MdClose className="h-7 w-7 " />
+            </button>
             <div className="flex flex-col gap-y-8 w-full h-full">
                 {!loadingStatus.inProgress && loadingStatus.done ? (
                     <>
                         <div className="flex flex-row">
-                            <p className="text-sm dark:text-slate-200/50 whitespace-normal">
+                            <p className="text-sm text-slate-700 dark:text-slate-200/75 whitespace-normal">
                                 Import a database from another device, or export
-                                your existing database to share with yourself or
-                                others!
+                                your existing database to share your database
+                                across devices! You can also keep database files
+                                as backups incase something goes wrong.
                             </p>
                         </div>
                         <div className="flex flex-row w-full gap-x-10">
@@ -314,8 +321,8 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                         )}
                                         {!isDragActive && (
                                             <p className="w-2/3">
-                                                Drop database JSON file here or
-                                                click to open dialog
+                                                Drop database .json file here or
+                                                click to open file picker.
                                             </p>
                                         )}
                                     </div>
@@ -532,7 +539,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                     </>
                 )}
             </div>
-        </>
+        </div>
     );
 };
 
