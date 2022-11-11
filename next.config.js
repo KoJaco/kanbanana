@@ -6,7 +6,7 @@ const withPWA = require('next-pwa')({
     skipWaiting: true,
     disable: process.env.NODE_ENV === 'development',
     fallbacks: {
-        document: '/pages/boards/index.tsx',
+        document: '/pages/_offline.tsx',
     },
 });
 
