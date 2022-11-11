@@ -46,7 +46,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 >
                     <div
                         ref={modalContentRef}
-                        className="flex w-4/5 lg:w-3/5 md:max-w-3/4 h-auto bg-white dark:bg-slate-900 rounded-md gap-x-6 shadow-lg"
+                        className="flex w-4/5 lg:w-3/5 md:max-w-3/4 h-auto max-h-[75vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-md gap-x-6 shadow-lg"
                     >
                         <ImportExport
                             handleCloseModal={() => setShowModal(false)}
@@ -82,7 +82,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             leaveFrom="translate-x-0"
                             leaveTo="-translate-x-full"
                         >
-                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col  pt-5 pb-4 bg-gradient-to-b from-primary to-primary-dark-alt dark:bg-gradient-to-b dark:from-slate-800 dark:to-slate-900">
+                            <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col pt-5 bg-gradient-to-b from-primary to-primary-dark-alt dark:bg-gradient-to-b dark:from-slate-800 dark:to-slate-900">
                                 <Transition.Child
                                     as={Fragment}
                                     enter="ease-in-out duration-300"
@@ -118,7 +118,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                     </Link>
                                 </div>
                                 <div className="mt-5 h-0 flex-1 overflow-y-auto">
-                                    <nav className="space-y-10 px-2">
+                                    <nav className="space-y-5 sm:space-y-10 px-2">
                                         <div>
                                             {/* New Board Button */}
                                             <button
@@ -144,26 +144,29 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 </div>
                                 {/* Sidebar Footer Desktop */}
 
-                                <div className="flex flex-shrink-0 bg-transparent py-4 px-2">
+                                <button
+                                    className="flex flex-shrink-0 bg-transparent px-2 group hover:bg-offset-bg transition-color duration-300 border-t border-indigo-700 dark:border-slate-700"
+                                    onClick={() => {
+                                        setShowModal(!showModal);
+                                    }}
+                                >
                                     <div className="group block w-full flex-shrink-0">
-                                        <div className="flex items-center">
-                                            <div></div>
-                                            <div className="ml-3">
-                                                <p className="text-sm font-medium text-indigo-100/[0.8]">
-                                                    Database Info
-                                                </p>
-                                                <div className="flex gap-5 text-xs font-medium text-indigo-200">
-                                                    <span className="group-hover:text-gray-50">
-                                                        12 boards
-                                                    </span>
-                                                    <span className="group-hover:text-gray-50">
-                                                        1mb / 50gb used
-                                                    </span>
+                                        <div className="flex items-center py-2">
+                                            <div className="mx-3 flex w-full justify-between">
+                                                <div className="flex flex-col items-start">
+                                                    <p className="text-sm font-bold text-indigo-100 dark:text-slate-100 group-hover:text-slate-900 transition-color duration-300">
+                                                        Database
+                                                    </p>
+                                                    <p className="text-sm font-medium text-indigo-100 dark:text-slate-100 group-hover:text-slate-900 transition-color duration-300">
+                                                        Import | Export | Reset
+                                                    </p>
                                                 </div>
+
+                                                <TbDatabaseExport className="w-7 h-10 flex text-xs font-medium text-indigo-200 dark:text-slate-50 group-hover:text-slate-900 transition-color duration-300" />
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </button>
                             </Dialog.Panel>
                         </Transition.Child>
                         <div className="w-14 flex-shrink-0" aria-hidden="true">

@@ -365,7 +365,7 @@ export default function SortableBoard({
     if (!items || !board) return null;
 
     return (
-        <div className="h-full w-full overflow-y-auto">
+        <div className="h-full w-full overflow-y-auto overflow-x-hidden">
             <DndContext
                 sensors={sensors}
                 collisionDetection={collisionDetectionStrategy}
@@ -664,7 +664,7 @@ export default function SortableBoard({
 
                 <div
                     id="carousel"
-                    className="pb-10 mt-8 mx-4 sm:mx-10 md:mx-8 lg:mx-6 no-scrollbar h-auto overflow-x-scroll snap-x whitespace-nowrap scroll-smooth snap-mandatory touch-pan-auto overscroll-x-hidden transition-all duration-500"
+                    className="pb-10 mt-8 mx-4 sm:mx-10 md:mx-8 lg:mx-6 no-scrollbar h-auto snap-x whitespace-nowrap scroll-smooth snap-mandatory touch-pan-auto overflow-x-auto overscroll-x-contain transition-all duration-500"
                 >
                     <div
                         className="inline-grid grid-auto-cols auto-cols-max relative z-40"

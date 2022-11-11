@@ -329,8 +329,8 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                     </div>
                                     {acceptedFileItems.length > 0 && (
                                         <>
-                                            <div className="grid grid-rows-2 gap-x-2 items-start mt-4 w-full">
-                                                <div className="grid-rows-1">
+                                            <div className="md:grid md:grid-rows-2 md:gap-x-2 items-start mt-4 w-full">
+                                                <div className="md:grid-rows-1 mb-4 md:mb-0">
                                                     <p className="text-slate-600 font-medium text-sm mt-2 dark:text-slate-200/75">
                                                         File accepted
                                                     </p>
@@ -339,7 +339,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                                     </ul>
                                                 </div>
 
-                                                <div className="flex flex-row grid-rows-1 mt-2">
+                                                <div className="flex flex-col md:flex-row md:grid-rows-1 mt-2 gap-y-4 md:gap-y-0">
                                                     {/* Import DB */}
                                                     <div className="flex flex-col gap-x-4 text-sm">
                                                         <p className="dark:text-slate-200/75 text-slate-600 font-medium">
@@ -382,7 +382,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                                         </div>
                                                     </div>
                                                     {/* Current DB */}
-                                                    <div className="md:flex flex-col ml-auto text-sm">
+                                                    <div className="md:flex flex-col mr-auto md:ml-auto text-sm">
                                                         <p className="text-slate-600 font-medium dark:text-slate-200/75">
                                                             Current Database:
                                                         </p>
@@ -489,7 +489,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                 }
                             />
                         ) : (
-                            <div className="border-t h-auto dark:border-slate-700 flex flex-row items-center justify-center w-full group">
+                            <div className="mb-10 border-t h-auto dark:border-slate-700 flex flex-row items-center justify-center w-full group">
                                 <span className="bg-slate-300 dark:bg-slate-400 h-[1px] w-1/3 mr-auto mt-4 group-hover:bg-primary-darker transition-color duration-300"></span>
                                 <button
                                     className="text-center items-center text-xl mx-auto mt-4 text-slate-700 dark:text-slate-200/75 py-2 rounded-md group-hover:scale-105 group-hover:text-primary-darker transition-color duration-300"

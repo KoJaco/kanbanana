@@ -35,14 +35,6 @@ export const arrayToObject = (array: Array<any>) =>
         return obj;
     }, {});
 
-export function parseBgColor(color: string) {
-    return `bg-[${color.toLowerCase()}]`;
-}
-
-export function parseCurrentColumnId(currentColumnId: number) {
-    return `column-${currentColumnId}`;
-}
-
 export function parseColorToString(color: {
     r: number;
     g: number;

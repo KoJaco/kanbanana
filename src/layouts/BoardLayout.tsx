@@ -25,7 +25,7 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
             <div className="lg:pl-64 flex flex-1 flex-col dark:bg-slate-900 h-screen">
                 <Navbar setSidebarOpen={setSidebarOpen} />
 
-                <main className="dark:bg-slate-900 touch-pan-y">
+                <main className="dark:bg-slate-900 touch-pan-y overflow-y-auto">
                     {children}
                 </main>
             </div>

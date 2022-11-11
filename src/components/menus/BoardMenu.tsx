@@ -92,7 +92,7 @@ const BoardMenu = () => {
     return (
         <>
             <div>
-                <div className="group flex items-center px-2 py-2 text-base font-medium rounded-md">
+                <div className="group flex items-center px-2 py-1 md:py-2 text-base font-medium rounded-md">
                     <span className="h-full ">
                         <BsGrid className="mr-4 h-6 w-6 flex-shrink-0 text-indigo-300 dark:text-slate-50" />
                     </span>
@@ -100,7 +100,7 @@ const BoardMenu = () => {
                         Boards
                     </p>
                 </div>
-                <div className="py-2 border-b border-indigo-500 dark:border-slate-600 text-indigo-200">
+                <div className="py-1 sm:py-2 border-b border-indigo-500 dark:border-slate-600 text-indigo-200">
                     <Link
                         href={{
                             pathname: '/boards',
@@ -114,8 +114,8 @@ const BoardMenu = () => {
                             }}
                             className={
                                 currentRoute === '/boards'
-                                    ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
-                                    : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
+                                    ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-1 sm:mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
+                                    : 'flex items-center gap-5 py-2 px-3 mt-1 sm:mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
                             }
                             onClick={handleCloseSidebar}
                             aria-label="View All Boards"
@@ -127,7 +127,7 @@ const BoardMenu = () => {
                     </Link>
                 </div>
 
-                <div className="flex flex-col max-h-64 md:max-h-96 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
+                <div className="flex flex-col max-h-48 sm:max-h-96 overflow-auto no-scrollbar hover:scrollbar-rounded transition-all duration-300">
                     {boards?.map((board, index) => (
                         <Link
                             key={index}
@@ -149,8 +149,8 @@ const BoardMenu = () => {
                                 }}
                                 className={
                                     currentRoute === `/boards/${board.slug}`
-                                        ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
-                                        : 'flex items-center gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
+                                        ? 'flex items-center md:gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-1 sm:mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
+                                        : 'flex items-center sm:gap-5 py-2 px-3 mt-1 sm:mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
                                 }
                                 onClick={handleCloseSidebar}
                             >

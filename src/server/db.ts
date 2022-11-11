@@ -1,5 +1,6 @@
 import Dexie, { Table } from 'dexie';
-import {
+import { stringToRandomSlug } from '@/core/utils/misc';
+import type {
     Board,
     BoardTags,
     Containers,
@@ -8,8 +9,7 @@ import {
     Items,
 } from '@/core/types/sortableBoard';
 
-// https://dexie.org/docs/Version/Version.stores()
-// https://dexie.org/docs/Table/Table.update()
+// https://dexie.org/docs/Version/Version.stores()#:~:text=Syntax%20For%20Primary%20Key&text=Primary%20key%20must%20always%20be%20unique.&text=Means%20that%20primary%20key%20is,not%20visible%20on%20the%20objects.
 
 export class KanbanBoardDexie extends Dexie {
     boards!: Table<Board>;
@@ -19,8 +19,7 @@ export class KanbanBoardDexie extends Dexie {
         this.version(1).stores({
             boards: 'slug, tag, updatedAt', // primary key is slug, index tag and updatedAt for .where clause
         });
-        // get a Dexie Table object, which is a class that represents our object store
-        // this means we can interact with the boards object store using this.boards.add(), etc.
+
         this.boards = this.table('boards');
     }
 
@@ -49,11 +48,11 @@ export class KanbanBoardDexie extends Dexie {
         containerOrder: ContainerOrder,
         containerItemMapping: ContainerItemMapping
     ) {
+        // Dexie primary keys are implicitly marked as unique, I believe
         return this.boards.add({
             title: title,
             tags: tags,
             slug: slug,
-            // is this guaranteed to be unique? no, need to fix.
             createdAt: new Date(Date.now()),
             updatedAt: new Date(Date.now()),
             items: items,

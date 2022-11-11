@@ -249,7 +249,7 @@ const AllBoards = () => {
                                         {/* Map through boards to generate board cards*/}
                                         <ul
                                             role="list"
-                                            className="grid xl:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6"
+                                            className="grid 2xl:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6"
                                         >
                                             {/* map through boards */}
                                             {boards?.map((board, index) => {
