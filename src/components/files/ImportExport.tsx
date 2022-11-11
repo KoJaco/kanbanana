@@ -287,8 +287,8 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                 as backups incase something goes wrong.
                             </p>
                         </div>
-                        <div className="md:flex md:flex-row w-full md:gap-x-10 gap-y-10">
-                            <div className="flex flex-col w-full my-10 md:my-0">
+                        <div className="md:flex md:flex-row w-full md:gap-x-10">
+                            <div className="flex flex-col w-full my-10 md:mb-10">
                                 <h1 className="text-xl dark:text-slate-200/75 text-slate-600 self-start mb-4 w-full border-b pb-2  dark:border-slate-700">
                                     Import
                                 </h1>
@@ -442,7 +442,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                     )}
                                 </div>
                             </div>
-                            <div className="flex flex-col my-10 md:my-0">
+                            <div className="flex flex-col my-10 md:mb-10">
                                 <h1 className="text-xl dark:text-slate-200/75 self-start mb-4 w-full border-b pb-2 dark:border-slate-700">
                                     Export
                                 </h1>

@@ -36,7 +36,7 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
                             <div className="ml-4 mt-1">
                                 <label className="appearance-none">
                                     <input
-                                        id={theme}
+                                        id="themeToggle"
                                         type="checkbox"
                                         className="absolute left-1/2 -translate-x-1/2 w-full h-full peer appearance-none rounded-md invisible checked:invisible"
                                         checked={

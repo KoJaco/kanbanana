@@ -5,10 +5,10 @@ import { BsArrowRight } from 'react-icons/bs';
 import clsx from 'clsx';
 
 const navigationLinks = [
-    { name: 'what?', href: '/#what' },
-    { name: 'why?', href: '/#why' },
-    { name: 'how?', href: '/#how' },
-    { name: 'who?', href: '/#who' },
+    { id: 0, name: 'what?', href: '/#what' },
+    { id: 1, name: 'why?', href: '/#why' },
+    { id: 2, name: 'how?', href: '/#how' },
+    { id: 3, name: 'who?', href: '/#who' },
 ];
 
 const Home: NextPage = () => {
@@ -50,8 +50,8 @@ const Home: NextPage = () => {
                         style={{ borderColor: conditionalColoring() }}
                     >
                         <ul className="my-8">
-                            {navigationLinks.map((link, index) => (
-                                <li className="mb-2 group" key={index}>
+                            {navigationLinks.map((link) => (
+                                <li className="mb-2 group" key={link.id}>
                                     <a
                                         type="button"
                                         className="ml-10 flex items-center cursor-pointer"
@@ -90,26 +90,24 @@ const Home: NextPage = () => {
                             className="flex flex-row self-center place-self-center border-b-2"
                             style={{ borderColor: conditionalColoring() }}
                         >
-                            {navigationLinks.map((link, index) => (
-                                <>
-                                    <li
-                                        className="group flex flex-col"
-                                        key={index}
+                            {navigationLinks.map((link) => (
+                                <li
+                                    className="group flex flex-col"
+                                    key={link.id}
+                                >
+                                    <a
+                                        type="button"
+                                        className="ml-10 flex items-center cursor-pointer"
+                                        href={link.href}
+                                        onClick={() => {
+                                            handleChangeSection(link.name);
+                                        }}
                                     >
-                                        <a
-                                            type="button"
-                                            className="ml-10 flex items-center cursor-pointer"
-                                            href={link.href}
-                                            onClick={() => {
-                                                handleChangeSection(link.name);
-                                            }}
-                                        >
-                                            <span className="text-slate-700 dark:text-slate-200">
-                                                {link.name}
-                                            </span>
-                                        </a>
-                                    </li>
-                                </>
+                                        <span className="text-slate-700 dark:text-slate-200">
+                                            {link.name}
+                                        </span>
+                                    </a>
+                                </li>
                             ))}
                         </ul>
                     </nav>
@@ -121,22 +119,78 @@ const Home: NextPage = () => {
                 >
                     <section
                         id="what?"
-                        className="row-span-1 snap-start flex flex-col bg-green-200 w-[88vw] h-[88vh] md:w-full md:h-[75vh]"
+                        className="row-span-1 snap-start flex flex-col w-[88vw] h-[88vh] md:w-full md:h-[75vh] p-2"
                     >
-                        <div></div>
+                        <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-100 lg:mb-5">
+                            Simple, quick Kanban boards.
+                        </h1>
+                        {/* section content */}
+                        <div className="flex flex-col gap-y-10">
+                            <div className="flex flex-col gap-y-2">
+                                <h3 className="">Kanban</h3>
+                                <p>
+                                    Easily create a board-like structure with
+                                    columns and items within those columns...
+                                    checklist or simple note types.
+                                </p>
+                            </div>
+                            <div className="flex flex-col">
+                                <h3>Reorder, rearrange, restructure</h3>
+                                <p>Drag and drop functionality...</p>
+                            </div>
+                            <div className="flex flex-col gap-y-2">
+                                <h3>No sign-up!</h3>
+                                <p>IndexDB feature...</p>
+                            </div>
+                            <div className="flex flex-col">
+                                <h3>Import and export database </h3>
+                                <p>
+                                    Cross device functionality... share .json
+                                    between devices.
+                                </p>
+                            </div>
+                            <div className="flex flex-col">
+                                <h3>Progressive Web App</h3>
+                                <p>
+                                    Works on all devices, downloadable the
+                                    app!...
+                                </p>
+                            </div>
+                            <div className="flex flex-col">
+                                <h3>Import and export database</h3>
+                                <p>Cross device functionality...</p>
+                            </div>
+
+                            <div className="flex flex-col">
+                                <h3>Filter boards</h3>
+                                <p>filter by tags, and time</p>
+                            </div>
+                        </div>
                     </section>
                     <section
                         id="why?"
-                        className="row-span-1 snap-start flex flex-col bg-green-200 w-[88vw] h-[88vh] md:w-full md:h-[75vh]"
-                    ></section>
+                        className="row-span-1 snap-start flex flex-col w-[88vw] h-[88vh] md:w-full md:h-[75vh] p-2"
+                    >
+                        <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-100">
+                            A bit about the app
+                        </h1>
+                    </section>
                     <section
                         id="how?"
-                        className="row-span-1 snap-start flex flex-col bg-green-200 w-[88vw] h-[88vh] md:w-full md:h-[75vh]"
-                    ></section>
+                        className="row-span-1 snap-start flex flex-col  w-[88vw] h-[88vh] md:w-full md:h-[75vh] p-2"
+                    >
+                        <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-100">
+                            Technical talk
+                        </h1>
+                    </section>
                     <section
                         id="who?"
-                        className="row-span-1 snap-start flex flex-col bg-green-200 w-[88vw] h-[88vh] md:w-full md:h-[75vh]"
-                    ></section>
+                        className="row-span-1 snap-start flex flex-col  w-[88vw] h-[88vh] md:w-full md:h-[75vh] p-2"
+                    >
+                        <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-100">
+                            KoJaco
+                        </h1>
+                    </section>
 
                     {/* psuedo border element */}
                 </div>
