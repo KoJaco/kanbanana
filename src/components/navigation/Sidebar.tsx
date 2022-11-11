@@ -207,24 +207,29 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         </nav>
                     </div>
                     {/* Sidebar Footer Desktop */}
-                    <div className="flex flex-shrink-0 bg-transparent py-4 px-2 group hover:bg-offset-bg transition-color duration-300">
+                    <button
+                        className="flex flex-shrink-0 bg-transparent py-3 px-2 group hover:bg-offset-bg transition-color duration-300"
+                        onClick={() => {
+                            setShowModal(!showModal);
+                        }}
+                    >
                         <div className="group block w-full flex-shrink-0">
                             <div className="flex items-center py-2">
-                                <button
-                                    className="mx-3 flex w-full justify-between"
-                                    onClick={() => {
-                                        setShowModal(!showModal);
-                                    }}
-                                >
-                                    <p className="text-sm font-medium text-indigo-100 dark:text-slate-50 group-hover:text-slate-900 transition-color duration-300">
-                                        Database Import/Export
-                                    </p>
+                                <div className="mx-3 flex w-full justify-between">
+                                    <div className="flex flex-col items-start">
+                                        <p className="text-sm font-bold text-indigo-100 dark:text-slate-100 group-hover:text-slate-900 transition-color duration-300">
+                                            Database
+                                        </p>
+                                        <p className="text-sm font-medium text-indigo-100 dark:text-slate-100 group-hover:text-slate-900 transition-color duration-300">
+                                            Import | Export | Reset
+                                        </p>
+                                    </div>
 
-                                    <TbDatabaseExport className="w-5 h-5 flex gap-5 text-xs font-medium text-indigo-200 dark:text-slate-50 group-hover:text-slate-900 transition-color duration-300" />
-                                </button>
+                                    <TbDatabaseExport className="w-7 h-10 flex gap-5 text-xs font-medium text-indigo-200 dark:text-slate-50 group-hover:text-slate-900 transition-color duration-300" />
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </button>
                 </div>
             </div>
         </>
