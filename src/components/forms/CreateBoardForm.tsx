@@ -1,10 +1,9 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { useOnClickOutside } from '@/core/hooks/index';
 import { useKanbanStore } from '@/stores/KanbanStore';
 import { db } from '@/server/db';
 import { stringToRandomSlug } from '@/core/utils/misc';
-import { Dialog, Transition, Menu } from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react';
 import { MdClose, MdModeEdit, MdOutlineEdit, MdSort } from 'react-icons/md';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 import { BsChevronBarDown } from 'react-icons/bs';

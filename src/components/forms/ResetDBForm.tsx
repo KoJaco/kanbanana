@@ -25,7 +25,7 @@ const ResetDBForm = ({ handleCloseResetDBForm }: ResetDBFormProps) => {
                 <div className="flex justify-between py-4">
                     <button
                         type="button"
-                        className="rounded-md border border-gray-300 dark:border-slate-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-slate-800 focus:outline-none"
+                        className="rounded-md border border-gray-300 dark:border-slate-500 py-2 px-4 text-sm font-medium text-slate-900 dark:text-white shadow-sm dark:hover:bg-slate-800 hover:bg-gray-100  focus:outline-none"
                         onClick={handleCloseResetDBForm}
                     >
                         Cancel

@@ -471,6 +471,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                 </label>
                             </div>
                         </div>
+
                         {showResetDBForm ? (
                             <ResetDBForm
                                 handleCloseResetDBForm={() =>
@@ -479,16 +480,16 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                             />
                         ) : (
                             <div className="border-t h-auto dark:border-slate-700 flex flex-row items-center justify-center w-full group">
-                                <span className="dark:bg-slate-400 h-[1px] w-1/3 mr-auto mt-4 group-hover:bg-primary-darker transition-color duration-300"></span>
+                                <span className="bg-slate-300 dark:bg-slate-400 h-[1px] w-1/3 mr-auto mt-4 group-hover:bg-primary-darker transition-color duration-300"></span>
                                 <button
-                                    className="text-center items-center text-xl mx-auto mt-4 dark:text-slate-200/75 py-2 rounded-md group-hover:scale-105 group-hover:text-primary-darker transition-color duration-300"
+                                    className="text-center items-center text-xl mx-auto mt-4 text-slate-700 dark:text-slate-200/75 py-2 rounded-md group-hover:scale-105 group-hover:text-primary-darker transition-color duration-300"
                                     onClick={() => {
                                         setShowResetDBForm(true);
                                     }}
                                 >
                                     Reset Database
                                 </button>
-                                <span className="dark:bg-slate-400 h-[1px] w-1/3 ml-auto mt-4 group-hover:bg-primary-darker transition-color duration-300"></span>
+                                <span className="bg-slate-300 dark:bg-slate-400 h-[1px] w-1/3 ml-auto mt-4 group-hover:bg-primary-darker transition-color duration-300"></span>
                             </div>
                         )}
                     </>
