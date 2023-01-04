@@ -10,7 +10,7 @@ const AllBoards = dynamic(() => import('@/components/displays/AllBoards'), {
 const Boards: NextPage = () => {
     return (
         <BoardLayout>
-            <div className="my-8 ml-2 px-2 sm:px-6 md:px-8 flex flex-col touch-pan-y">
+            <div className="my-8 ml-2 px-2 sm:px-6 md:px-8 flex flex-col">
                 <Suspense fallback={'loading'}>
                     <AllBoards />
                 </Suspense>

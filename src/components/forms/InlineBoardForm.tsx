@@ -99,7 +99,7 @@ const InlineBoardForm = ({ setShowForm, ...props }: InlineBoardFormProps) => {
         if (deleteCount === 1) {
             console.info(`Successfully deleted board with slug: ${props.slug}`);
             setShowForm(false);
-            router.push('/', undefined, { shallow: false });
+            router.push('/boards', undefined, { shallow: false });
         } else {
             console.info(
                 `Something went wrong when attempting to delete board with slug: ${props.slug}`

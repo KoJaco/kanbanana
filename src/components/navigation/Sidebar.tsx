@@ -1,4 +1,4 @@
-import { Fragment, useState, useRef, useCallback } from 'react';
+import { Fragment, useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
 import Link from 'next/link';
@@ -7,7 +7,6 @@ import { MdClose } from 'react-icons/md';
 import { AiOutlineAppstoreAdd } from 'react-icons/ai';
 import { SiKibana } from 'react-icons/si';
 import { TbDatabaseExport } from 'react-icons/tb';
-import { VscExport } from 'react-icons/vsc';
 import { useOnClickOutside } from '@/core/hooks/index';
 import CreateBoardForm from '@/components/forms/CreateBoardForm';
 import BaseModal from '@/components/modals/BaseModal';

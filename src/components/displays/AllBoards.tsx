@@ -64,7 +64,9 @@ const AllBoards = () => {
                 const date = board.updatedAt;
                 const dayOfTheWeek = date.getDay();
                 const dayIndex = date.getDate();
+
                 const monthIndex = date.getMonth();
+
                 const year = date.getFullYear();
                 let identifier = '';
                 let startOfWeek = '';
@@ -89,10 +91,18 @@ const AllBoards = () => {
 
                         if (dayIndex - dayOfTheWeek <= 1) {
                             // if we're in day 3 and it's Nov 2, start of the week is 31 (oct) - difference (3-2)
-                            startOfWeek = `${
-                                daysPerMonths[monthIndex - 1]! -
-                                (dayOfTheWeek - dayIndex)
-                            } ${months[monthIndex - 1]} ${year}`;
+
+                            if (monthIndex === 0) {
+                                // if it's january, we need to subtract 1 from the year
+                                startOfWeek = `${dayIndex - dayOfTheWeek} ${
+                                    months[0]
+                                } ${year}`;
+                            } else {
+                                startOfWeek = `${
+                                    daysPerMonths[monthIndex - 1]! -
+                                    (dayOfTheWeek - dayIndex)
+                                } ${months[monthIndex - 1]} ${year}`;
+                            }
                         }
 
                         if (
@@ -131,6 +141,7 @@ const AllBoards = () => {
                         }
 
                         identifier = `${startOfWeek} - ${endOfWeek}`;
+
                         break;
                     case 'months':
                         identifier = `${months[monthIndex]}, ${year}`;

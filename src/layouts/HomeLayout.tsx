@@ -18,7 +18,7 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
                 <title>Home</title>
                 <meta name="robots" content="index, follow" />
             </Head>
-            <div className="flex flex-1 flex-col dark:bg-slate-900 h-screen">
+            <div className="flex flex-1 flex-col dark:bg-slate-900 h-auto">
                 {/* Navbar */}
                 <div className="sticky top-0 z-[150] flex h-16 flex-shrink-0 bg-white dark:bg-slate-900 dark:border-b dark:border-slate-700/[0.5] dark:shadow-slate-900 shadow dark:shadow-sm">
                     <div className="flex flex-1 justify-between px-4">
@@ -35,7 +35,7 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
                         <div className="flex flex-1"></div>
                         <div className="ml-4 flex items-center lg:ml-6 gap-x-6">
                             <Link href="/boards" passHref={true}>
-                                <a className="rounded-full bg-transparent p-1 text-slate-500 dark:text-slate-300 hover:text-slate-700 focus:outline-none dark:focus:ring-slate-500 focus:drop-shadow-sm transition-shadow duration-300 cursor-pointer px-1">
+                                <a className="rounded-full bg-transparent p-1 text-slate-800 dark:text-slate-100 hover:scale-105 dark:hover:scale-105 focus:outline-none dark:focus:ring-slate-500 focus:drop-shadow-sm transition-all duration-300 cursor-pointer px-1">
                                     Get creating!
                                 </a>
                             </Link>
@@ -66,7 +66,7 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
                     </div>
                 </div>
 
-                <main className="dark:bg-slate-900 touch-pan-y h-full w-full flex items-center justify-center">
+                <main className="dark:bg-slate-900 h-full w-full flex items-center justify-center mx-auto">
                     {children}
                 </main>
             </div>

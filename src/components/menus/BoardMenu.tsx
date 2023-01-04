@@ -13,9 +13,6 @@ import { HiOutlineTag } from 'react-icons/hi';
 import Tag from '@/components/elements/Tag';
 
 const BoardMenu = () => {
-    // TODO: Add showTags and showTimestamp options, add styling for each if they're selected... maybe show tags on hover, or beneath.
-    // const { boardCount, setBoardCount } = useKanbanStore();
-
     const { setSidebarOpen } = useUIControlStore();
 
     const router = useRouter();

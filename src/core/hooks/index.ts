@@ -129,3 +129,28 @@ export const useEditField = ({
         inputRef,
     };
 };
+
+export function useDebounce(callback: Function, delay: number) {
+    const latestCallback = useRef<null | Function>();
+    const [callCount, setCallCount] = useState(0);
+    // const latestTimeout = useRef<null | ReturnType<typeof setInterval>>();
+
+    useEffect(() => {
+        latestCallback.current = callback;
+    }, [callback]);
+
+    useEffect(() => {
+        if (callCount > 0) {
+            const fire = () => {
+                setCallCount(0);
+                if (latestCallback.current) {
+                    latestCallback.current();
+                }
+            };
+            const id = setTimeout(fire, delay);
+            return () => clearTimeout(id);
+        }
+    }, [callCount, delay]);
+
+    return () => setCallCount((callCount) => callCount + 1);
+}
