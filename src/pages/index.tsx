@@ -12,7 +12,15 @@ import {
     BsArrowRight,
     BsArrowLeft,
 } from 'react-icons/bs';
-import { BiSortAlt2 } from 'react-icons/bi';
+import { BiSortAlt2, BiData } from 'react-icons/bi';
+import {
+    SiNextdotjs,
+    SiTailwindcss,
+    SiReact,
+    SiTypescript,
+    SiGithub,
+    SiLinkedin,
+} from 'react-icons/si';
 
 import InfoCard from '@/components/displays/InfoCard';
 import { useDebounce } from '@/core/hooks/index';
@@ -145,10 +153,13 @@ const Home: NextPage = () => {
         const contentWrapper = document.getElementById('contentWrapper');
         const currentSection = document.getElementById(linkName);
 
+        console.log(contentWrapper?.scrollLeft);
+        console.log(currentSection?.offsetLeft);
+
         const newLink = { id: linkIndex, name: linkName };
 
         if (contentWrapper && currentSection) {
-            contentWrapper.scrollLeft = currentSection.offsetLeft + 100;
+            contentWrapper.scrollLeft = currentSection.offsetLeft;
         }
 
         setCurrentLink(newLink);
@@ -287,7 +298,7 @@ const Home: NextPage = () => {
                     >
                         <section
                             id="what?"
-                            className="col-span-1 snap-start flex flex-col w-[100vw] h-auto lg:w-[72vw] xl:w-[72vw] max-w-[1800px] px-10 xl:mx-40 py-10"
+                            className="col-span-1 snap-start flex flex-col w-[100vw] h-auto lg:w-[72vw] xl:w-[75vw] max-w-[1800px] px-10 xl:mx-40 py-10"
                         >
                             {/* <section
                             id="what?"
