@@ -13,14 +13,14 @@ const InfoCard = ({ onClick, ...props }: InfoCardProps) => {
             <div className="flex flex-col gap-y-5">
                 <div className="flex flex-row items-center justify-between">
                     {props.title && (
-                        <div className="text-slate-900 whitespace-normal dark:text-slate-100 font-semibold w-2/3">
+                        <div className="text-slate-900 whitespace-normal dark:text-slate-200 font-semibold w-2/3">
                             <h2> {props.title}</h2>
                         </div>
                     )}
                     {props.icon}
                 </div>
 
-                <div className="text-slate-700 dark:text-slate-200">
+                <div className="text-slate-700 dark:text-slate-400">
                     <p>{props.content}</p>
                 </div>
             </div>

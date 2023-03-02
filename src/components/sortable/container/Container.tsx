@@ -184,11 +184,14 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                 <div className="flex my-2 w-full h-auto justify-start px-1">
                     {container && (
                         <button
-                            className="bg-transparent hover:scale-110 text-gray-500 transition-transform duration-300"
+                            className="bg-transparent text-gray-500 transition-transform duration-300 w-full flex mx-2 group"
                             onClick={handleAddItem}
                             aria-label="Add Item"
+                            title="Add Empty Item"
                         >
-                            <MdAdd className="w-5 h-5 text-gray-500" />
+                            <span className="w-1/2 h-0.5 bg-gray-300 dark:bg-slate-500 rounded-full self-center opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
+                            <MdAdd className="w-5 h-5 mx-4 text-gray-500 group-hover:text-gray-700 dark:group-hover:text-slate-300 transition-color duration-300" />
+                            <span className="w-1/2 h-0.5 bg-gray-300 dark:bg-slate-500 rounded-full self-center opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
                         </button>
                     )}
                 </div>

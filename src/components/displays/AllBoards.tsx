@@ -54,6 +54,7 @@ const AllBoards = () => {
 
     const boards = useLiveQuery(() => db.getAllBoards(true), []);
 
+    // Could have used date-fns here, cleaner solution.
     const filteredBoards: Months | Weeks | Days = useMemo(() => {
         // let filteredDatesSet = new Set<string>();
         let filteredBoardsObject: any = {};

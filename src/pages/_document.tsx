@@ -38,7 +38,7 @@ class MyDocument extends Document {
                         rel="stylesheet"
                     />
                 </Head>
-                <body className="h-full" lang="en">
+                <body className="h-full dark:bg-slate-900" lang="en">
                     <Main />
                     <NextScript />
                 </body>

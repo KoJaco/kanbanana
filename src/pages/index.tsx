@@ -182,9 +182,9 @@ const Home: NextPage = () => {
 
     return (
         <HomeLayout>
-            <div className="flex flex-col lg:flex-row w-full h-auto lg:relative absolute top-20">
+            <div className="flex flex-col lg:flex-row w-full h-auto lg:relative absolute top-20 dark:bg-slate-900">
                 {/* Page scroll menu */}
-                <div className="lg:absolute lg:left-0 flex flex-col w-auto lg:h-1/2 border-b-1 dark:border-slate-600 lg:border-0 md:shadow-none self-center justify-center lg:mx-0">
+                <div className="lg:absolute lg:left-0 flex flex-col w-auto lg:h-1/2 border-b-1 dark:border-slate-600 lg:border-0 md:shadow-none self-center justify-center lg:mx-0 ">
                     {/* desktop styling */}
                     <nav
                         className="hidden lg:block border-l-2 transition-color duration-500 ml-[7vw]"
@@ -290,7 +290,7 @@ const Home: NextPage = () => {
                 </div>
 
                 {/* Main content section */}
-                <div className="flex justify-center items-center overflow-x-hidden w-full lg:px-32 2xl:px-40 lg:ml-[5vw] 2xl:ml-[10vw]">
+                <div className="flex justify-center items-center overflow-x-hidden w-full lg:px-32 2xl:px-40 lg:ml-[5vw] 2xl:ml-[10vw] ">
                     <div
                         id="contentWrapper"
                         className="grid grid-flow-col auto-cols-auto w-full h-full  self-center transition-color duration-300 overflow-y-auto scroll-smooth snap-x touch-pan-x no-scrollbar snap-proximity"
@@ -298,17 +298,17 @@ const Home: NextPage = () => {
                     >
                         <section
                             id="what?"
-                            className="col-span-1 snap-start flex flex-col w-[100vw] h-auto lg:w-[72vw] xl:w-[75vw] max-w-[1800px] px-10 xl:mx-40 py-10"
+                            className="col-span-1 snap-start flex flex-col w-[100vw] h-auto lg:w-[72vw] xl:w-[75vw] max-w-[1800px] px-10 xl:mx-40 py-10 "
                         >
                             {/* <section
                             id="what?"
                             className="col-span-1 snap-start flex flex-col w-[100vw] md:w-[70vw] xl:w-[75vw] h-[75vh]"
        
                         > */}
-                            <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-100 lg:mb-5">
+                            <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-200 lg:mb-5">
                                 Simple, quick Kanban boards.
                             </h1>
-                            <p className="text-slate-800 dark:text-slate-200 mb-5">
+                            <p className="text-slate-800 dark:text-slate-400 mb-5">
                                 Kan-banana is a free application built for
                                 creating and organising basic Kanban boards. It
                                 uses IndexedDB, a database located within a
@@ -330,7 +330,7 @@ const Home: NextPage = () => {
                                 ))}
                             </div>
                             <div className="flex flex-col mt-5">
-                                <p>
+                                <p className="text-slate-800 dark:text-slate-400">
                                     Kan-banana does not store or track any data
                                     externally, solely relying on data stored
                                     within your own browser to operate. You can
@@ -339,7 +339,7 @@ const Home: NextPage = () => {
                                     inspect) and selecting:
                                 </p>
                                 <br />
-                                <div className="text-center py-5 rounded-sm bg-slate-200/50 dark:bg-slate-700">
+                                <div className="text-center py-5 rounded-sm bg-slate-200/50 dark:bg-slate-800 text-slate-800 dark:text-slate-300">
                                     {
                                         'Application  -->  IndexedDB  -->  Kan-bananaDB  -->  Delete Database'
                                     }
@@ -351,17 +351,20 @@ const Home: NextPage = () => {
                             id="why?"
                             className="col-span-1 snap-start flex flex-col w-[100vw] h-[80vh] lg:w-[72vw] xl:w-[72vw] max-w-[1800px] px-10 xl:mx-40 py-10"
                         >
-                            <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-100">
+                            <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-200">
                                 A bit about the app
                             </h1>
 
-                            <p>
-                                Kan-banana is also a hobby or portfolio project,
-                                it is not mean to be the most performant,
-                                versatile, nor ground-breaking solution out
-                                there. As it is a free app, I have also not
-                                spent too much time in optimising, and testing
-                                or bugs.
+                            <p className="text-slate-700 dark:text-slate-400">
+                                Kan-banana is also a hobby project I have
+                                undertaken to learn react/next.js. It is not
+                                meant to be the most performant, versatile, nor
+                                ground-breaking solution out there. As it is a
+                                free app, I have also not spent too much time in
+                                testing and optimising. Kan-banana was a project
+                                I started quite some time ago and there are many
+                                things I would do differently if I were to start
+                                again.
                             </p>
                         </section>
                         <section
