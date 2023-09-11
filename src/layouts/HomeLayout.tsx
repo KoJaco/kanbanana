@@ -16,7 +16,8 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
         <>
             <Head>
                 <title>Home</title>
-                <meta name="robots" content="index, follow" />
+                <meta name="robots" content="noindex,nofollow" />
+                <meta name="googlebot" content="noindex,nofollow" />
             </Head>
             <div className="flex flex-1 flex-col dark:bg-slate-900 h-auto">
                 {/* Navbar */}
@@ -33,9 +34,9 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
                             </Link>
                         </div>
                         <div className="flex flex-1"></div>
-                        <div className="ml-4 flex items-center lg:ml-6 gap-x-6">
+                        <div className="ml-4 flex items-center lg:ml-6 gap-x-2 lg:gap-x-6">
                             <Link href="/boards" passHref={true}>
-                                <a className="rounded-full bg-transparent p-1 text-slate-800 dark:text-slate-100 hover:scale-105 dark:hover:scale-105 focus:outline-none dark:focus:ring-slate-500 focus:drop-shadow-sm transition-all duration-300 cursor-pointer px-1 text-sm lg:text-md">
+                                <a className="rounded-full bg-transparent p-1 text-slate-800 dark:text-slate-100 hover:scale-105 dark:hover:scale-105 focus:outline-none dark:focus:ring-slate-500 focus:drop-shadow-sm transition-all duration-300 cursor-pointer px-1 text-md lg:text-lg">
                                     Get creating!
                                 </a>
                             </Link>

@@ -1,5 +1,4 @@
 import Dexie, { Table } from 'dexie';
-import { stringToRandomSlug } from '@/core/utils/misc';
 import type {
     Board,
     BoardTags,

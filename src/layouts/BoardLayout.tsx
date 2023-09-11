@@ -14,7 +14,8 @@ export default function BoardLayout({ children }: BoardLayoutProps) {
         <>
             <Head>
                 <title>Boards</title>
-                <meta name="robots" content="index, NoFollow" />
+                <meta name="robots" content="noindex,nofollow" />
+                <meta name="googlebot" content="noindex,nofollow" />
             </Head>
             {/* Sidebar, static on desktop, responsive/closed on mobile */}
             <Sidebar

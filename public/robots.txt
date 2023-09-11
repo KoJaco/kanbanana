@@ -1,4 +1,4 @@
 User-agent: *
-Allow: /
-Allow: /boards
+Disallow: /
+Disallow: /boards
 Disallow: /boards/*

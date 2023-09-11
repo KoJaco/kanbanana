@@ -7,8 +7,7 @@ class MyDocument extends Document {
         return (
             <Html lang="en">
                 <Head>
-                    <meta name="robots" content="noindex,nofollow" />
-                    <meta name="googlebot" content="noindex,nofollow" />
+                    <meta name="theme-color" content="#6967CE" />
                     <meta name="title" content="Kanbanana" />
                     <meta
                         name="description"
@@ -32,7 +31,7 @@ class MyDocument extends Document {
                         rel="stylesheet"
                     />
                 </Head>
-                <body className="h-full dark:bg-slate-900" lang="en">
+                <body className="h-full dark:bg-slate-900">
                     <Main />
                     <NextScript />
                 </body>

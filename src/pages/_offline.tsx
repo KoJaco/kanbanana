@@ -1,7 +1,7 @@
 import React from 'react';
 
-const _offline = () => {
+const Offline = () => {
     return <div>_offline</div>;
 };
 
-export default _offline;
+export default Offline;
