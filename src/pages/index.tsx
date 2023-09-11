@@ -169,7 +169,7 @@ const Home: NextPage = () => {
                                         )}
                                         <span
                                             className={clsx(
-                                                'text-slate-700 dark:text-slate-200 opacity-50',
+                                                'text-slate-700 dark:text-slate-200 opacity-75',
                                                 link.name === currentLink.name
                                                     ? 'tracking-wider opacity-100'
                                                     : 'group-hover:text-slate-800 dark:group-hover:text-slate-100 group-hover:tracking-wider group-hover:opacity-100 transition-opacity duration-300'

@@ -5,14 +5,10 @@ class MyDocument extends Document {
     // See  https://nextjs.org/docs/advanced-features/custom-document
     render() {
         return (
-            <Html>
+            <Html lang="en">
                 <Head>
-                    <meta
-                        charSet="utf-8"
-                        name="theme-color"
-                        content="#fff"
-                        lang="en"
-                    />
+                    <meta name="robots" content="noindex,nofollow" />
+                    <meta name="googlebot" content="noindex,nofollow" />
                     <meta name="title" content="Kanbanana" />
                     <meta
                         name="description"
@@ -20,10 +16,7 @@ class MyDocument extends Document {
                     />
                     {/* recognize manifest */}
                     <link rel="manifest" href="/manifest.json" />
-                    <link
-                        rel="apple-touch-icon"
-                        href="/apple-touch-icon.png"
-                    ></link>
+                    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
                     <link
                         rel="preconnect"
