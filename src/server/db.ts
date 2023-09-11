@@ -9,13 +9,11 @@ import type {
     Items,
 } from '@/core/types/sortableBoard';
 
-// https://dexie.org/docs/Version/Version.stores()#:~:text=Syntax%20For%20Primary%20Key&text=Primary%20key%20must%20always%20be%20unique.&text=Means%20that%20primary%20key%20is,not%20visible%20on%20the%20objects.
-
 export class KanbanBoardDexie extends Dexie {
     boards!: Table<Board>;
 
     constructor() {
-        super('checklistitDB');
+        super('kanbanana');
         this.version(1).stores({
             boards: 'slug, tag, updatedAt', // primary key is slug, index tag and updatedAt for .where clause
         });

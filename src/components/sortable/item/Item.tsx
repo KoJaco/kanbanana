@@ -513,7 +513,7 @@ export const Item = React.memo(
                                         )}
                                 </div>
 
-                                <div className="self-start whitespace-normal pb-2 text-slate-600 dark:text-slate-100 break-all text-sm sm:text-md">
+                                <div className="self-start whitespace-normal pb-2 text-slate-600 dark:text-slate-300 break-all text-sm sm:text-md">
                                     {/* value here is text content */}
                                     {value}
                                 </div>

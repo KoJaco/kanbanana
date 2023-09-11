@@ -13,9 +13,10 @@ class MyDocument extends Document {
                         content="#fff"
                         lang="en"
                     />
+                    <meta name="title" content="Kanbanana" />
                     <meta
                         name="description"
-                        content="Kan-banana is a small, progressive web application for creating, storing, and filtering data in a 'kanban board' format. It is a hobby project developed by full-stack developer KoJaco."
+                        content="Kan-banana is a small, progressive web application for creating, storing, and filtering data in a 'kanban board' format. It is a hobby project developed by full-stack developer Kori Jacobsen."
                     />
                     {/* recognize manifest */}
                     <link rel="manifest" href="/manifest.json" />

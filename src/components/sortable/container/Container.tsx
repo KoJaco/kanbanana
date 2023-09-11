@@ -149,7 +149,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                         '--columns': columns,
                     } as React.CSSProperties
                 }
-                className="flex flex-col max-content h-full w-80 sm:w-80 md:w-96 lg:w-[26rem] xl:w-[32rem] bg-gray-100 dark:bg-slate-800 rounded-md mr-2 dark:border-slate-600 snap-end snap-always"
+                className="flex flex-col max-content h-full w-80 sm:w-80 md:w-[360px] lg:w-[400px] bg-gray-100 dark:bg-slate-800 rounded-md mr-2 dark:border-slate-600 snap-end snap-always"
                 onClick={onClick}
                 tabIndex={onClick ? 0 : undefined}
             >
@@ -184,7 +184,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
                 <div className="flex my-2 w-full h-auto justify-start px-1">
                     {container && (
                         <button
-                            className="bg-transparent text-gray-500 transition-transform duration-300 w-full flex mx-2 group"
+                            className="bg-transparent text-gray-500 transition-transform duration-300 w-full flex mx-2 group py-2"
                             onClick={handleAddItem}
                             aria-label="Add Item"
                             title="Add Empty Item"

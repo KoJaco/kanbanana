@@ -14,7 +14,7 @@ const Navbar = ({ setSidebarOpen }: NavbarProps) => {
         <div className="sticky top-0 z-[150] flex h-16 flex-shrink-0 bg-white dark:bg-slate-900 dark:border-b dark:border-slate-700/[0.5] dark:shadow-slate-900 shadow dark:shadow-sm">
             <button
                 type="button"
-                className="border-r dark:border-slate-700 px-4 text-gray-500 dark:text-gray-50 focus:outline-none focus:ring-0 lg:hidden"
+                className="border-r dark:border-slate-700 px-4 text-gray-500 dark:text-gray-50 focus:outline-none focus:ring-0 xl:hidden"
                 onClick={() => setSidebarOpen(true)}
             >
                 <span className="sr-only">Open sidebar</span>
@@ -23,7 +23,7 @@ const Navbar = ({ setSidebarOpen }: NavbarProps) => {
 
             <div className="flex flex-1 justify-between px-4">
                 <div className="flex flex-1"></div>
-                <div className="ml-4 flex items-center lg:ml-6 gap-x-6">
+                <div className="ml-4 flex items-center xl:ml-6 gap-x-6">
                     <Link type="button" href="/" passHref={true}>
                         <a className="rounded-full bg-transparent p-1 text-slate-700 dark:text-slate-100 hover:scale-105 focus:outline-none cursor-pointer px-1 transition-transform duration-300">
                             Why the bananas?

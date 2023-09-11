@@ -12,24 +12,15 @@ import {
     BsArrowRight,
     BsArrowLeft,
 } from 'react-icons/bs';
-import { BiSortAlt2, BiData } from 'react-icons/bi';
-import {
-    SiNextdotjs,
-    SiTailwindcss,
-    SiReact,
-    SiTypescript,
-    SiGithub,
-    SiLinkedin,
-} from 'react-icons/si';
+import { BiSortAlt2 } from 'react-icons/bi';
 
 import InfoCard from '@/components/displays/InfoCard';
-import { useDebounce } from '@/core/hooks/index';
+
+import InstallPWA from '@/components/InstallApp/InstallPWA';
 
 const navigationLinks = [
     { id: 0, name: 'what?', href: '/#what', color: '#6967CE' },
     { id: 1, name: 'why?', href: '/#why', color: '#FFC414' },
-    { id: 2, name: 'how?', href: '/#how', color: '#0ea5e9' },
-    { id: 3, name: 'who?', href: '/#who', color: '#f97316' },
 ];
 
 const infoCards = [
@@ -41,7 +32,7 @@ const infoCards = [
     },
     {
         title: 'Categorisation',
-        content: 'Categories boards by time or give them a custom tag.',
+        content: 'Categorise boards by time or give them custom tags.',
         icon: <MdCategory className="w-7 h-7 text-indigo-500" />,
     },
     {
@@ -61,11 +52,22 @@ const infoCards = [
         icon: <BsDownload className="w-7 h-7 text-red-500" />,
     },
     {
-        title: 'Cross-platform',
+        title: 'Sharable DB',
         content:
             'Import and export your database as a JSON (.json) file to share your boards across devices.',
         icon: <BsShareFill className="w-7 h-7 text-blue-500" />,
     },
+];
+
+const learningCards = [
+    'Learn Next.js and React to create a fully functioning application.',
+    'Apply styling using tailwind and really cement my knowledge of css in the context of tailwind as my styling framework of choice (I much prefer tailwind to plain css).',
+    'Get familiar with using forms and controlling inputs, submitting form data to a db after parsing & sanitising client-side data, etc.',
+    'Implement styling in both a light and a dark mode.',
+    'Make use of the dnd-kit library and create some cool drag, drop, and item filtering animations.',
+    'Interact with a database and send data between a database and a UI (even though it is an in-browser DB).',
+    'Make something that I may actually use for organising information into kanban boards (I do know that Trello exists).',
+    'Just getting coding myself without the help of any tutorials or guides.',
 ];
 
 const Home: NextPage = () => {
@@ -92,17 +94,6 @@ const Home: NextPage = () => {
         return () => window.removeEventListener('resize', handleWindowResize);
     });
 
-    // function handleChangeSection(linkName: string) {
-    //     const contentWrapper = document.getElementById('contentWrapper');
-    //     const currentSection = document.getElementById(linkName);
-
-    //     if (contentWrapper && currentSection) {
-    //         contentWrapper.scrollLeft = currentSection.offsetLeft;
-    //     }
-
-    //     setCurrentLink(linkName);
-    // }
-
     function handleWindowResize() {
         if (debounceTimer?.current) {
             // if user tries to resize the screen again
@@ -112,40 +103,6 @@ const Home: NextPage = () => {
         debounceTimer.current = setTimeout(() => {
             // set state variable and delay state changes after 0.5s
             setViewWidth(window.innerWidth);
-        }, 500);
-    }
-
-    function handleLeftOrRight(direction: 'left' | 'right', value?: number) {
-        const contentWrapper = document.getElementById('contentWrapper');
-
-        let newLink: any;
-        let currentIndex: number = currentLink.id;
-
-        setLeftRightDisabled(true);
-
-        if (contentWrapper && direction === 'left') {
-            if (currentIndex > 0) {
-                newLink = navigationLinks[currentLink.id - 1];
-                contentWrapper.scrollLeft = value
-                    ? contentWrapper.scrollLeft - value
-                    : contentWrapper.scrollLeft - viewWidth * 0.9;
-
-                setCurrentLink(newLink);
-            }
-        }
-        if (contentWrapper && direction === 'right') {
-            if (currentIndex < 3) {
-                newLink = navigationLinks[currentLink.id + 1];
-                contentWrapper.scrollLeft = value
-                    ? contentWrapper.scrollLeft + value
-                    : contentWrapper.scrollLeft + viewWidth * 0.9;
-
-                setCurrentLink(newLink);
-            }
-        }
-
-        setTimeout(() => {
-            setLeftRightDisabled(false);
         }, 500);
     }
 
@@ -171,10 +128,7 @@ const Home: NextPage = () => {
                 return '#6967CE';
             case 'why?':
                 return '#FFC414';
-            case 'how?':
-                return '#0ea5e9';
-            case 'who?':
-                return '#f97316';
+
             default:
                 return '#6967CE';
         }
@@ -215,10 +169,10 @@ const Home: NextPage = () => {
                                         )}
                                         <span
                                             className={clsx(
-                                                'text-slate-700 dark:text-slate-200 ',
+                                                'text-slate-700 dark:text-slate-200 opacity-50',
                                                 link.name === currentLink.name
-                                                    ? 'tracking-wider'
-                                                    : 'group-hover:text-slate-800 dark:group-hover:text-slate-100 group-hover:tracking-wider'
+                                                    ? 'tracking-wider opacity-100'
+                                                    : 'group-hover:text-slate-800 dark:group-hover:text-slate-100 group-hover:tracking-wider group-hover:opacity-100 transition-opacity duration-300'
                                             )}
                                         >
                                             {link.name}
@@ -229,21 +183,11 @@ const Home: NextPage = () => {
                         </ul>
                     </nav>
                     {/* mobile / ipad mini nav styling */}
-                    <nav className="lg:hidden my-10 flex w-[88vw] items-center py-2">
-                        <button
-                            className="mr-auto hover:scale-105 disabled:opacity-50"
-                            type="button"
-                            aria-label="scroll-left"
-                            onClick={() => handleLeftOrRight('left')}
-                            disabled={leftRightDisabled}
-                        >
-                            <BsArrowLeft className="w-7 h-5" />
-                        </button>
-
-                        <ul className="inline-flex flex-row -ml-10 items-center justify-center">
+                    <nav className="lg:hidden my-10 flex w-[80vw] items-center">
+                        <ul className="inline-flex flex-row items-center justify-center w-full gap-x-10">
                             {navigationLinks.map((link) => (
                                 <li
-                                    className="group flex mx-auto"
+                                    className="group flex"
                                     key={link.id}
                                     style={{
                                         borderColor: conditionalColoring(),
@@ -251,7 +195,7 @@ const Home: NextPage = () => {
                                 >
                                     <a
                                         type="button"
-                                        className="ml-10 flex cursor-pointer"
+                                        className="flex cursor-pointer"
                                         href={link.href}
                                         onClick={() => {
                                             handleChangeSection(
@@ -275,49 +219,39 @@ const Home: NextPage = () => {
                                 </li>
                             ))}
                         </ul>
-                        <button
-                            className="ml-auto hover:scale-105 disabled:opacity-50"
-                            type="button"
-                            aria-label="scroll-right"
-                            onClick={() => {
-                                handleLeftOrRight('right');
-                            }}
-                            disabled={leftRightDisabled}
-                        >
-                            <BsArrowRight className="w-7 h-5" />
-                        </button>
                     </nav>
                 </div>
 
                 {/* Main content section */}
-                <div className="flex justify-center items-center overflow-x-hidden w-full lg:px-32 2xl:px-40 lg:ml-[5vw] 2xl:ml-[10vw] ">
+                <div className="flex justify-center items-center overflow-x-hidden w-full lg:px-32 2xl:px-40 lg:ml-[5vw] 2xl:ml-[10vw]">
                     <div
                         id="contentWrapper"
-                        className="grid grid-flow-col auto-cols-auto w-full h-full  self-center transition-color duration-300 overflow-y-auto scroll-smooth snap-x touch-pan-x no-scrollbar snap-proximity"
-                        // className="grid grid-flow-col md:grid-flow-row w-[88vw] md:w-2/3 md:ml-auto md:mr-1 h-[88vh] md:h-[75vh] self-center transition-color duration-300 overflow-x-hidden md:overflow-y-hidden scroll-smooth md:snap-y snap-x touch-pan-y no-scrollbar"
+                        className="grid grid-flow-col auto-cols-auto w-full h-full self-center transition-color duration-300 overflow-y-auto scroll-smooth snap-x touch-pan-x no-scrollbar snap-proximity mx-4"
                     >
                         <section
                             id="what?"
-                            className="col-span-1 snap-start flex flex-col w-[100vw] h-auto lg:w-[72vw] xl:w-[75vw] max-w-[1800px] px-10 xl:mx-40 py-10 "
+                            className="col-span-1 snap-start flex flex-col w-[100vw] h-auto lg:w-[72vw] xl:w-[75vw] max-w-[1800px] px-10 xl:mx-40 py-10"
                         >
-                            {/* <section
-                            id="what?"
-                            className="col-span-1 snap-start flex flex-col w-[100vw] md:w-[70vw] xl:w-[75vw] h-[75vh]"
-       
-                        > */}
                             <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-200 lg:mb-5">
                                 Simple, quick Kanban boards.
                             </h1>
                             <p className="text-slate-800 dark:text-slate-400 mb-5">
-                                Kan-banana is a free application built for
+                                Kan-banana is a free hobby application built for
                                 creating and organising basic Kanban boards. It
                                 uses IndexedDB, a database located within a
-                                user&#39;s browser, to store board data.
+                                user&#39;s browser, to store board data. You can
+                                also download the application, providing your
+                                browser supports the operation, by clicking the
+                                button below!
                             </p>
+                            <div>
+                                <InstallPWA />
+                            </div>
+
                             {/* section content */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-12 gap-y-10 gap-x-8">
+                            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-12 gap-y-10 gap-x-8">
                                 {infoCards.map((card, index) => (
-                                    <div
+                                    <li
                                         key={index}
                                         className="flex col-1 w-full h-full"
                                     >
@@ -326,9 +260,9 @@ const Home: NextPage = () => {
                                             icon={card?.icon}
                                             content={card.content}
                                         />
-                                    </div>
+                                    </li>
                                 ))}
-                            </div>
+                            </ul>
                             <div className="flex flex-col mt-5">
                                 <p className="text-slate-800 dark:text-slate-400">
                                     Kan-banana does not store or track any data
@@ -336,12 +270,13 @@ const Home: NextPage = () => {
                                     within your own browser to operate. You can
                                     manually delete Kan-banana&#39;s database by
                                     opening up developer tools (right click &
-                                    inspect) and selecting:
+                                    inspect) and following:
                                 </p>
                                 <br />
-                                <div className="text-center py-5 rounded-sm bg-slate-200/50 dark:bg-slate-800 text-slate-800 dark:text-slate-300">
+                                <br />
+                                <div className="text-center py-5 rounded-sm bg-slate-200/50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-300">
                                     {
-                                        'Application  -->  IndexedDB  -->  Kan-bananaDB  -->  Delete Database'
+                                        'Application  -->  IndexedDB --> Kan-banana --> Delete Database'
                                     }
                                 </div>
                                 <br />
@@ -351,50 +286,59 @@ const Home: NextPage = () => {
                             id="why?"
                             className="col-span-1 snap-start flex flex-col w-[100vw] h-[80vh] lg:w-[72vw] xl:w-[72vw] max-w-[1800px] px-10 xl:mx-40 py-10"
                         >
-                            <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-200">
+                            <h2 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-200">
                                 A bit about the app
-                            </h1>
+                            </h2>
 
                             <p className="text-slate-700 dark:text-slate-400">
-                                Kan-banana is also a hobby project I have
-                                undertaken to learn react/next.js. It is not
-                                meant to be the most performant, versatile, nor
-                                ground-breaking solution out there. As it is a
-                                free app, I have also not spent too much time in
-                                testing and optimising. Kan-banana was a project
-                                I started quite some time ago and there are many
-                                things I would do differently if I were to start
-                                again.
+                                Kan-banana is a hobby project that I undertook
+                                solely with the aim of learning react/next.js.
+                                It is the first actual application I created and
+                                released and, as I finished the development of
+                                it quite some time ago, there are many things I
+                                would do differently now. As it is a free app, I
+                                have also not spent too much time in testing and
+                                optimising.
+                            </p>
+                            <br />
+                            <p className="text-slate-700 dark:text-slate-400">
+                                The Specific skills that I wished to cover with
+                                the creation of Kanbanana were as follows...
+                            </p>
+                            <ul className="grid grid-cols-2 my-10 gap-10">
+                                {learningCards.map((c, index) => {
+                                    return (
+                                        <li
+                                            key={index}
+                                            className="flex col-1 w-full h-full"
+                                        >
+                                            <InfoCard
+                                                title={`0${index + 1}.`}
+                                                content={c}
+                                            />
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                            <p className="text-slate-700 dark:text-slate-400">
+                                If you wish to see more of my work or get in
+                                contact with me, please check out{' '}
+                                <span className="underline font-semibold">
+                                    <a href="#" target="_blank">
+                                        my portfolio website.
+                                    </a>
+                                </span>
                             </p>
                         </section>
-                        <section
-                            id="how?"
-                            className="col-span-1 snap-start flex flex-col w-[100vw] h-[80vh] lg:w-[72vw] xl:w-[72vw] max-w-[1800px] px-10 xl:mx-40 py-10"
-                        >
-                            <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-100">
-                                Technical talk
-                            </h1>
-                        </section>
-                        <section
-                            id="who?"
-                            className="col-span-1 snap-start flex flex-col w-[100vw] h-[80vh] lg:w-[72vw] xl:w-[72vw] max-w-[1800px] px-10 xl:mx-40 py-10"
-                        >
-                            <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-100">
-                                KoJaco
-                            </h1>
-                        </section>
-                        {/* psuedo border element */}
                     </div>
                 </div>
 
                 {/* side slider wrapper */}
-                <div className="hidden lg:absolute lg:flex right-0 self-center lg:h-[75vh] ml-auto mr-[7vw]">
+                <div className="hidden lg:absolute lg:flex right-0 self-center lg:h-full ml-auto mr-[7vw]">
                     <span
                         className={clsx(
-                            'flex w-[3px] h-1/4 transition-translate duration-500 rounded-full bg-red-500',
-                            currentLink.name === 'why?' && 'translate-y-[15vh]',
-                            currentLink.name === 'how?' && 'translate-y-[28vh]',
-                            currentLink.name === 'who?' && 'translate-y-[40vh]'
+                            'flex w-[3px] h-1/4 transition-translate duration-500 rounded-full',
+                            currentLink.name === 'why?' && 'translate-y-[60vh]'
                         )}
                         style={{ backgroundColor: conditionalColoring() }}
                     />

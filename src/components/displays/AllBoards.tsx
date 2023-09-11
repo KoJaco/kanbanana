@@ -251,17 +251,15 @@ const AllBoards = () => {
                             return (
                                 <div key={index} className="mt-4">
                                     {/* Date range identifier */}
-                                    {boards.length > 0 && (
-                                        <div className="flex flex-col h-auto w-full text-slate-600 dark:text-slate-100/75">
-                                            {dateIdentifier}
-                                        </div>
-                                    )}
+                                    <div className="flex flex-col h-auto w-full text-slate-600 dark:text-slate-100/75">
+                                        {dateIdentifier}
+                                    </div>
 
                                     <div className="mb-10">
                                         {/* Map through boards to generate board cards*/}
                                         <ul
                                             role="list"
-                                            className="grid 2xl:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-6"
+                                            className="grid 2xl:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-2 md:gap-4 lg:gap-6"
                                         >
                                             {/* map through boards */}
                                             {boards?.map((board, index) => {

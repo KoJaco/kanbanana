@@ -2,19 +2,43 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@/components/*": ["./src/components/*"],
-            "@/stores/*": ["./src/stores/*"],
-            "@/core/*": ["./src/core/*"],
-            "@/env/*": ["./src/env/*"],
-            "@/layouts/*": ["./src/layouts/*"],
-            "@/pages/*": ["./src/pages/*"],
-            "@/server/*": ["./src/server/*"],
-            "@/static/*": ["./src/static/*"],
-            "@/styles/*": ["./src/styles/*"],
-            "@/utils/*": ["./src/utils/*"]
+            "@/components/*": [
+                "./src/components/*"
+            ],
+            "@/stores/*": [
+                "./src/stores/*"
+            ],
+            "@/core/*": [
+                "./src/core/*"
+            ],
+            "@/env/*": [
+                "./src/env/*"
+            ],
+            "@/layouts/*": [
+                "./src/layouts/*"
+            ],
+            "@/pages/*": [
+                "./src/pages/*"
+            ],
+            "@/server/*": [
+                "./src/server/*"
+            ],
+            "@/static/*": [
+                "./src/static/*"
+            ],
+            "@/styles/*": [
+                "./src/styles/*"
+            ],
+            "@/utils/*": [
+                "./src/utils/*"
+            ]
         },
         "target": "es5",
-        "lib": ["dom", "dom.iterable", "esnext"],
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
         "downlevelIteration": true,
         "allowJs": true,
         "skipLibCheck": true,
@@ -40,5 +64,7 @@
         "**/*.js",
         "src/components/masks/CanvasParticle.jsx"
     ],
-    "exclude": ["node_modules"]
+    "exclude": [
+        "node_modules"
+    ]
 }

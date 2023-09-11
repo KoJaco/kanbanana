@@ -45,7 +45,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 >
                     <div
                         ref={modalContentRef}
-                        className="flex w-4/5 lg:w-3/5 md:max-w-3/4 h-auto max-h-[75vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-md gap-x-6 shadow-lg"
+                        className="flex w-4/5 xl:w-3/5 md:max-w-3/4 h-auto max-h-[75vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-md gap-x-6 shadow-lg"
                     >
                         <ImportExport
                             handleCloseModal={() => setShowModal(false)}
@@ -58,7 +58,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 setShowBoardForm={setShowCreateBoardForm}
             />
             <Transition.Root show={sidebarOpen} as={Fragment}>
-                <Dialog as="div" className="lg:hidden" onClose={setSidebarOpen}>
+                <Dialog as="div" className="xl:hidden" onClose={setSidebarOpen}>
                     <Transition.Child
                         as={Fragment}
                         enter="transition-opacity ease-linear duration-300"
@@ -176,7 +176,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </Transition.Root>
 
             {/* DESKTOP: static sidebar */}
-            <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col dark:border-r dark:border-slate-700/[0.5] dark:shadow-slate-800/[0.5] dark:shadow-md">
+            <div className="hidden xl:fixed xl:inset-y-0 xl:flex xl:w-64 xl:flex-col dark:border-r dark:border-slate-700/[0.5] dark:shadow-slate-800/[0.5] dark:shadow-md">
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className="pt-5 flex flex-grow flex-col overflow-y-auto bg-gradient-to-b from-primary to-primary-dark-alt dark:bg-gradient-to-b dark:from-slate-800 dark:to-slate-900">
                     <div className="flex flex-shrink-0 items-center px-4">

@@ -47,5 +47,10 @@ todo.md
 
 backupData/
 
+# next-pwa
+**/public/workbox-*.js
+**/public/sw.js
+**/public/fallback-*.js
+
 
 
