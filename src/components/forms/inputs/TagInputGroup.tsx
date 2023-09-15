@@ -69,7 +69,7 @@ const TagInputGroup = ({ addOrEdit = 'add', ...props }: TagInputGroupProps) => {
                     <div className="flex items-center space-x-2 justify-start">
                         {props.labels && (
                             <label
-                                htmlFor="Tag"
+                                htmlFor="tag"
                                 className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75] after:content-['*'] after:ml-0.5 after:text-red-500"
                             >
                                 {props.tagLabel ? props.tagLabel : 'Tag:'}
@@ -85,7 +85,7 @@ const TagInputGroup = ({ addOrEdit = 'add', ...props }: TagInputGroupProps) => {
                         <input
                             type="text"
                             name="text"
-                            id="text"
+                            id="tag"
                             value={tagText}
                             placeholder="Write your tag here."
                             className="p-2 block outline-primary border-1 border-gray-300 w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-900 dark:border-slate-600 dark:focus:outline-none  dark:focus:ring-1 dark:focus:ring-slate-800 text-sm sm:text-md invalid:border-pink-300 dark:invalid:border-pink-500/50"
@@ -103,14 +103,14 @@ const TagInputGroup = ({ addOrEdit = 'add', ...props }: TagInputGroupProps) => {
                     <div className="flex items-center space-x-2 justify-start">
                         {props.labels && (
                             <label
-                                htmlFor="tagColor"
+                                htmlFor="tag-color"
                                 className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75]"
                             >
                                 Color
                             </label>
                         )}
                     </div>
-                    <div className="mt-1">
+                    <div className="mt-1" id="tag-color">
                         <ColorPicker
                             corner="topRight"
                             colorPaletteOptions="dark"
@@ -145,14 +145,14 @@ const TagInputGroup = ({ addOrEdit = 'add', ...props }: TagInputGroupProps) => {
                     <div className="flex items-center flex-col justify-center w-16">
                         {props.labels && (
                             <label
-                                htmlFor="saveTag"
+                                htmlFor="save-tag"
                                 className="block text-sm font-medium text-slate-600 dark:text-slate-100/[.75]"
                             >
                                 Save Tag
                             </label>
                         )}
 
-                        <div className="mt-1">
+                        <div className="mt-1" id="save-tag">
                             <button
                                 type="button"
                                 name="saveTag"

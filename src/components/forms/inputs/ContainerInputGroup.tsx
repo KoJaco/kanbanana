@@ -140,7 +140,7 @@ const ContainerInputGroup = ({
                     {/* Container Title input */}
                     <div className="w-full">
                         <label
-                            htmlFor="Container"
+                            htmlFor="title"
                             className="block text-sm font-medium text-slate-600 dark:text-slate-50 after:content-['*'] after:ml-0.5 after:text-red-500"
                         >
                             Title
@@ -168,7 +168,7 @@ const ContainerInputGroup = ({
                             </label>
                         </div>
 
-                        <div className="mt-1">
+                        <div id="tag-color" className="mt-1">
                             <ColorPicker
                                 corner="topRight"
                                 popoverDirection="down"

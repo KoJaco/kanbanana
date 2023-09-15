@@ -12,9 +12,9 @@ export const Handle = forwardRef<HTMLButtonElement, ActionProps>(
                 data-cypress="draggable-handle"
                 {...props}
             >
-                <label className="sr-only">
+                <span className="sr-only">
                     A handle used to drag the element it belongs to around
-                </label>
+                </span>
                 <svg
                     viewBox="0 0 20 20"
                     width="12"

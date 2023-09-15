@@ -156,7 +156,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                     <p className="text-sm font-bold text-indigo-100 dark:text-slate-100 group-hover:text-slate-900 transition-color duration-300">
                                                         Database
                                                     </p>
-                                                    <p className="text-sm font-medium text-indigo-100 dark:text-slate-100 group-hover:text-slate-900 transition-color duration-300">
+                                                    <p className="text-sm font-medium text-indigo-300 dark:text-slate-400 group-hover:text-slate-900 transition-color duration-300">
                                                         Import | Export | Reset
                                                     </p>
                                                 </div>
@@ -224,7 +224,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                         <p className="text-sm font-bold text-indigo-100 dark:text-slate-100 group-hover:text-slate-900 transition-color duration-300">
                                             Database
                                         </p>
-                                        <p className="text-sm font-medium text-indigo-100 dark:text-slate-100 group-hover:text-slate-900 transition-color duration-300">
+                                        <p className="text-sm font-medium text-indigo-300 dark:text-slate-400 group-hover:text-slate-900 transition-color duration-300">
                                             Import | Export | Reset
                                         </p>
                                     </div>

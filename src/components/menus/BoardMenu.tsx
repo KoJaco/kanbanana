@@ -111,8 +111,8 @@ const BoardMenu = () => {
                             }}
                             className={
                                 currentRoute === '/boards'
-                                    ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-1 sm:mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
-                                    : 'flex items-center gap-5 py-2 px-3 mt-1 sm:mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
+                                    ? 'flex items-center gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md my-1 font-regular dark:shadow-sm dark:shadow-inherit'
+                                    : 'flex items-center gap-5 py-2 px-3 my-1 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
                             }
                             onClick={handleCloseSidebar}
                             aria-label="View All Boards"
@@ -146,8 +146,8 @@ const BoardMenu = () => {
                                 }}
                                 className={
                                     currentRoute === `/boards/${board.slug}`
-                                        ? 'flex items-center md:gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-1 sm:mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
-                                        : 'flex items-center sm:gap-5 py-2 px-3 mt-1 sm:mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
+                                        ? 'flex items-center md:gap-5 py-2 px-3 rounded-lg text-md text-slate-900 drop-shadow-md mt-2 font-regular dark:shadow-sm dark:shadow-inherit'
+                                        : 'flex items-center sm:gap-5 py-2 px-3 mt-2 rounded-lg text-md text-indigo-200 dark:text-gray-50 font-light hover:bg-primary-bg-darker dark:hover:bg-slate-700'
                                 }
                                 onClick={handleCloseSidebar}
                             >
@@ -189,7 +189,7 @@ const BoardMenu = () => {
                                         className="hover:scale-110 transition-transform duration-300"
                                         onClick={handleCloseSidebar}
                                     >
-                                        <label className="sr-only">{`Link to boards with tag: ${tag}`}</label>
+                                        <span className="sr-only">{`Link to boards with tag: ${tag}`}</span>
                                         <Tag
                                             text={tag.text}
                                             backgroundColor={

@@ -466,7 +466,10 @@ const CreateBoardForm = ({
                                                                         Tags:
                                                                     </label>
                                                                     {/* tags map for display only */}
-                                                                    <div className="flex flex-wrap gap-x-2 gap-y-2 mt-1">
+                                                                    <div
+                                                                        id="boardTags"
+                                                                        className="flex flex-wrap gap-x-2 gap-y-2 mt-1"
+                                                                    >
                                                                         {boardTags?.map(
                                                                             (
                                                                                 tag,
@@ -563,7 +566,10 @@ const CreateBoardForm = ({
                                                                     >
                                                                         Columns:
                                                                     </label>
-                                                                    <div className="grid grid-cols-2 mt-1 gap-y-2 gap-x-2 my-4">
+                                                                    <div
+                                                                        id="board-containers"
+                                                                        className="grid grid-cols-2 mt-1 gap-y-2 gap-x-2 my-4"
+                                                                    >
                                                                         {/* map through containers for display only*/}
                                                                         {boardContainerItemMapping !==
                                                                             null &&
@@ -671,10 +677,16 @@ const CreateBoardForm = ({
                                                                                                                     ),
                                                                                                                 }}
                                                                                                             >
-                                                                                                                <label className="text-sm font-bold text-slate-600 dark:text-slate-100">
+                                                                                                                <label
+                                                                                                                    className="text-sm font-bold text-slate-600 dark:text-slate-100"
+                                                                                                                    htmlFor="container-title"
+                                                                                                                >
                                                                                                                     Title
                                                                                                                 </label>
-                                                                                                                <div className="text-light text-sm text-slate-500 dark:text-slate-100/75">
+                                                                                                                <div
+                                                                                                                    id="container-title"
+                                                                                                                    className="text-light text-sm text-slate-500 dark:text-slate-100/75"
+                                                                                                                >
                                                                                                                     {
                                                                                                                         container.title
                                                                                                                     }
@@ -693,10 +705,16 @@ const CreateBoardForm = ({
                                                                                                                     ),
                                                                                                                 }}
                                                                                                             >
-                                                                                                                <label className="text-sm font-bold text-slate-600 dark:text-slate-100">
+                                                                                                                <label
+                                                                                                                    htmlFor="container-type"
+                                                                                                                    className="text-sm font-bold text-slate-600 dark:text-slate-100"
+                                                                                                                >
                                                                                                                     Type
                                                                                                                 </label>
-                                                                                                                <div className="text-light text-slate-500 dark:text-slate-100/75">
+                                                                                                                <div
+                                                                                                                    id="container-type"
+                                                                                                                    className="text-light text-slate-500 dark:text-slate-100/75"
+                                                                                                                >
                                                                                                                     {
                                                                                                                         container.type
                                                                                                                     }
@@ -717,10 +735,16 @@ const CreateBoardForm = ({
                                                                                                                         ),
                                                                                                                     }}
                                                                                                                 >
-                                                                                                                    <label className="text-sm font-bold text-slate-600 dark:text-slate-100">
+                                                                                                                    <label
+                                                                                                                        htmlFor="container-ordering"
+                                                                                                                        className="text-sm font-bold text-slate-600 dark:text-slate-100"
+                                                                                                                    >
                                                                                                                         Ordering
                                                                                                                     </label>
-                                                                                                                    <div className="text-light text-sm text-slate-500 dark:text-slate-100/75">
+                                                                                                                    <div
+                                                                                                                        id="container-ordering"
+                                                                                                                        className="text-light text-sm text-slate-500 dark:text-slate-100/75"
+                                                                                                                    >
                                                                                                                         {
                                                                                                                             container.completedItemOrder
                                                                                                                         }

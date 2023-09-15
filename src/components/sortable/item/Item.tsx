@@ -412,9 +412,7 @@ export const Item = React.memo(
                     }
                     ref={ref}
                 >
-                    <label htmlFor="content" className="sr-only">
-                        Task, note, or item content
-                    </label>
+                    <span className="sr-only">Task, note, or item content</span>
                     {/* main content */}
                     <div
                         className={clsx(

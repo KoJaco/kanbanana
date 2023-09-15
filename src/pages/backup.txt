@@ -17,7 +17,6 @@ import { BiSortAlt2 } from 'react-icons/bi';
 import InfoCard from '@/components/displays/InfoCard';
 
 import InstallPWA from '@/components/InstallApp/InstallPWA';
-import { useIntersectionObserver } from '@/core/hooks';
 
 const navigationLinks = [
     { id: 0, name: 'what?', href: '/#what', color: '#6967CE' },
@@ -79,9 +78,6 @@ const Home: NextPage = () => {
     const [viewWidth, setViewWidth] = useState(0);
     const [leftRightDisabled, setLeftRightDisabled] = useState(false);
 
-    const whatRef = useRef<HTMLElement | null>(null);
-    const whyRef = useRef<HTMLElement | null>(null);
-
     const debounceTimer = useRef<null | ReturnType<typeof setInterval>>(null);
 
     const isClientSide = typeof window === 'undefined' ? false : true;
@@ -111,38 +107,20 @@ const Home: NextPage = () => {
     }
 
     function handleChangeSection(linkIndex: number, linkName: string) {
+        const contentWrapper = document.getElementById('contentWrapper');
+        const currentSection = document.getElementById(linkName);
+
+        console.log(contentWrapper?.scrollLeft);
+        console.log(currentSection?.offsetLeft);
+
         const newLink = { id: linkIndex, name: linkName };
 
-        if (linkName === 'what?') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-            const sectionEl = document.getElementById(linkName);
-
-            if (sectionEl) {
-                sectionEl.scrollIntoView({
-                    behavior: 'smooth',
-                });
-            } else {
-                throw new Error('');
-            }
+        if (contentWrapper && currentSection) {
+            contentWrapper.scrollLeft = currentSection.offsetLeft;
         }
+
         setCurrentLink(newLink);
     }
-
-    // auto-set current link using intersection observer, nothing fancy just toggle basically.
-    const entry = useIntersectionObserver(whyRef, {});
-    const isVisible = !!entry?.isIntersecting;
-
-    useEffect(() => {
-        if (!whyRef.current) return;
-
-        const sectionID = whyRef.current.id;
-        if (isVisible) {
-            setCurrentLink({ id: 1, name: sectionID });
-        } else {
-            setCurrentLink({ id: 0, name: 'what?' });
-        }
-    }, [isVisible, setCurrentLink]);
 
     const conditionalColoring = () => {
         switch (currentLink.name) {
@@ -150,6 +128,7 @@ const Home: NextPage = () => {
                 return '#6967CE';
             case 'why?':
                 return '#FFC414';
+
             default:
                 return '#6967CE';
         }
@@ -157,12 +136,12 @@ const Home: NextPage = () => {
 
     return (
         <HomeLayout>
-            <div className="relative flex flex-col lg:flex-row justify-center gap-x-10 items-center h-auto w-full px-10 lg:px-0 2xl:max-w-[1600px]">
+            <div className="flex flex-col lg:flex-row w-full h-auto lg:relative absolute top-20 dark:bg-slate-900">
                 {/* Page scroll menu */}
-                <div className="lg:fixed lg:left-[5%] xl:left-[10%] top-10 flex lg:flex-col items-center lg:h-screen w-full lg:w-auto border-b-1 dark:border-slate-600 lg:border-0 md:shadow-none self-center justify-center py-10 lg:py-0 lg:mx-0">
+                <div className="lg:absolute lg:left-0 flex flex-col w-auto lg:h-1/2 border-b-1 dark:border-slate-600 lg:border-0 md:shadow-none self-center justify-center lg:mx-0 ">
                     {/* desktop styling */}
                     <nav
-                        className="hidden lg:block border-l-2 transition-color duration-500"
+                        className="hidden lg:block border-l-2 transition-color duration-500 ml-[7vw]"
                         style={{ borderColor: conditionalColoring() }}
                     >
                         <ul className="my-4">
@@ -204,7 +183,7 @@ const Home: NextPage = () => {
                         </ul>
                     </nav>
                     {/* mobile / ipad mini nav styling */}
-                    <nav className="lg:hidden flex w-full items-center h-auto">
+                    <nav className="lg:hidden my-10 flex w-[80vw] items-center">
                         <ul className="inline-flex flex-row items-center justify-center w-full gap-x-10">
                             {navigationLinks.map((link) => (
                                 <li
@@ -244,117 +223,122 @@ const Home: NextPage = () => {
                 </div>
 
                 {/* Main content section */}
-                <div className="flex flex-col justify-center items-center h-auto right-auto w-full lg:max-w-[70%] xl:max-w-80%] lg:px-20 gap-y-[100px] lg:gap-y-40 lg:py-0 py-20">
-                    <section
-                        ref={whatRef}
-                        id="what?"
-                        className="flex flex-col h-auto lg:min-h-screen items-start justify-start lg:justify-center"
+                <div className="flex justify-center items-center overflow-x-hidden w-full lg:px-32 2xl:px-40 lg:ml-[5vw] 2xl:ml-[10vw]">
+                    <div
+                        id="contentWrapper"
+                        className="grid grid-flow-col auto-cols-auto w-full h-full self-center transition-color duration-300 overflow-y-auto scroll-smooth snap-x touch-pan-x no-scrollbar snap-proximity mx-4"
                     >
-                        <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-200 lg:mb-5">
-                            Simple, quick Kanban boards.
-                        </h1>
-                        <p className="text-slate-800 dark:text-slate-400 mb-5">
-                            Kan-banana is a free hobby application built for
-                            creating and organising basic Kanban boards. It uses
-                            IndexedDB, a database located within a user&#39;s
-                            browser, to store board data. You can also download
-                            the application, providing your browser supports the
-                            operation, by clicking the button below!
-                        </p>
-                        <div>
-                            <InstallPWA />
-                        </div>
-
-                        {/* section content */}
-                        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-12 gap-y-10 gap-x-8">
-                            {infoCards.map((card, index) => (
-                                <li
-                                    key={index}
-                                    className="flex col-1 w-full h-full"
-                                >
-                                    <InfoCard
-                                        title={card?.title}
-                                        icon={card?.icon}
-                                        content={card.content}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                        <div className="flex flex-col mt-5">
-                            <p className="text-slate-800 dark:text-slate-400">
-                                Kan-banana does not store or track any data
-                                externally, solely relying on data stored within
-                                your own browser to operate. You can manually
-                                delete Kan-banana&#39;s database by opening up
-                                developer tools (right click & inspect) and
-                                following:
+                        <section
+                            id="what?"
+                            className="col-span-1 snap-start flex flex-col w-[100vw] h-auto lg:w-[72vw] xl:w-[75vw] max-w-[1800px] px-10 xl:mx-40 py-10"
+                        >
+                            <h1 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-200 lg:mb-5">
+                                Simple, quick Kanban boards.
+                            </h1>
+                            <p className="text-slate-800 dark:text-slate-400 mb-5">
+                                Kan-banana is a free hobby application built for
+                                creating and organising basic Kanban boards. It
+                                uses IndexedDB, a database located within a
+                                user&#39;s browser, to store board data. You can
+                                also download the application, providing your
+                                browser supports the operation, by clicking the
+                                button below!
                             </p>
-                            <br />
-                            <br />
-                            <div className="text-center py-5 rounded-sm bg-slate-200/50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-300">
-                                {
-                                    'Application  -->  IndexedDB --> Kan-banana --> Delete Database'
-                                }
+                            <div>
+                                <InstallPWA />
                             </div>
-                            <br />
-                        </div>
-                    </section>
-                    <section
-                        ref={whyRef}
-                        id="why?"
-                        className="flex flex-col h-auto lg:min-h-screen items-start justify-start lg:justify-center"
-                    >
-                        <h2 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-200">
-                            A bit about the app
-                        </h2>
 
-                        <p className="text-slate-700 dark:text-slate-400">
-                            Kan-banana is a hobby project that I undertook
-                            solely with the aim of learning react/next.js. It is
-                            the first actual application I created and released
-                            and, as I finished the development of it quite some
-                            time ago, there are many things I would do
-                            differently now. As it is a free app, I have also
-                            not spent too much time in testing and optimising.
-                        </p>
-                        <br />
-                        <p className="text-slate-700 dark:text-slate-400">
-                            The Specific skills that I wished to cover with the
-                            creation of Kanbanana were as follows...
-                        </p>
-                        <ul className="grid grid-cols-1 md:grid-cols-2 my-10 gap-10">
-                            {learningCards.map((c, index) => {
-                                return (
+                            {/* section content */}
+                            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 my-12 gap-y-10 gap-x-8">
+                                {infoCards.map((card, index) => (
                                     <li
                                         key={index}
                                         className="flex col-1 w-full h-full"
                                     >
                                         <InfoCard
-                                            title={`0${index + 1}.`}
-                                            content={c}
+                                            title={card?.title}
+                                            icon={card?.icon}
+                                            content={card.content}
                                         />
                                     </li>
-                                );
-                            })}
-                        </ul>
-                        <p className="text-slate-700 dark:text-slate-400">
-                            If you wish to see more of my work or get in contact
-                            with me, please check out{' '}
-                            <span className="underline font-semibold">
-                                <a href="#" target="_blank">
-                                    my portfolio website.
-                                </a>
-                            </span>
-                        </p>
-                    </section>
+                                ))}
+                            </ul>
+                            <div className="flex flex-col mt-5">
+                                <p className="text-slate-800 dark:text-slate-400">
+                                    Kan-banana does not store or track any data
+                                    externally, solely relying on data stored
+                                    within your own browser to operate. You can
+                                    manually delete Kan-banana&#39;s database by
+                                    opening up developer tools (right click &
+                                    inspect) and following:
+                                </p>
+                                <br />
+                                <br />
+                                <div className="text-center py-5 rounded-sm bg-slate-200/50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-300">
+                                    {
+                                        'Application  -->  IndexedDB --> Kan-banana --> Delete Database'
+                                    }
+                                </div>
+                                <br />
+                            </div>
+                        </section>
+                        <section
+                            id="why?"
+                            className="col-span-1 snap-start flex flex-col w-[100vw] h-[80vh] lg:w-[72vw] xl:w-[72vw] max-w-[1800px] px-10 xl:mx-40 py-10"
+                        >
+                            <h2 className="py-2 text-xl font-medium text-slate-700 dark:text-slate-200">
+                                A bit about the app
+                            </h2>
+
+                            <p className="text-slate-700 dark:text-slate-400">
+                                Kan-banana is a hobby project that I undertook
+                                solely with the aim of learning react/next.js.
+                                It is the first actual application I created and
+                                released and, as I finished the development of
+                                it quite some time ago, there are many things I
+                                would do differently now. As it is a free app, I
+                                have also not spent too much time in testing and
+                                optimising.
+                            </p>
+                            <br />
+                            <p className="text-slate-700 dark:text-slate-400">
+                                The Specific skills that I wished to cover with
+                                the creation of Kanbanana were as follows...
+                            </p>
+                            <ul className="grid grid-cols-2 my-10 gap-10">
+                                {learningCards.map((c, index) => {
+                                    return (
+                                        <li
+                                            key={index}
+                                            className="flex col-1 w-full h-full"
+                                        >
+                                            <InfoCard
+                                                title={`0${index + 1}.`}
+                                                content={c}
+                                            />
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                            <p className="text-slate-700 dark:text-slate-400">
+                                If you wish to see more of my work or get in
+                                contact with me, please check out{' '}
+                                <span className="underline font-semibold">
+                                    <a href="#" target="_blank">
+                                        my portfolio website.
+                                    </a>
+                                </span>
+                            </p>
+                        </section>
+                    </div>
                 </div>
 
                 {/* side slider wrapper */}
-                <div className="hidden fixed lg:right-[5%] xl:right-[10%] lg:flex self-start lg:h-screen mt-[10vh]">
+                <div className="hidden lg:absolute lg:flex right-0 self-center lg:h-full ml-auto mr-[7vw]">
                     <span
                         className={clsx(
                             'flex w-[3px] h-1/4 transition-translate duration-500 rounded-full',
-                            currentLink.name === 'why?' && 'translate-y-[50vh]'
+                            currentLink.name === 'why?' && 'translate-y-[60vh]'
                         )}
                         style={{ backgroundColor: conditionalColoring() }}
                     />
