@@ -278,86 +278,87 @@ const AllBoards = () => {
                                                     router.asPath === '/boards'
                                                 ) {
                                                     return (
-                                                        <Link
-                                                            key={index}
-                                                            href={{
-                                                                pathname: `/boards/[slug]`,
-                                                                query: {
-                                                                    slug: encodeURIComponent(
-                                                                        slug
-                                                                    ),
-                                                                },
-                                                            }}
-                                                            passHref={true}
-                                                        >
-                                                            <a className="mt-4 w-full col-span-1 bg-gray-50 dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 rounded-lg divide-y divide-slate-200 drop-shadow-md hover:drop-shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
-                                                                {/* Title, timestamp, and tags */}
-                                                                <div className="flex w-full items-end justify-between space-x-6 p-6">
-                                                                    <div className="flex-1 truncate">
-                                                                        <div className="flex justify-between items-start space-x-3">
-                                                                            <h3 className="truncate text-md font-medium text-slate-900 dark:text-gray-50">
-                                                                                {
-                                                                                    title
-                                                                                }
-                                                                            </h3>
-                                                                        </div>
-                                                                        <p className="mt-1 truncate text-sm text-gray-500 dark:text-slate-200 whitespace-normal">
-                                                                            {board.updatedAt.toLocaleString(
-                                                                                'en-uk',
-                                                                                {
-                                                                                    weekday:
-                                                                                        'long',
-                                                                                    month: 'short',
-                                                                                    day: 'numeric',
-                                                                                    hour: 'numeric',
-                                                                                    minute: 'numeric',
-                                                                                    second: 'numeric',
-                                                                                }
-                                                                            )}
-                                                                        </p>
-                                                                        <div className="space-x-1">
-                                                                            {tags?.map(
-                                                                                (
-                                                                                    tag,
-                                                                                    index
-                                                                                ) => (
-                                                                                    <span
-                                                                                        key={
-                                                                                            index
-                                                                                        }
-                                                                                        className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                                                                                            tag
-                                                                                                .backgroundColor
-                                                                                                .name ===
-                                                                                                'transparent' &&
-                                                                                            'border-1 border-slate-500'
-                                                                                        }`}
-                                                                                        style={{
-                                                                                            backgroundColor:
+                                                        <li key={index}>
+                                                            <Link
+                                                                href={{
+                                                                    pathname: `/boards/[slug]`,
+                                                                    query: {
+                                                                        slug: encodeURIComponent(
+                                                                            slug
+                                                                        ),
+                                                                    },
+                                                                }}
+                                                                passHref={true}
+                                                            >
+                                                                <a className="mt-4 w-full col-span-1 bg-gray-50 dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 rounded-lg divide-y divide-slate-200 drop-shadow-md hover:drop-shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
+                                                                    {/* Title, timestamp, and tags */}
+                                                                    <div className="flex w-full items-end justify-between space-x-6 p-6">
+                                                                        <div className="flex-1 truncate">
+                                                                            <div className="flex justify-between items-start space-x-3">
+                                                                                <h2 className="truncate text-md font-medium text-slate-900 dark:text-gray-50">
+                                                                                    {
+                                                                                        title
+                                                                                    }
+                                                                                </h2>
+                                                                            </div>
+                                                                            <p className="mt-1 truncate text-sm text-gray-500 dark:text-slate-200 whitespace-normal">
+                                                                                {board.updatedAt.toLocaleString(
+                                                                                    'en-uk',
+                                                                                    {
+                                                                                        weekday:
+                                                                                            'long',
+                                                                                        month: 'short',
+                                                                                        day: 'numeric',
+                                                                                        hour: 'numeric',
+                                                                                        minute: 'numeric',
+                                                                                        second: 'numeric',
+                                                                                    }
+                                                                                )}
+                                                                            </p>
+                                                                            <div className="space-x-1">
+                                                                                {tags?.map(
+                                                                                    (
+                                                                                        tag,
+                                                                                        index
+                                                                                    ) => (
+                                                                                        <span
+                                                                                            key={
+                                                                                                index
+                                                                                            }
+                                                                                            className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
                                                                                                 tag
                                                                                                     .backgroundColor
-                                                                                                    .value,
-                                                                                            color: textColorStyle(
-                                                                                                tag
-                                                                                                    .backgroundColor
-                                                                                                    .name,
-                                                                                                tag
-                                                                                                    .backgroundColor
-                                                                                                    .textDark
-                                                                                            ),
-                                                                                        }}
-                                                                                    >
-                                                                                        {
-                                                                                            tag.text
-                                                                                        }
-                                                                                    </span>
-                                                                                )
-                                                                            )}
+                                                                                                    .name ===
+                                                                                                    'transparent' &&
+                                                                                                'border-1 border-slate-500'
+                                                                                            }`}
+                                                                                            style={{
+                                                                                                backgroundColor:
+                                                                                                    tag
+                                                                                                        .backgroundColor
+                                                                                                        .value,
+                                                                                                color: textColorStyle(
+                                                                                                    tag
+                                                                                                        .backgroundColor
+                                                                                                        .name,
+                                                                                                    tag
+                                                                                                        .backgroundColor
+                                                                                                        .textDark
+                                                                                                ),
+                                                                                            }}
+                                                                                        >
+                                                                                            {
+                                                                                                tag.text
+                                                                                            }
+                                                                                        </span>
+                                                                                    )
+                                                                                )}
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </a>
-                                                        </Link>
+                                                                </a>
+                                                            </Link>
+                                                        </li>
                                                     );
                                                 } else {
                                                     return null;

@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react';
-import { FileWithPath, useDropzone } from 'react-dropzone';
+import { FileError, FileWithPath, useDropzone } from 'react-dropzone';
+import type File from 'react-dropzone';
 import {
+    DexieExportJsonMeta,
     exportDB,
     importDB,
     importInto,
@@ -19,25 +21,29 @@ import assert from 'assert';
 import { IndexableType, Table } from 'dexie';
 
 import ResetDBForm from '@/components/forms/ResetDBForm';
+import { resolve } from 'path';
 
 type ImportExportProps = {
     handleCloseModal: () => void;
 };
 
+const defaultMetaDataObject = {
+    formatName: '',
+    formatVersion: 0,
+    databaseName: '',
+    databaseVersion: 0,
+    tables: [
+        {
+            name: '',
+            rowCount: 0,
+            schema: '',
+        },
+    ],
+};
+
 const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
-    const [metaDataObject, setMetaDataObject] = useState({
-        formatName: '',
-        formatVersion: 0,
-        databaseName: '',
-        databaseVersion: 0,
-        tables: [
-            {
-                name: '',
-                rowCount: 0,
-                schema: '',
-            },
-        ],
-    });
+    const [metaDataObject, setMetaDataObject] = useState(defaultMetaDataObject);
+    const [fileAccepted, setFileAccepted] = useState(false);
 
     const [currentDbObject, setCurrentDbObject] = useState<{
         databaseName: string;
@@ -57,6 +63,9 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
         ],
     });
 
+    // TODO: Make sure this doesn't error when accepting arbitrary, non-related .json files... check table schema and name too.
+    // TODO: Add rejected file items into the mix with react dropzone... probably try to do validation here right?
+
     const onDrop = useCallback(
         async (acceptedFiles: FileWithPath[]) => {
             acceptedFiles.forEach(async (file) => {
@@ -68,69 +77,96 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                     async function handleSetData(file: FileWithPath) {
                         setImportBlob(file);
                         const importMeta = await peakImportFile(file);
-                        setMetaDataObject({
-                            formatName: importMeta.formatName,
-                            formatVersion: importMeta.formatVersion,
-                            ...importMeta.data,
-                        });
+                        console.log(importMeta);
 
-                        let i = 0;
-                        db.tables.forEach((table) => {
-                            assert(table === db[table.name]);
-                            const tableName = table.name;
+                        // assertions
+                        // assert(importMeta.formatName === 'dexie');
+                        // assert(importMeta.formatVersion === 1);
+                        // assert(importMeta.data.databaseName === 'kanbanana');
+                        // assert(importMeta.data.tables.length === 1);
+                        // assert(importMeta.data.tables[0]?.name === 'boards');
+                        // assert(
+                        //     importMeta.data.tables[0].schema ===
+                        //         'slug,tag,updatedAt'
+                        // );
 
-                            const tableRowCount = async (
-                                table: Table<any, IndexableType>
-                            ) => {
-                                return await table.toCollection().count();
-                            };
+                        const ks = Object.keys(importMeta);
 
-                            const primKeyObj = table.schema.primKey;
-                            assert(primKeyObj.name === primKeyObj.keyPath);
-                            let tableSchema = primKeyObj.name;
-                            const indexObjs = table.schema.indexes;
-                            for (let j = 0; j < indexObjs.length; j++) {
-                                let iObj = indexObjs[j];
-                                if (iObj) {
-                                    assert(iObj.name === iObj.keyPath);
-                                    tableSchema = tableSchema + ',' + iObj.name;
+                        if (
+                            !ks.includes('formatName') ||
+                            !ks.includes('formatVersion')
+                        ) {
+                            // console.log('hit 1');
+                            setMetaDataObject(defaultMetaDataObject);
+                            setFileAccepted(false);
+                        } else {
+                            // console.log('hit 2');
+                            setFileAccepted(true);
+                            setMetaDataObject({
+                                formatName: importMeta.formatName,
+                                formatVersion: importMeta.formatVersion,
+                                ...importMeta.data,
+                            });
+
+                            let i = 0;
+                            db.tables.forEach((table) => {
+                                assert(table === db[table.name]);
+                                const tableName = table.name;
+
+                                const tableRowCount = async (
+                                    table: Table<any, IndexableType>
+                                ) => {
+                                    return await table.toCollection().count();
+                                };
+
+                                const primKeyObj = table.schema.primKey;
+                                assert(primKeyObj.name === primKeyObj.keyPath);
+                                let tableSchema = primKeyObj.name;
+                                const indexObjs = table.schema.indexes;
+                                for (let j = 0; j < indexObjs.length; j++) {
+                                    let iObj = indexObjs[j];
+                                    if (iObj) {
+                                        assert(iObj.name === iObj.keyPath);
+                                        tableSchema =
+                                            tableSchema + ',' + iObj.name;
+                                    }
                                 }
-                            }
-                            let tableObject = {
-                                name: tableName,
-                                rowCount: 0,
-                                schema: tableSchema,
-                            };
+                                let tableObject = {
+                                    name: tableName,
+                                    rowCount: 0,
+                                    schema: tableSchema,
+                                };
 
-                            let rowCount = tableRowCount(table)
-                                .then((result) => result)
-                                .then((result) => {
-                                    tableObject.rowCount = result;
-                                })
-                                .catch((error) => console.error(error));
+                                let rowCount = tableRowCount(table)
+                                    .then((result) => result)
+                                    .then((result) => {
+                                        tableObject.rowCount = result;
+                                    })
+                                    .catch((error) => console.error(error));
 
-                            if (i === 0) {
-                                let newTables = Array.from(
-                                    currentDbObject.tables
-                                );
-                                newTables.push(tableObject);
-                                newTables.splice(0, 1);
-                                setCurrentDbObject({
-                                    ...currentDbObject,
-                                    tables: newTables,
-                                });
-                            } else {
-                                let newTables = Array.from(
-                                    currentDbObject.tables
-                                );
-                                newTables.push(tableObject);
-                                setCurrentDbObject({
-                                    ...currentDbObject,
-                                    tables: newTables,
-                                });
-                            }
-                            i + 1;
-                        });
+                                if (i === 0) {
+                                    let newTables = Array.from(
+                                        currentDbObject.tables
+                                    );
+                                    newTables.push(tableObject);
+                                    newTables.splice(0, 1);
+                                    setCurrentDbObject({
+                                        ...currentDbObject,
+                                        tables: newTables,
+                                    });
+                                } else {
+                                    let newTables = Array.from(
+                                        currentDbObject.tables
+                                    );
+                                    newTables.push(tableObject);
+                                    setCurrentDbObject({
+                                        ...currentDbObject,
+                                        tables: newTables,
+                                    });
+                                }
+                                i + 1;
+                            });
+                        }
                     }
                     handleSetData(file);
                 };
@@ -197,6 +233,9 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
 
     async function handleImportDB() {
         if (importBlob !== null) {
+            console.log(
+                currentDbObject.databaseName === metaDataObject.databaseName
+            );
             const dbNamesEqual =
                 currentDbObject.databaseName === metaDataObject.databaseName;
             let schemaEqual = false;
@@ -209,16 +248,16 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                 }
             }
             if (dbNamesEqual && schemaEqual) {
+                console.log('hit');
                 // importInto
                 await importInto(db, importBlob, {
                     overwriteValues: true,
                     progressCallback: progressCallback,
                 });
             } else {
-                // import as a separate database, is this necessary? or can we always import into?
-                const db = await importDB(importBlob, {
-                    progressCallback: progressCallback,
-                });
+                console.error(
+                    'Database cannot be imported, it is not of the same schema nor format.'
+                );
             }
         } else {
             throw new Error(
@@ -303,8 +342,9 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                                 'border-emerald-600 dark:border-emerald-500',
                                             isDragAccept &&
                                                 'border-emerald-600 dark:border-emerald-500',
-                                            isDragReject &&
-                                                'border-red-600 dark:border-red-500'
+                                            isDragReject ||
+                                                (!fileAccepted &&
+                                                    'border-red-600 dark:border-red-500')
                                         )}
                                         {...getRootProps()}
                                     >
@@ -317,7 +357,9 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                         )}
                                         {isDragReject && (
                                             <p className="text-red-500 w-2/3">
-                                                File must be in JSON format
+                                                The file was not accepted. It
+                                                must be is .json format and be
+                                                an export from Kanbanana.
                                             </p>
                                         )}
                                         {!isDragActive && (
@@ -332,7 +374,9 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                             <div className="md:grid md:grid-rows-2 md:gap-x-2 items-start mt-4 w-full">
                                                 <div className="md:grid-rows-1 mb-4 md:mb-0">
                                                     <p className="text-slate-600 font-medium text-sm mt-2 dark:text-slate-200/75">
-                                                        File accepted
+                                                        {fileAccepted
+                                                            ? 'File accepted'
+                                                            : 'File rejected'}
                                                     </p>
                                                     <ul className="text-sm text-slate-600 dark:text-slate-200/50  whitespace-normal">
                                                         {acceptedFileItems}
@@ -436,6 +480,7 @@ const ImportExport = ({ handleCloseModal }: ImportExportProps) => {
                                                         handleImportDB();
                                                     }}
                                                     aria-label="Import Database"
+                                                    disabled={!fileAccepted}
                                                 >
                                                     <BsDownload className="w-7 h-7" />
                                                 </button>
