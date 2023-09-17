@@ -568,7 +568,7 @@ const CreateBoardForm = ({
                                                                     </label>
                                                                     <div
                                                                         id="board-containers"
-                                                                        className="grid grid-cols-2 mt-1 gap-y-2 gap-x-2 my-4"
+                                                                        className="grid grid-cols-1 lg:grid-cols-2 mt-1 gap-y-2 gap-x-2 my-4"
                                                                     >
                                                                         {/* map through containers for display only*/}
                                                                         {boardContainerItemMapping !==
@@ -598,7 +598,7 @@ const CreateBoardForm = ({
                                                                                                     key={
                                                                                                         index
                                                                                                     }
-                                                                                                    className="cols-span-1 grid-rows-auto group rounded-md drop-shadow my-2 text-md relative bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-800 px-2 py-2"
+                                                                                                    className="grid-rows-auto group rounded-md drop-shadow my-2 text-md relative bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-800 px-2 py-2"
                                                                                                 >
                                                                                                     <div className="flex flex-col text-slate-600 mb-1 ">
                                                                                                         <div className="flex mb-2">
