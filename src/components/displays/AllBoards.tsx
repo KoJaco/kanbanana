@@ -278,7 +278,10 @@ const AllBoards = () => {
                                                     router.asPath === '/boards'
                                                 ) {
                                                     return (
-                                                        <li key={index}>
+                                                        <li
+                                                            key={index}
+                                                            className="mt-4 w-full col-span-1 bg-gray-50 dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 rounded-lg divide-y divide-slate-200 drop-shadow-md hover:drop-shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer"
+                                                        >
                                                             <Link
                                                                 href={{
                                                                     pathname: `/boards/[slug]`,
@@ -290,7 +293,7 @@ const AllBoards = () => {
                                                                 }}
                                                                 passHref={true}
                                                             >
-                                                                <a className="mt-4 w-full col-span-1 bg-gray-50 dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 rounded-lg divide-y divide-slate-200 drop-shadow-md hover:drop-shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
+                                                                <a>
                                                                     {/* Title, timestamp, and tags */}
                                                                     <div className="flex w-full items-end justify-between space-x-6 p-6">
                                                                         <div className="flex-1 truncate">
