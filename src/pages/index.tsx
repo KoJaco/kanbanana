@@ -254,12 +254,12 @@ const Home: NextPage = () => {
                             Simple, quick Kanban boards.
                         </h1>
                         <p className="text-slate-800 dark:text-slate-400 mb-5">
-                            Kan-banana is a free hobby application built for
-                            creating and organising basic Kanban boards. It uses
-                            IndexedDB, a database located within a user&#39;s
-                            browser, to store board data. You can also download
-                            the application, providing your browser supports the
-                            operation, by clicking the button below!
+                            Kan-banana is a hobby application built for creating
+                            and organising basic Kanban boards. It uses
+                            IndexedDB, a database within a user&#39;s browser,
+                            to store board data. You can also download the
+                            application if your browser supports it by clicking
+                            the button below!
                         </p>
                         <div>
                             <InstallPWA />
